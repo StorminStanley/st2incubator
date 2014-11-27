@@ -10,6 +10,9 @@ parameters:
   device:
     required: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   instance_id:
     required: true
     type: string

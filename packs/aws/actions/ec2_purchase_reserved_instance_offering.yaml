@@ -7,6 +7,9 @@ parameters:
     default: purchase_reserved_instance_offering
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   instance_count:
     default: 1
     type: string

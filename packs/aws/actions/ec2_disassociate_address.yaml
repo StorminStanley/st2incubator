@@ -9,6 +9,9 @@ parameters:
     type: string
   association_id:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   public_ip:
     type: string
 runner_type: run-python

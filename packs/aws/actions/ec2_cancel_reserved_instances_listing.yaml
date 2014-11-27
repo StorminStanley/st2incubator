@@ -7,6 +7,9 @@ parameters:
     default: cancel_reserved_instances_listing
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   reserved_instances_listing_ids:
     type: string
 runner_type: run-python

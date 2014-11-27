@@ -10,6 +10,9 @@ parameters:
   attribute:
     default: launchPermission
     type: string
+  dry_run:
+    default: false
+    type: boolean
   image_id:
     required: true
     type: string

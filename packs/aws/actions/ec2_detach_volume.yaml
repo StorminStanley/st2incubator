@@ -9,6 +9,9 @@ parameters:
     type: string
   device:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   force:
     default: false
     type: boolean

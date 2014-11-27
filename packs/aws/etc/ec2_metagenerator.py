@@ -39,9 +39,9 @@ def generate_meta(actions,pack):
 
     action_meta["name"] = "ec2_%s" % action
     for parameter in actions[action]:
-      if parameter == 'dry_run':
-        continue
       parameters[parameter] = { "type":"string" }
+      if isinstance(actions[action][parameter], bool):
+        parameters[parameter]['type'] = "boolean"
       if actions[action][parameter] is not None:
         if actions[action][parameter] == 'required':
             parameters[parameter]['required'] = True

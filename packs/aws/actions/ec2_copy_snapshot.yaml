@@ -9,6 +9,9 @@ parameters:
     type: string
   description:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   source_region:
     required: true
     type: string

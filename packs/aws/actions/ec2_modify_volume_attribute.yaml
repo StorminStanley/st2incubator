@@ -10,6 +10,9 @@ parameters:
   attribute:
     required: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   new_value:
     required: true
     type: string

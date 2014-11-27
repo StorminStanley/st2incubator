@@ -7,6 +7,9 @@ parameters:
     default: stop_instances
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   force:
     default: false
     type: boolean

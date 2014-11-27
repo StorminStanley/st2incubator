@@ -18,6 +18,9 @@ parameters:
   disable_api_termination:
     default: false
     type: boolean
+  dry_run:
+    default: false
+    type: boolean
   ebs_optimized:
     default: false
     type: boolean

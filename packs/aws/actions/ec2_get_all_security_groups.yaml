@@ -7,6 +7,9 @@ parameters:
     default: get_all_security_groups
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
   group_ids:

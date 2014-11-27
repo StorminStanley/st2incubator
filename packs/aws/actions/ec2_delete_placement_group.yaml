@@ -7,6 +7,9 @@ parameters:
     default: delete_placement_group
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   name:
     required: true
     type: string

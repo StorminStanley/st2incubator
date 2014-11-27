@@ -7,6 +7,9 @@ parameters:
     default: get_all_images
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   executable_by:
     type: string
   filters:

@@ -16,6 +16,9 @@ parameters:
   count:
     default: 1
     type: string
+  dry_run:
+    default: false
+    type: boolean
   ebs_optimized:
     default: false
     type: boolean

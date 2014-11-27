@@ -7,6 +7,9 @@ parameters:
     default: create_tags
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   resource_ids:
     required: true
     type: string

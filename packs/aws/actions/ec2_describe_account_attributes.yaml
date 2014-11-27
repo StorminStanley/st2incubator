@@ -9,4 +9,7 @@ parameters:
     type: string
   attribute_names:
     type: string
+  dry_run:
+    default: false
+    type: boolean
 runner_type: run-python

@@ -7,6 +7,9 @@ parameters:
     default: get_all_ramdisks
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   owners:
     type: string
   ramdisk_ids:

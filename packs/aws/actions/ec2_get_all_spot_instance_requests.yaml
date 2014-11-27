@@ -7,6 +7,9 @@ parameters:
     default: get_all_spot_instance_requests
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
   request_ids:

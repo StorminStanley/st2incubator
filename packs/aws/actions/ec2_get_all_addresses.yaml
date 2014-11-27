@@ -11,6 +11,9 @@ parameters:
     type: string
   allocation_ids:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
 runner_type: run-python

@@ -7,6 +7,9 @@ parameters:
     default: modify_vpc_attribute
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   enable_dns_hostnames:
     type: string
   enable_dns_support:
