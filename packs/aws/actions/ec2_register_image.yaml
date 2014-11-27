@@ -16,6 +16,9 @@ parameters:
     type: boolean
   description:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   image_location:
     type: string
   kernel_id:

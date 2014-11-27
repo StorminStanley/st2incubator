@@ -7,6 +7,9 @@ parameters:
     default: get_only_instances
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
   instance_ids:

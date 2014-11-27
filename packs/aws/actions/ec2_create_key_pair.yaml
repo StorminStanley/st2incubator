@@ -7,6 +7,9 @@ parameters:
     default: create_key_pair
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   key_name:
     required: true
     type: string

@@ -12,6 +12,9 @@ parameters:
   attr:
     required: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   interface_id:
     required: true
     type: string

@@ -7,6 +7,9 @@ parameters:
     default: delete_snapshot
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   snapshot_id:
     required: true
     type: string

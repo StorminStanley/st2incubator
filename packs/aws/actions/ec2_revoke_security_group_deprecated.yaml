@@ -9,6 +9,9 @@ parameters:
     type: string
   cidr_ip:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   from_port:
     type: string
   group_name:

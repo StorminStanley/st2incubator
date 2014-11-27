@@ -10,6 +10,9 @@ parameters:
   attribute:
     default: createVolumePermission
     type: string
+  dry_run:
+    default: false
+    type: boolean
   groups:
     type: string
   operation:

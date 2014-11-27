@@ -7,6 +7,9 @@ parameters:
     default: unassign_private_ip_addresses
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   network_interface_id:
     type: string
   private_ip_addresses:

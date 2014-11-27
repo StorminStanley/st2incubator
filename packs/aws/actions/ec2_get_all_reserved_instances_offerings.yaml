@@ -9,6 +9,9 @@ parameters:
     type: string
   availability_zone:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
   include_marketplace:

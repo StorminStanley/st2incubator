@@ -9,6 +9,9 @@ parameters:
     type: string
   description:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   groups:
     type: string
   private_ip_address:

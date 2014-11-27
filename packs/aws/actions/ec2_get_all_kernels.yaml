@@ -7,6 +7,9 @@ parameters:
     default: get_all_kernels
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   kernel_ids:
     type: string
   owners:

@@ -7,6 +7,9 @@ parameters:
     default: get_all_volume_status
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   filters:
     type: string
   max_results:

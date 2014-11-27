@@ -10,6 +10,9 @@ parameters:
   client_token:
     required: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   instance_count:
     required: true
     type: string

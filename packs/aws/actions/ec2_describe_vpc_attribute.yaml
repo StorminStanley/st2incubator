@@ -9,6 +9,9 @@ parameters:
     type: string
   attribute:
     type: string
+  dry_run:
+    default: false
+    type: boolean
   vpc_id:
     required: true
     type: string

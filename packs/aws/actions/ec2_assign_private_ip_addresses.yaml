@@ -10,6 +10,9 @@ parameters:
   allow_reassignment:
     default: false
     type: boolean
+  dry_run:
+    default: false
+    type: boolean
   network_interface_id:
     type: string
   private_ip_addresses:

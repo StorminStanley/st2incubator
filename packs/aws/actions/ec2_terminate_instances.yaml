@@ -7,6 +7,9 @@ parameters:
     default: terminate_instances
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   instance_ids:
     type: string
 runner_type: run-python

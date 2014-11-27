@@ -7,6 +7,9 @@ parameters:
     default: enable_volume_io
     immutable: true
     type: string
+  dry_run:
+    default: false
+    type: boolean
   volume_id:
     required: true
     type: string
