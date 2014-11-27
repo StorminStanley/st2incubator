@@ -1,0 +1,28 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_revoke_security_group
+parameters:
+  action:
+    default: revoke_security_group
+    immutable: true
+    type: string
+  cidr_ip:
+    type: string
+  from_port:
+    type: string
+  group_id:
+    type: string
+  group_name:
+    type: string
+  ip_protocol:
+    type: string
+  src_security_group_group_id:
+    type: string
+  src_security_group_name:
+    type: string
+  src_security_group_owner_id:
+    type: string
+  to_port:
+    type: string
+runner_type: run-python

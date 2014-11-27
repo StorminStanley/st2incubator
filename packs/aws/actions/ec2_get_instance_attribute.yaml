@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_instance_attribute
+parameters:
+  action:
+    default: get_instance_attribute
+    immutable: true
+    type: string
+  attribute:
+    required: true
+    type: string
+  instance_id:
+    required: true
+    type: string
+runner_type: run-python

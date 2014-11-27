@@ -1,0 +1,19 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_assign_private_ip_addresses
+parameters:
+  action:
+    default: assign_private_ip_addresses
+    immutable: true
+    type: string
+  allow_reassignment:
+    default: false
+    type: boolean
+  network_interface_id:
+    type: string
+  private_ip_addresses:
+    type: string
+  secondary_private_ip_address_count:
+    type: string
+runner_type: run-python

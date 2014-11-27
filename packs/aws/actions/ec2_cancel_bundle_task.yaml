@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_cancel_bundle_task
+parameters:
+  action:
+    default: cancel_bundle_task
+    immutable: true
+    type: string
+  bundle_id:
+    required: true
+    type: string
+runner_type: run-python

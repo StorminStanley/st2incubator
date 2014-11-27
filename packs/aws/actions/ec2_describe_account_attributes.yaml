@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_describe_account_attributes
+parameters:
+  action:
+    default: describe_account_attributes
+    immutable: true
+    type: string
+  attribute_names:
+    type: string
+runner_type: run-python

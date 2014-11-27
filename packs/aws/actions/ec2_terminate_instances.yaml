@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_terminate_instances
+parameters:
+  action:
+    default: terminate_instances
+    immutable: true
+    type: string
+  instance_ids:
+    type: string
+runner_type: run-python

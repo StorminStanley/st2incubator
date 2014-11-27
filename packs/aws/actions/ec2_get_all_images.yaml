@@ -1,0 +1,18 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_all_images
+parameters:
+  action:
+    default: get_all_images
+    immutable: true
+    type: string
+  executable_by:
+    type: string
+  filters:
+    type: string
+  image_ids:
+    type: string
+  owners:
+    type: string
+runner_type: run-python

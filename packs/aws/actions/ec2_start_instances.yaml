@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_start_instances
+parameters:
+  action:
+    default: start_instances
+    immutable: true
+    type: string
+  instance_ids:
+    type: string
+runner_type: run-python

@@ -1,0 +1,19 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_attach_network_interface
+parameters:
+  action:
+    default: attach_network_interface
+    immutable: true
+    type: string
+  device_index:
+    required: true
+    type: string
+  instance_id:
+    required: true
+    type: string
+  network_interface_id:
+    required: true
+    type: string
+runner_type: run-python

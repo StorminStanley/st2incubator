@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_describe_reserved_instances_modifications
+parameters:
+  action:
+    default: describe_reserved_instances_modifications
+    immutable: true
+    type: string
+  filters:
+    type: string
+  next_token:
+    type: string
+  reserved_instances_modification_ids:
+    type: string
+runner_type: run-python

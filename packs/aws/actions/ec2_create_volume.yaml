@@ -1,0 +1,25 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_volume
+parameters:
+  action:
+    default: create_volume
+    immutable: true
+    type: string
+  encrypted:
+    default: false
+    type: boolean
+  iops:
+    type: string
+  size:
+    required: true
+    type: string
+  snapshot:
+    type: string
+  volume_type:
+    type: string
+  zone:
+    required: true
+    type: string
+runner_type: run-python

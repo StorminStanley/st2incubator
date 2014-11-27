@@ -1,0 +1,19 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_network_interface
+parameters:
+  action:
+    default: create_network_interface
+    immutable: true
+    type: string
+  description:
+    type: string
+  groups:
+    type: string
+  private_ip_address:
+    type: string
+  subnet_id:
+    required: true
+    type: string
+runner_type: run-python

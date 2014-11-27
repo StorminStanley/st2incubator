@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_delete_snapshot
+parameters:
+  action:
+    default: delete_snapshot
+    immutable: true
+    type: string
+  snapshot_id:
+    required: true
+    type: string
+runner_type: run-python

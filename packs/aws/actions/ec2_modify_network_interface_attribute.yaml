@@ -1,0 +1,21 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_modify_network_interface_attribute
+parameters:
+  action:
+    default: modify_network_interface_attribute
+    immutable: true
+    type: string
+  attachment_id:
+    type: string
+  attr:
+    required: true
+    type: string
+  interface_id:
+    required: true
+    type: string
+  value:
+    required: true
+    type: string
+runner_type: run-python

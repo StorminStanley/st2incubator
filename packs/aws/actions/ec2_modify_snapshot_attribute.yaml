@@ -1,0 +1,23 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_modify_snapshot_attribute
+parameters:
+  action:
+    default: modify_snapshot_attribute
+    immutable: true
+    type: string
+  attribute:
+    default: createVolumePermission
+    type: string
+  groups:
+    type: string
+  operation:
+    default: add
+    type: string
+  snapshot_id:
+    required: true
+    type: string
+  user_ids:
+    type: string
+runner_type: run-python

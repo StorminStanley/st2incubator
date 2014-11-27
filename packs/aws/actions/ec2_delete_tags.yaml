@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_delete_tags
+parameters:
+  action:
+    default: delete_tags
+    immutable: true
+    type: string
+  resource_ids:
+    required: true
+    type: string
+  tags:
+    required: true
+    type: string
+runner_type: run-python

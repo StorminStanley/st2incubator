@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_close
+parameters:
+  action:
+    default: close
+    immutable: true
+    type: string
+runner_type: run-python

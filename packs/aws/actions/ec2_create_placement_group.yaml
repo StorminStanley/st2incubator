@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_placement_group
+parameters:
+  action:
+    default: create_placement_group
+    immutable: true
+    type: string
+  name:
+    required: true
+    type: string
+  strategy:
+    default: cluster
+    type: string
+runner_type: run-python

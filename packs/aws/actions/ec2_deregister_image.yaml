@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_deregister_image
+parameters:
+  action:
+    default: deregister_image
+    immutable: true
+    type: string
+  delete_snapshot:
+    default: false
+    type: boolean
+  image_id:
+    required: true
+    type: string
+runner_type: run-python

@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_cancel_reserved_instances_listing
+parameters:
+  action:
+    default: cancel_reserved_instances_listing
+    immutable: true
+    type: string
+  reserved_instances_listing_ids:
+    type: string
+runner_type: run-python

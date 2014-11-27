@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_all_addresses
+parameters:
+  action:
+    default: get_all_addresses
+    immutable: true
+    type: string
+  addresses:
+    type: string
+  allocation_ids:
+    type: string
+  filters:
+    type: string
+runner_type: run-python

@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_reboot_instances
+parameters:
+  action:
+    default: reboot_instances
+    immutable: true
+    type: string
+  instance_ids:
+    type: string
+runner_type: run-python

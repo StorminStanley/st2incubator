@@ -1,0 +1,23 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_image
+parameters:
+  action:
+    default: create_image
+    immutable: true
+    type: string
+  block_device_mapping:
+    type: string
+  description:
+    type: string
+  instance_id:
+    required: true
+    type: string
+  name:
+    required: true
+    type: string
+  no_reboot:
+    default: false
+    type: boolean
+runner_type: run-python

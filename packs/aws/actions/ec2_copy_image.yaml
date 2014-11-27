@@ -1,0 +1,22 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_copy_image
+parameters:
+  action:
+    default: copy_image
+    immutable: true
+    type: string
+  client_token:
+    type: string
+  description:
+    type: string
+  name:
+    type: string
+  source_image_id:
+    required: true
+    type: string
+  source_region:
+    required: true
+    type: string
+runner_type: run-python

@@ -1,0 +1,14 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_proxy_ssl
+parameters:
+  action:
+    default: proxy_ssl
+    immutable: true
+    type: string
+  host:
+    type: string
+  port:
+    type: string
+runner_type: run-python
