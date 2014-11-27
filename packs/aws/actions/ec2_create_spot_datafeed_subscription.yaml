@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_spot_datafeed_subscription
+parameters:
+  action:
+    default: create_spot_datafeed_subscription
+    immutable: true
+    type: string
+  bucket:
+    required: true
+    type: string
+  prefix:
+    required: true
+    type: string
+runner_type: run-python

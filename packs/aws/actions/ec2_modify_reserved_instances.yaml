@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_modify_reserved_instances
+parameters:
+  action:
+    default: modify_reserved_instances
+    immutable: true
+    type: string
+runner_type: run-python

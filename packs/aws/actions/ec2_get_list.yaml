@@ -1,0 +1,23 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_list
+parameters:
+  action:
+    required: true
+    type: string
+  markers:
+    required: true
+    type: string
+  params:
+    required: true
+    type: string
+  parent:
+    type: string
+  path:
+    default: /
+    type: string
+  verb:
+    default: GET
+    type: string
+runner_type: run-python

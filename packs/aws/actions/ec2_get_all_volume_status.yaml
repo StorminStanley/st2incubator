@@ -1,0 +1,18 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_all_volume_status
+parameters:
+  action:
+    default: get_all_volume_status
+    immutable: true
+    type: string
+  filters:
+    type: string
+  max_results:
+    type: string
+  next_token:
+    type: string
+  volume_ids:
+    type: string
+runner_type: run-python

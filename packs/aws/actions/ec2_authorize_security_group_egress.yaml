@@ -1,0 +1,24 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_authorize_security_group_egress
+parameters:
+  action:
+    default: authorize_security_group_egress
+    immutable: true
+    type: string
+  cidr_ip:
+    type: string
+  from_port:
+    type: string
+  group_id:
+    required: true
+    type: string
+  ip_protocol:
+    required: true
+    type: string
+  src_group_id:
+    type: string
+  to_port:
+    type: string
+runner_type: run-python

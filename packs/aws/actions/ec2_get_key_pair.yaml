@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_key_pair
+parameters:
+  action:
+    default: get_key_pair
+    immutable: true
+    type: string
+  keyname:
+    required: true
+    type: string
+runner_type: run-python

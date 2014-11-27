@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_image_attribute
+parameters:
+  action:
+    default: get_image_attribute
+    immutable: true
+    type: string
+  attribute:
+    default: launchPermission
+    type: string
+  image_id:
+    required: true
+    type: string
+runner_type: run-python

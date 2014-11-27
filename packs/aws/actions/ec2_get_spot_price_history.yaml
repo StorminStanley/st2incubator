@@ -1,0 +1,26 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_spot_price_history
+parameters:
+  action:
+    default: get_spot_price_history
+    immutable: true
+    type: string
+  availability_zone:
+    type: string
+  end_time:
+    type: string
+  filters:
+    type: string
+  instance_type:
+    type: string
+  max_results:
+    type: string
+  next_token:
+    type: string
+  product_description:
+    type: string
+  start_time:
+    type: string
+runner_type: run-python

@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_all_instances
+parameters:
+  action:
+    default: get_all_instances
+    immutable: true
+    type: string
+  filters:
+    type: string
+  instance_ids:
+    type: string
+  max_results:
+    type: string
+runner_type: run-python

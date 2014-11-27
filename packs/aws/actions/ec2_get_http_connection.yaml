@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_http_connection
+parameters:
+  action:
+    default: get_http_connection
+    immutable: true
+    type: string
+runner_type: run-python

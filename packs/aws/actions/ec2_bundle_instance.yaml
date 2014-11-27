@@ -1,0 +1,22 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_bundle_instance
+parameters:
+  action:
+    default: bundle_instance
+    immutable: true
+    type: string
+  instance_id:
+    required: true
+    type: string
+  s3_bucket:
+    required: true
+    type: string
+  s3_prefix:
+    required: true
+    type: string
+  s3_upload_policy:
+    required: true
+    type: string
+runner_type: run-python

@@ -1,0 +1,18 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_copy_snapshot
+parameters:
+  action:
+    default: copy_snapshot
+    immutable: true
+    type: string
+  description:
+    type: string
+  source_region:
+    required: true
+    type: string
+  source_snapshot_id:
+    required: true
+    type: string
+runner_type: run-python

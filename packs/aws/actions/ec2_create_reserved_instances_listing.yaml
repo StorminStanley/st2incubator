@@ -1,0 +1,22 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_reserved_instances_listing
+parameters:
+  action:
+    default: create_reserved_instances_listing
+    immutable: true
+    type: string
+  client_token:
+    required: true
+    type: string
+  instance_count:
+    required: true
+    type: string
+  price_schedules:
+    required: true
+    type: string
+  reserved_instances_id:
+    required: true
+    type: string
+runner_type: run-python

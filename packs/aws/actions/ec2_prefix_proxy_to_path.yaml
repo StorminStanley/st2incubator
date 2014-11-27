@@ -1,0 +1,15 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_prefix_proxy_to_path
+parameters:
+  action:
+    default: prefix_proxy_to_path
+    immutable: true
+    type: string
+  host:
+    type: string
+  path:
+    required: true
+    type: string
+runner_type: run-python

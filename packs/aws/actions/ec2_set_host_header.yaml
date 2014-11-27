@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_set_host_header
+parameters:
+  action:
+    default: set_host_header
+    immutable: true
+    type: string
+runner_type: run-python

@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_allocate_address
+parameters:
+  action:
+    default: allocate_address
+    immutable: true
+    type: string
+  domain:
+    type: string
+runner_type: run-python

@@ -1,0 +1,16 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_import_key_pair
+parameters:
+  action:
+    default: import_key_pair
+    immutable: true
+    type: string
+  key_name:
+    required: true
+    type: string
+  public_key_material:
+    required: true
+    type: string
+runner_type: run-python

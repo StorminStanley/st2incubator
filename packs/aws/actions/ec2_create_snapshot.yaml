@@ -1,0 +1,15 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_create_snapshot
+parameters:
+  action:
+    default: create_snapshot
+    immutable: true
+    type: string
+  description:
+    type: string
+  volume_id:
+    required: true
+    type: string
+runner_type: run-python

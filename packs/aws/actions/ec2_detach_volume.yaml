@@ -1,0 +1,20 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_detach_volume
+parameters:
+  action:
+    default: detach_volume
+    immutable: true
+    type: string
+  device:
+    type: string
+  force:
+    default: false
+    type: boolean
+  instance_id:
+    type: string
+  volume_id:
+    required: true
+    type: string
+runner_type: run-python

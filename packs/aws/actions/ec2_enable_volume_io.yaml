@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_enable_volume_io
+parameters:
+  action:
+    default: enable_volume_io
+    immutable: true
+    type: string
+  volume_id:
+    required: true
+    type: string
+runner_type: run-python

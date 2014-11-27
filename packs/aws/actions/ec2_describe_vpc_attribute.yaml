@@ -1,0 +1,15 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_describe_vpc_attribute
+parameters:
+  action:
+    default: describe_vpc_attribute
+    immutable: true
+    type: string
+  attribute:
+    type: string
+  vpc_id:
+    required: true
+    type: string
+runner_type: run-python

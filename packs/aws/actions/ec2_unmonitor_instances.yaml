@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_unmonitor_instances
+parameters:
+  action:
+    default: unmonitor_instances
+    immutable: true
+    type: string
+  instance_ids:
+    required: true
+    type: string
+runner_type: run-python

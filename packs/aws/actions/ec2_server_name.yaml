@@ -1,0 +1,12 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_server_name
+parameters:
+  action:
+    default: server_name
+    immutable: true
+    type: string
+  port:
+    type: string
+runner_type: run-python

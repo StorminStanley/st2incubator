@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_handle_proxy
+parameters:
+  action:
+    default: handle_proxy
+    immutable: true
+    type: string
+runner_type: run-python

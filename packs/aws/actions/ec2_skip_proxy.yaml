@@ -1,0 +1,10 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_skip_proxy
+parameters:
+  action:
+    default: skip_proxy
+    immutable: true
+    type: string
+runner_type: run-python

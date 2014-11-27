@@ -1,0 +1,25 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_modify_image_attribute
+parameters:
+  action:
+    default: modify_image_attribute
+    immutable: true
+    type: string
+  attribute:
+    default: launchPermission
+    type: string
+  groups:
+    type: string
+  image_id:
+    required: true
+    type: string
+  operation:
+    default: add
+    type: string
+  product_codes:
+    type: string
+  user_ids:
+    type: string
+runner_type: run-python

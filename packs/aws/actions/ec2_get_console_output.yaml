@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_console_output
+parameters:
+  action:
+    default: get_console_output
+    immutable: true
+    type: string
+  instance_id:
+    required: true
+    type: string
+runner_type: run-python

@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_image
+parameters:
+  action:
+    default: get_image
+    immutable: true
+    type: string
+  image_id:
+    required: true
+    type: string
+runner_type: run-python

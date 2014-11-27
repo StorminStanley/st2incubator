@@ -1,0 +1,14 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_unassign_private_ip_addresses
+parameters:
+  action:
+    default: unassign_private_ip_addresses
+    immutable: true
+    type: string
+  network_interface_id:
+    type: string
+  private_ip_addresses:
+    type: string
+runner_type: run-python

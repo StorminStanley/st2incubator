@@ -1,0 +1,22 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_trim_snapshots
+parameters:
+  action:
+    default: trim_snapshots
+    immutable: true
+    type: string
+  daily_backups:
+    default: 7
+    type: string
+  hourly_backups:
+    default: 8
+    type: string
+  monthly_backups:
+    default: true
+    type: boolean
+  weekly_backups:
+    default: 4
+    type: string
+runner_type: run-python

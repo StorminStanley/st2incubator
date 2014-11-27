@@ -1,0 +1,17 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_make_request
+parameters:
+  action:
+    required: true
+    type: string
+  params:
+    type: string
+  path:
+    default: /
+    type: string
+  verb:
+    default: GET
+    type: string
+runner_type: run-python

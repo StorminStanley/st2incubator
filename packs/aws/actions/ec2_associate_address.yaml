@@ -1,0 +1,23 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_associate_address
+parameters:
+  action:
+    default: associate_address
+    immutable: true
+    type: string
+  allocation_id:
+    type: string
+  allow_reassociation:
+    default: false
+    type: boolean
+  instance_id:
+    type: string
+  network_interface_id:
+    type: string
+  private_ip_address:
+    type: string
+  public_ip:
+    type: string
+runner_type: run-python

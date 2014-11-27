@@ -1,0 +1,18 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_all_snapshots
+parameters:
+  action:
+    default: get_all_snapshots
+    immutable: true
+    type: string
+  filters:
+    type: string
+  owner:
+    type: string
+  restorable_by:
+    type: string
+  snapshot_ids:
+    type: string
+runner_type: run-python

@@ -1,0 +1,19 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_modify_volume_attribute
+parameters:
+  action:
+    default: modify_volume_attribute
+    immutable: true
+    type: string
+  attribute:
+    required: true
+    type: string
+  new_value:
+    required: true
+    type: string
+  volume_id:
+    required: true
+    type: string
+runner_type: run-python

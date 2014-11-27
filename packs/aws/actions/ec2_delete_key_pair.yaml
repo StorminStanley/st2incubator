@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_delete_key_pair
+parameters:
+  action:
+    default: delete_key_pair
+    immutable: true
+    type: string
+  key_name:
+    required: true
+    type: string
+runner_type: run-python

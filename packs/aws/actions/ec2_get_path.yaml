@@ -1,0 +1,13 @@
+description: ''
+enabled: true
+entry_point: ec2conn.py
+name: ec2_get_path
+parameters:
+  action:
+    default: get_path
+    immutable: true
+    type: string
+  path:
+    default: /
+    type: string
+runner_type: run-python
