@@ -1,6 +1,6 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
+entry_point: run.py
 name: ec2_revoke_security_group
 parameters:
   action:
@@ -8,6 +8,10 @@ parameters:
     immutable: true
     type: string
   cidr_ip:
+    type: string
+  cls:
+    default: EC2Connection
+    immutable: true
     type: string
   dry_run:
     default: false
@@ -19,6 +23,10 @@ parameters:
   group_name:
     type: string
   ip_protocol:
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   src_security_group_group_id:
     type: string

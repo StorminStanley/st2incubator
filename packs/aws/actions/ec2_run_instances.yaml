@@ -1,6 +1,6 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
+entry_point: run.py
 name: ec2_run_instances
 parameters:
   action:
@@ -14,6 +14,10 @@ parameters:
   block_device_map:
     type: string
   client_token:
+    type: string
+  cls:
+    default: EC2Connection
+    immutable: true
     type: string
   disable_api_termination:
     default: false
@@ -45,6 +49,10 @@ parameters:
     type: string
   min_count:
     default: 1
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   monitoring_enabled:
     default: false

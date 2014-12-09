@@ -1,10 +1,14 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
+entry_point: run.py
 name: ec2_get_all_reservations
 parameters:
   action:
     default: get_all_reservations
+    immutable: true
+    type: string
+  cls:
+    default: EC2Connection
     immutable: true
     type: string
   dry_run:
@@ -15,6 +19,10 @@ parameters:
   instance_ids:
     type: string
   max_results:
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   next_token:
     type: string
