@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_close
 parameters:
   action:
-    default: ec2_close
+    default: close
     immutable: true
     type: string
   cls:

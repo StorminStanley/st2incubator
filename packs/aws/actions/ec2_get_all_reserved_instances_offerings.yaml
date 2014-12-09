@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_all_reserved_instances_offerings
 parameters:
   action:
-    default: ec2_get_all_reserved_instances_offerings
+    default: get_all_reserved_instances_offerings
     immutable: true
     type: string
   availability_zone:

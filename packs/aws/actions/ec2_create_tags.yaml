@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_tags
 parameters:
   action:
-    default: ec2_create_tags
+    default: create_tags
     immutable: true
     type: string
   cls:

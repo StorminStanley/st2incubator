@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_import_key_pair
 parameters:
   action:
-    default: ec2_import_key_pair
+    default: import_key_pair
     immutable: true
     type: string
   cls:

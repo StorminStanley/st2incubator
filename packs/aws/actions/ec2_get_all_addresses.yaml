@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_all_addresses
 parameters:
   action:
-    default: ec2_get_all_addresses
+    default: get_all_addresses
     immutable: true
     type: string
   addresses:

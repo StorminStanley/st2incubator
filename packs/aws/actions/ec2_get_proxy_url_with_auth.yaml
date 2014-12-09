@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_proxy_url_with_auth
 parameters:
   action:
-    default: ec2_get_proxy_url_with_auth
+    default: get_proxy_url_with_auth
     immutable: true
     type: string
   cls:

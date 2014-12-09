@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_reboot_instances
 parameters:
   action:
-    default: ec2_reboot_instances
+    default: reboot_instances
     immutable: true
     type: string
   cls:

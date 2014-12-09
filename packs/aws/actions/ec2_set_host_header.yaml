@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_set_host_header
 parameters:
   action:
-    default: ec2_set_host_header
+    default: set_host_header
     immutable: true
     type: string
   cls:

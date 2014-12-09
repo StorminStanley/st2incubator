@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_snapshot
 parameters:
   action:
-    default: ec2_create_snapshot
+    default: create_snapshot
     immutable: true
     type: string
   cls:

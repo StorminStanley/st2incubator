@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_unmonitor_instance
 parameters:
   action:
-    default: ec2_unmonitor_instance
+    default: unmonitor_instance
     immutable: true
     type: string
   cls:

@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_trim_snapshots
 parameters:
   action:
-    default: ec2_trim_snapshots
+    default: trim_snapshots
     immutable: true
     type: string
   cls:

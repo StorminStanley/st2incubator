@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_image
 parameters:
   action:
-    default: ec2_get_image
+    default: get_image
     immutable: true
     type: string
   cls:

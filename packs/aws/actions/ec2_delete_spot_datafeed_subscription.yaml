@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_delete_spot_datafeed_subscription
 parameters:
   action:
-    default: ec2_delete_spot_datafeed_subscription
+    default: delete_spot_datafeed_subscription
     immutable: true
     type: string
   cls:

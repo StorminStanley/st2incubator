@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_delete_volume
 parameters:
   action:
-    default: ec2_delete_volume
+    default: delete_volume
     immutable: true
     type: string
   cls:

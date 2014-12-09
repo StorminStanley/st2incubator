@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_disassociate_address
 parameters:
   action:
-    default: ec2_disassociate_address
+    default: disassociate_address
     immutable: true
     type: string
   association_id:

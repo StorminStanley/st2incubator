@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_request_spot_instances
 parameters:
   action:
-    default: ec2_request_spot_instances
+    default: request_spot_instances
     immutable: true
     type: string
   addressing_type:

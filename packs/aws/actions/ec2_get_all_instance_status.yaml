@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_all_instance_status
 parameters:
   action:
-    default: ec2_get_all_instance_status
+    default: get_all_instance_status
     immutable: true
     type: string
   cls:

@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_security_group
 parameters:
   action:
-    default: ec2_create_security_group
+    default: create_security_group
     immutable: true
     type: string
   cls:

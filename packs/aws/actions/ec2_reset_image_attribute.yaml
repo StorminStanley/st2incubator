@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_reset_image_attribute
 parameters:
   action:
-    default: ec2_reset_image_attribute
+    default: reset_image_attribute
     immutable: true
     type: string
   attribute:

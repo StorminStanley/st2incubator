@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_assign_private_ip_addresses
 parameters:
   action:
-    default: ec2_assign_private_ip_addresses
+    default: assign_private_ip_addresses
     immutable: true
     type: string
   allow_reassignment:

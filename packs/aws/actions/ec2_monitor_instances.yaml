@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_monitor_instances
 parameters:
   action:
-    default: ec2_monitor_instances
+    default: monitor_instances
     immutable: true
     type: string
   cls:

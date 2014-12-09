@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_detach_network_interface
 parameters:
   action:
-    default: ec2_detach_network_interface
+    default: detach_network_interface
     immutable: true
     type: string
   attachment_id:

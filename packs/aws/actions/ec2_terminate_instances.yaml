@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_terminate_instances
 parameters:
   action:
-    default: ec2_terminate_instances
+    default: terminate_instances
     immutable: true
     type: string
   cls:

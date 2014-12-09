@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_all_bundle_tasks
 parameters:
   action:
-    default: ec2_get_all_bundle_tasks
+    default: get_all_bundle_tasks
     immutable: true
     type: string
   bundle_ids:

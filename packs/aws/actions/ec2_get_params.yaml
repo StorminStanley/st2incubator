@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_params
 parameters:
   action:
-    default: ec2_get_params
+    default: get_params
     immutable: true
     type: string
   cls:

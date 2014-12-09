@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_proxy_ssl
 parameters:
   action:
-    default: ec2_proxy_ssl
+    default: proxy_ssl
     immutable: true
     type: string
   cls:

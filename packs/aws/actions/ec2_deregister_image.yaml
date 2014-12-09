@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_deregister_image
 parameters:
   action:
-    default: ec2_deregister_image
+    default: deregister_image
     immutable: true
     type: string
   cls:

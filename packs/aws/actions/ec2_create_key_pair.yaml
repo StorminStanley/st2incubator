@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_key_pair
 parameters:
   action:
-    default: ec2_create_key_pair
+    default: create_key_pair
     immutable: true
     type: string
   cls:

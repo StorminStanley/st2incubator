@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_all_tags
 parameters:
   action:
-    default: ec2_get_all_tags
+    default: get_all_tags
     immutable: true
     type: string
   cls:

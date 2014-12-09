@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_allocate_address
 parameters:
   action:
-    default: ec2_allocate_address
+    default: allocate_address
     immutable: true
     type: string
   cls:

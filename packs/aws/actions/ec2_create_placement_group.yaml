@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_placement_group
 parameters:
   action:
-    default: ec2_create_placement_group
+    default: create_placement_group
     immutable: true
     type: string
   cls:

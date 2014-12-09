@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_create_reserved_instances_listing
 parameters:
   action:
-    default: ec2_create_reserved_instances_listing
+    default: create_reserved_instances_listing
     immutable: true
     type: string
   client_token:

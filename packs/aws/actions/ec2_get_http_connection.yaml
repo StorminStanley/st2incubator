@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_get_http_connection
 parameters:
   action:
-    default: ec2_get_http_connection
+    default: get_http_connection
     immutable: true
     type: string
   cls:

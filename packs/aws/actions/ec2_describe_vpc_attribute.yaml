@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_describe_vpc_attribute
 parameters:
   action:
-    default: ec2_describe_vpc_attribute
+    default: describe_vpc_attribute
     immutable: true
     type: string
   attribute:

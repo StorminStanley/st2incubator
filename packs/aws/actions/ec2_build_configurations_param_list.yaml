@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_build_configurations_param_list
 parameters:
   action:
-    default: ec2_build_configurations_param_list
+    default: build_configurations_param_list
     immutable: true
     type: string
   cls:

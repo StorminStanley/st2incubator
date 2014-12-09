@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_purchase_reserved_instance_offering
 parameters:
   action:
-    default: ec2_purchase_reserved_instance_offering
+    default: purchase_reserved_instance_offering
     immutable: true
     type: string
   cls:

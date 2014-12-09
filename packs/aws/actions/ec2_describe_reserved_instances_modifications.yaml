@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_describe_reserved_instances_modifications
 parameters:
   action:
-    default: ec2_describe_reserved_instances_modifications
+    default: describe_reserved_instances_modifications
     immutable: true
     type: string
   cls:

@@ -4,7 +4,7 @@ entry_point: run.py
 name: ec2_authorize_security_group
 parameters:
   action:
-    default: ec2_authorize_security_group
+    default: authorize_security_group
     immutable: true
     type: string
   cidr_ip:
