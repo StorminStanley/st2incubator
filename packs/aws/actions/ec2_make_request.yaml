@@ -1,7 +1,7 @@
 description: ''
 enabled: true
 entry_point: run.py
-name: make_request
+name: ec2_make_request
 parameters:
   action:
     required: true

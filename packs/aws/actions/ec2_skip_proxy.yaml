@@ -1,10 +1,10 @@
 description: ''
 enabled: true
 entry_point: run.py
-name: skip_proxy
+name: ec2_skip_proxy
 parameters:
   action:
-    default: skip_proxy
+    default: ec2_skip_proxy
     immutable: true
     type: string
   cls:

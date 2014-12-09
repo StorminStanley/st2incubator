@@ -1,7 +1,7 @@
 description: ''
 enabled: true
 entry_point: run.py
-name: get_object
+name: ec2_get_object
 parameters:
   action:
     required: true

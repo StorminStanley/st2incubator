@@ -1,10 +1,10 @@
 description: ''
 enabled: true
 entry_point: run.py
-name: get_all_kernels
+name: ec2_get_all_kernels
 parameters:
   action:
-    default: get_all_kernels
+    default: ec2_get_all_kernels
     immutable: true
     type: string
   cls:
