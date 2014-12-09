@@ -1,13 +1,21 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
-name: ec2_describe_reserved_instances_modifications
+entry_point: run.py
+name: describe_reserved_instances_modifications
 parameters:
   action:
     default: describe_reserved_instances_modifications
     immutable: true
     type: string
+  cls:
+    default: EC2Connection
+    immutable: true
+    type: string
   filters:
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   next_token:
     type: string

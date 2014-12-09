@@ -1,7 +1,7 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
-name: ec2_modify_snapshot_attribute
+entry_point: run.py
+name: modify_snapshot_attribute
 parameters:
   action:
     default: modify_snapshot_attribute
@@ -10,10 +10,18 @@ parameters:
   attribute:
     default: createVolumePermission
     type: string
+  cls:
+    default: EC2Connection
+    immutable: true
+    type: string
   dry_run:
     default: false
     type: boolean
   groups:
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   operation:
     default: add

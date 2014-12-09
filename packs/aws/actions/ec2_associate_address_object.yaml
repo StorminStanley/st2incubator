@@ -1,7 +1,7 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
-name: ec2_associate_address_object
+entry_point: run.py
+name: associate_address_object
 parameters:
   action:
     default: associate_address_object
@@ -12,10 +12,18 @@ parameters:
   allow_reassociation:
     default: false
     type: boolean
+  cls:
+    default: EC2Connection
+    immutable: true
+    type: string
   dry_run:
     default: false
     type: boolean
   instance_id:
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   network_interface_id:
     type: string

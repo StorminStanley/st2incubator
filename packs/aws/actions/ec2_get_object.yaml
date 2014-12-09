@@ -1,13 +1,18 @@
 description: ''
 enabled: true
-entry_point: ec2conn.py
-name: ec2_get_object
+entry_point: run.py
+name: get_object
 parameters:
   action:
     required: true
     type: string
   cls:
-    required: true
+    default: EC2Connection
+    immutable: true
+    type: string
+  module_path:
+    default: boto.ec2.connection
+    immutable: true
     type: string
   params:
     required: true
