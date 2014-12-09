@@ -1,0 +1,8 @@
+---
+    name: 'update_cache'
+    runner_type: 'run-remote'
+    description: 'Update the Freight cache and regenerate the repository'
+    enabled: true
+    entry_point: 'update_cache.sh'
+    sudo: true
+    parameters:
