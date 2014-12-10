@@ -1,6 +1,8 @@
+import boto.ec2
 import imp, re, importlib
 from st2actions.runners.pythonrunner import Action
-import os, yaml
+import os, yaml, json
+from ec2parsers import ResultSets as result_parser
 
 class BaseAction(Action):
 
@@ -8,11 +10,45 @@ class BaseAction(Action):
         super(BaseAction, self).__init__(config)
         self.setup = config['setup']
 
+    def ec2_connect(self):
+        region = self.setup['region']
+        del self.setup['region']
+        return boto.ec2.connect_to_region(region,**self.setup)
+
+    def wait_for_state(self, instance_id, state):
+        state_list = {}
+        obj = self.ec2_connect()
+        
+        for instance in obj.get_only_instances([instance_id,]):
+            current_state = instance.update()
+            while current_state != state:
+                current_state = instance.update()
+            state_list[instance_id] = current_state
+        return state_list
+
     def do_method(self,module_path, cls, action,**kwargs):
+      results = {}
       module = importlib.import_module(module_path)
-      obj = getattr(module,cls)(**self.setup)
-      return getattr(obj,action)(**kwargs)
+      # hack to connect to correct region
+      if cls == 'EC2Connection':
+          obj = self.ec2_connect()
+      else:
+          obj = getattr(module,cls)(**self.setup)
+      resultset = getattr(obj,action)(**kwargs)
+      return self.output_formatter(resultset)
 
     def do_function(self,module_path,action,**kwargs):
       module = __import__(module_path)
       return getattr(module,action)(**kwargs)
+
+    def output_formatter(self,output):
+        formatted = []
+        if isinstance(output, boto.ec2.instance.Reservation):
+            for instance in output.instances:
+                instance_data = {}
+                for field in result_parser.INSTANCE_FIELDS:
+                    instance_data[field] = getattr(instance,field)
+                formatted.append(instance_data)
+        else:
+            formatted = output
+        return formatted
