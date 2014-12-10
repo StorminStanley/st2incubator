@@ -2,13 +2,14 @@ import boto.ec2
 import imp, re, importlib
 from st2actions.runners.pythonrunner import Action
 import os, yaml, json
-from ec2parsers import ResultSets as result_parser
+from ec2parsers import ResultSets
 
 class BaseAction(Action):
 
     def __init__(self, config):
         super(BaseAction, self).__init__(config)
         self.setup = config['setup']
+        self.resultsets = ResultSets()
 
     def ec2_connect(self):
         region = self.setup['region']
@@ -35,20 +36,8 @@ class BaseAction(Action):
       else:
           obj = getattr(module,cls)(**self.setup)
       resultset = getattr(obj,action)(**kwargs)
-      return self.output_formatter(resultset)
+      return self.resultsets.formatter(resultset)
 
     def do_function(self,module_path,action,**kwargs):
       module = __import__(module_path)
       return getattr(module,action)(**kwargs)
-
-    def output_formatter(self,output):
-        formatted = []
-        if isinstance(output, boto.ec2.instance.Reservation):
-            for instance in output.instances:
-                instance_data = {}
-                for field in result_parser.INSTANCE_FIELDS:
-                    instance_data[field] = getattr(instance,field)
-                formatted.append(instance_data)
-        else:
-            formatted = output
-        return formatted
