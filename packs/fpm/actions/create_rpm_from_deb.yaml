@@ -1,0 +1,32 @@
+---
+runner_type: run-remote
+enabled: true
+entry_point: ''
+name: create_rpm_from_deb
+description: Create a rpm package from deb with fpm
+parameters:
+  name:
+    type: string
+    description: 'Package Name (e.g.: libpq)'
+    required: true
+  source:
+    type: string
+    description: Source type for fpm
+    default: deb
+  output:
+    type: string
+    description: Package output type for fpm
+    default: rpm
+  version:
+    type: string
+    description: 'Package Versioni (e.g.: 0.1.1)'
+    required: true
+  revision:
+    type: string
+    description: 'Package Revision (e.g: 2)'
+    default: '1'
+    required: true
+  cmd:
+    default: fpm -s {{source}} -t {{output}} -n {{name}} --version {{version}} --iteration
+      {{revision}}
+    immutable: true
