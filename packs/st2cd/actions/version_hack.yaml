@@ -1,0 +1,29 @@
+---
+  name: "version_hack"
+  runner_type: "run-remote-script"
+  description: "Hack version and build number in to proper places"
+  enabled: true
+  entry_point: "version_hack.sh"
+  parameters:
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
+    repo:
+      type: "string"
+      description: "Path to st2 repo"
+      required: true
+      position: 1
+    build:
+      type: "string"
+      default: "0"
+      required: true
+      position: 0
