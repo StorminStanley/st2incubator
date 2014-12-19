@@ -1,0 +1,24 @@
+---
+  name: "make_pytests"
+  runner_type: "run-remote"
+  description: "Run pytests"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    repo:
+      type: "string"
+      required: true
+      default: "st2_master"
+    cmd: 
+      immutable: false
+      default: "cd {{repo}} && make pytests"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+

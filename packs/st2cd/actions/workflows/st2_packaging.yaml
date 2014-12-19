@@ -1,0 +1,65 @@
+---
+  chain:
+    - 
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params: 
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+      on-success: "version_hack"
+    - 
+      name: "version_hack"
+      ref: "st2cd.version_hack"
+      params: 
+        hosts: "{{build_server}}"
+        repo: "{{clone_repo[build_server].stdout}}"
+        build: "{{build_number}}"
+      on-success: "make_debs"
+    - 
+      name: "make_debs"
+      ref: "st2cd.make_debs"
+      params: 
+        hosts: "{{build_server}}"
+        repo: "{{clone_repo[build_server].stdout}}"
+      on-success: "rsync_debs"
+    - 
+      name: "rsync_debs"
+      ref: "linux.rsync"
+      params: 
+        hosts: "{{build_server}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/home/stanley/debbuild/*.deb"
+        dest_server: "{{dl_server}}"
+        destination: "/home/stanley/packages/deb/"
+      on-success: "add_packages"
+    - 
+      name: "add_packages"
+      ref: "freight.add_package"
+      params: 
+        hosts: "{{dl_server}}"
+        file: "/home/stanley/packages/deb/*.deb"
+        distribution: "trusty"
+      on-success: "update_cache"
+    - 
+      name: "update_cache"
+      ref: "freight.update_cache"
+      params: 
+        sudo: true
+        hosts: "{{dl_server}}"
+      on-success: "build_increment"
+    -
+      name: "build_increment"
+      ref: "st2cd.build_increment"
+      params: 
+        build: "{{build_number}}"
+      on-success: "clean_repo"
+    - 
+      name: "clean_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{clone_repo[build_server].stdout}}"
+
+  default: "clone_repo"

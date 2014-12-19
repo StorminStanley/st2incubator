@@ -1,0 +1,37 @@
+---
+  name: "pytests"
+  runner_type: "action-chain"
+  description: "Clones a repo to a remote host, and runs python tests"
+  enabled: true
+  entry_point: "workflows/st2_pytests.yaml"
+  parameters: 
+    build_server: 
+      type: "string"
+      description: "Host to run build on"
+      required: true
+    repo: 
+      type: "string"
+      description: "Url of the repo to clone"
+      default: "https://github.com/StackStorm/st2.git"
+      required: true
+    branch:
+      type: "string"
+      description: "The branch to test"
+      default: "master"
+      required: true
+    repo_target: 
+      type: "string"
+      default: "st2_{{branch}}"
+      description: "Possible options are all, actions, rules."
+    revision: 
+      type: "string"
+      description: ""
+      required: true
+    author: 
+      type: "string"
+      description: ""
+      required: true
+    build_number: 
+      type: "string"
+      description: ""
+      required: true
