@@ -21,8 +21,6 @@ class ResultSets(object):
     def parseReservation(self,output):
         instance_list = []
         for instance in output.instances:
-            instance_data = {}
-            for field in FieldLists.INSTANCE:
-                instance_data[field] = getattr(instance,field)
+            instance_data = {field: getattr(instance, field) for field in FieldLists.INSTANCE}
             instance_list.append(instance_data)
         return instance_list
