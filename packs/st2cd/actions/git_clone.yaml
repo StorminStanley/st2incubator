@@ -20,7 +20,7 @@
     branch:
       type: "string"
       description: "The branch to clone"
-      require: true
+      required: true
       position: 2
       default: "master"  
     dir: 
