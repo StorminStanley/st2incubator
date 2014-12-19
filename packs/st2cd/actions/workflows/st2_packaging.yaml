@@ -6,7 +6,7 @@
       params: 
         hosts: "{{build_server}}"
         repo: "{{repo}}"
-        target: "{{target}}"
+        target: "{{repo_target}}"
         branch: "{{branch}}"
       on-success: "version_hack"
     - 
@@ -51,7 +51,7 @@
       on-success: "build_increment"
     -
       name: "build_increment"
-      ref: "st2build.build_increment"
+      ref: "st2cd.build_increment"
       params: 
         build: "{{build_number}}"
       on-success: "clean_repo"
