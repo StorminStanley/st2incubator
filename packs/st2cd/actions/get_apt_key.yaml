@@ -1,0 +1,27 @@
+---
+  name: "get_apt_key"
+  runner_type: "run-remote"
+  description: "Get key for apt-get repository"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    name:
+      type: "string"
+      description: "name to be used for key file"
+      required: true
+    url:
+      type: "string"
+      required: true
+      description: "Url of the apt-get repo"
+    cmd: 
+      immutable: true
+      default: "wget -O /etc/apt/trusted.gpg.d/{{name}}.gpg {{url}} && apt-get update"
+    kwarg_op: 
+      immutable: true
+      default: "--"
