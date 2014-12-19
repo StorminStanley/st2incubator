@@ -36,6 +36,7 @@ class ResultSets(object):
         instance_list = []
         for instance in output.instances:
             instance_data = self.parseInstance(instance)
+            instance_data['owner_id'] = output.owner_id
             instance_list.append(instance_data)
         return instance_list
 
