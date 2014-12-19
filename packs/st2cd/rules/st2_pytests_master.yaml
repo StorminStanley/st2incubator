@@ -1,0 +1,19 @@
+---
+    name: "st2_pytests_master"
+    description: "Run pytests on each commit to master"
+    enabled: true
+    trigger:
+        type: "webhooks.github_event"
+    criteria:
+        trigger.body.ref:
+            pattern: "refs/heads/master"
+            type: "equals"
+    action:
+        ref: "st2cd.pytests"
+        parameters:
+            repo: "{{trigger.body.repository.clone_url}}"
+            build_server: "ubuntu-build001"
+            revision: "{{trigger.body.head_commit.id}}"
+            branch: "master"
+            author: "{{trigger.body.head_commit.author.username}}"
+            build_number: "{{system.st2_build}}"

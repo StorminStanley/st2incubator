@@ -1,0 +1,20 @@
+---
+  name: "build_increment"
+  runner_type: "run-remote"
+  description: "Increment build number"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    hosts: 
+      immutable: true
+      default: "localhost"
+    build: 
+      type: "string"
+      required: true
+    cmd: 
+      immutable: false
+      default: "st2 key update st2_build $(( {{build}} + 1 )) -j"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+

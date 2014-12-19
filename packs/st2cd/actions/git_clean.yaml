@@ -1,0 +1,23 @@
+---
+  name: "git_clean"
+  runner_type: "run-remote"
+  description: "Clean a git repo"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    repo:
+      required: true
+      default: "master"
+    cmd: 
+      immutable: false
+      default: "rm -Rf {{repo}}* && echo '{{repo}} deleted'"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+
