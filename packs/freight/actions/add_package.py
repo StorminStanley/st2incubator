@@ -1,15 +1,41 @@
 #!/usr/bin/env python
-import sys
-import os
-import subprocess
+import os, sys, glob, json
+import subprocess, re
 
-FILE=sys.argv[1]
-REPOS=sys.argv[2].split(',')
-REPOS[:] = ['apt/%s' % item for item in REPOS]
+exitcode = 2
+output = {}
+output['result'] = {}
+output['error'] = {}
 
-## Check to see if the file exists
-if os.path.isfile(FILE):
-    subprocess.call(['freight', 'add', FILE, ' '.join(REPOS)])
+# Pop off script name
+sys.argv.pop(0)
+# Repo is last entry, get it then pop it
+repos=sys.argv[-1]
+sys.argv.pop(-1)
+#Remaining items are our list
+if re.search('\*',sys.argv[0]):
+    files = glob.glob(sys.argv[0])
 else:
-    print "Requested file %s is not available" % FILE
-    exit(1)
+    files = sys.argv
+
+if re.search(',',repos):
+    repos = split(',',repos)
+    repos = ' '.join(['apt/%s' % item for item in repos])
+else:
+    repos = "apt/%s" % repos
+
+for f in files:
+    ## Check to see if the file exists
+    if os.path.isfile(f):
+        call = subprocess.Popen(['freight', 'add', f, repos], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = call.communicate()
+        output['result'][f] = stdout
+        output['error'][f] = stderr
+        exitcode = call.returncode
+    else:
+        output['result'] = "error"
+        exitcode = 1
+
+print json.dumps(output)
+sys.exit(exitcode)
+
