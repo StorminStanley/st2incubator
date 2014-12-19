@@ -1,5 +1,5 @@
 ---
-  name: "st2_pytests"
+  name: "pytests"
   runner_type: "action-chain"
   description: "Clones a repo to a remote host, and runs python tests"
   enabled: true
