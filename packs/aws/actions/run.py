@@ -8,6 +8,8 @@ class ActionManager(action.BaseAction):
         del kwargs['action']
         module_path = kwargs['module_path']
         del kwargs['module_path']
+        if action == 'run_instances':
+            kwargs['user_data'] = self.st2_user_data()
         if 'cls' in kwargs.keys():
             cls = kwargs['cls']
             del kwargs['cls']
