@@ -1,0 +1,18 @@
+---
+    name: "st2_upgrade_master_staging"
+    description: "Upgrade StackStorm on staging hosts for each build"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd.packaging"
+            type: "equals"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_upgrade"
+        parameters:
+            act: "core.local hostname"
+            hostname: "st2stage201"

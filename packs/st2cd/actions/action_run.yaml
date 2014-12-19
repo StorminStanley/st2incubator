@@ -1,0 +1,21 @@
+---
+  name: "action_run"
+  runner_type: "run-remote"
+  description: "Run remote st2 action"
+  enabled: true
+  entry_point: ""
+  parameters:
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      default: false
+    cmd:
+      immutable: true
+      default: "st2 run {{act}} -j"
+    kwarg_op:
+      immutable: true
+      default: "--"
+    act:
+      type: "string"
+      default: "core.local date"

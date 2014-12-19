@@ -1,0 +1,26 @@
+---
+  chain:
+    -
+      name: "upgrade_st2"
+      ref: "st2cd.apt_get"
+      params:
+        hosts: "{{hostname}}"
+        act: "install"
+        packages: "st2common st2reactor st2actions st2api st2auth"
+      on-success: "upgrade_st2client"
+    -
+      name: "upgrade_st2client"
+      ref: "st2cd.apt_get"
+      params:
+        hosts: "{{hostname}}"
+        act: "install"
+        packages: "python-st2client"
+      on-success: "action_run"
+    -
+      name: "action_run"
+      ref: "st2cd.action_run"
+      params:
+        hosts: "{{hostname}}"
+        act: "{{act}}"
+
+  default: "upgrade_st2"

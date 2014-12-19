@@ -1,0 +1,25 @@
+---
+  name: "apt_get"
+  runner_type: "run-remote"
+  description: "Run apt-get on a remote host"
+  enabled: true
+  entry_point: ""
+  parameters:
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: true
+      default: "apt-get {{act}} -y {{packages}}"
+    kwarg_op:
+      immutable: true
+      default: "--"
+    act:
+      type: "string"
+      default: "install"
+    packages:
+      type: "string"
+      required: true
