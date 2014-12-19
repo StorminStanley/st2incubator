@@ -9,7 +9,7 @@
             pattern: "refs/heads/master"
             type: "equals"
     action:
-        ref: "st2build.st2_pytests"
+        ref: "st2cd.pytests"
         parameters:
             repo: "{{trigger.body.repository.clone_url}}"
             build_server: "ubuntu-build001"
