@@ -8,4 +8,6 @@ parameters:
         type: string
         description: "Project to build in Jenkins"
         required: true
-        position: 0
+    branch:
+        type: string
+        description: "Git branch to build in Jenkins"
