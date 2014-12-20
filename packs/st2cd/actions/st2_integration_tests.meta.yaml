@@ -1,0 +1,11 @@
+---
+  name: "integration_tests"
+  runner_type: "action-chain"
+  description: "Runs a series of integration tests on a StackStorm server"
+  enabled: true
+  entry_point: "workflows/st2_integration_tests.yaml"
+  parameters: 
+    hostname: 
+      type: "string"
+      description: "Host to run tests on"
+      required: true
