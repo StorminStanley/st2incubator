@@ -3,8 +3,10 @@
 import boto.ec2
 
 class FieldLists():
+    ADDRESS = ['public_ip','instance_id','domain','allocation_id','association_id','network_interface_id','network_interface_owner_id','private_ip_address']
     INSTANCE = ['id','public_dns_name','private_dns_name','state','state_code','previous_state','previous_state_code','key_name','instance_type','launch_time','image_id','placement','placement_group','placement_tenancy','kernel','ramdisk','architecture','hypervisor','virtualization_type','ami_launch_index','monitored','monitoring_state','spot_instance_request_id','subnet_id','vpc_id','private_ip_address','ip_address','platform','root_device_name','root_device_type','state_reason','ebs_optimized']
-    VOLUME =['id','create_time','status','size','snapshot_id','zone','type','iops','encrypted']
+    VOLUME = ['id','create_time','status','size','snapshot_id','zone','type','iops','encrypted']
+    ZONE = ['name', 'state', 'region_name', 'messages']
 
 
 class ResultSets(object):
@@ -20,6 +22,10 @@ class ResultSets(object):
             return self.parseInstance(output)
         elif isinstance(output, boto.ec2.volume.Volume):
             return self.parseVolume(output)
+        elif isinstance(output, boto.ec2.zone.Zone):
+            return self.parseZone(output)
+        elif isinstance(output, boto.ec2.address.Address):
+            return self.parseAddress(output)
         else:
             return output
 
@@ -40,10 +46,18 @@ class ResultSets(object):
             instance_list.append(instance_data)
         return instance_list
 
+    def parseAddress(self,output):
+        instance_data = {field: getattr(output, field) for field in FieldLists.ADDRESS}
+        return instance_data
+
     def parseInstance(self,output):
         instance_data = {field: getattr(output, field) for field in FieldLists.INSTANCE}
         return instance_data
 
     def parseVolume(self,output):
         volume_data = {field: getattr(output, field) for field in FieldLists.VOLUME}
+        return volume_data
+
+    def parseZone(self,output):
+        volume_data = {field: getattr(output, field) for field in FieldLists.ZONE}
         return volume_data
