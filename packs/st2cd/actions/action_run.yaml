@@ -1,21 +1,27 @@
 ---
   name: "action_run"
-  runner_type: "run-remote"
+  runner_type: "run-remote-script"
   description: "Run remote st2 action"
   enabled: true
-  entry_point: ""
+  entry_point: "action_run.py"
   parameters:
     dir:
       immutable: true
       default: "/home/stanley/"
     sudo:
       default: false
-    cmd:
-      immutable: true
-      default: "st2 run {{act}} -j"
+    name:
+      type: "string"
+      description: "Alias for this action execution"
+      required: true
+    action:
+      type: "string"
+      description: "action ref"
+      required: true
+    params:
+      type: "string"
+      description: "Action parameters"
+      required: true
     kwarg_op:
       immutable: true
       default: "--"
-    act:
-      type: "string"
-      default: "core.local date"
