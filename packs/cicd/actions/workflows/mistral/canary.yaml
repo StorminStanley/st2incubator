@@ -1,0 +1,375 @@
+---
+name: 'cicd.canary'
+version: '2.0'
+description: Pipeline used to guide projects through a canary deployment. Accompanies Infrastructure Seed CI/CD
+workflows:
+
+#  # Entry point: Webhook Listener for cicd pipeline. Will be called prior to CI build even begins
+#  # Just experimenting here... not actually in use.
+#  validate_compatable_project:
+#    description: Subflow to perform validation on the input project to determine if eligible for running through the canary pipeline
+#    type: direct
+#    input:
+#      - project
+#      - branch
+#      - build_host
+#      - build_directory: "/tmp/{{$.project}}"
+#    task-defaults:
+#      # TODO: Expose a WARN or NOTICE type attribute return in the event a new project
+#      #       is run through this pipeline but has not been setup properly yet.
+#      on-error:
+#        - pause
+#    tasks:
+#      clone_repository:
+#        action: clone_repository
+#        description: Clone repository for processing
+#        input:
+#          project: $.project
+#          host: $.build_host
+#          directory: $.build_directory
+#        on-success:
+#          - check_required_build_scripts
+#        on-error:
+#          - notify_clone_failure
+#      notify_clone_failure:
+#        action: notify
+#        input:
+#          message: "The project {{$.project}}/{{$.branch}} failed to clone."
+#      check_required_build_scripts:
+#        # Should return true/false
+#        #
+#        # Required are:
+#        #  - script/cisetup        :: Any pre-flight checks that may need to be run prior to a cibuild
+#        #  - script/cibuild        :: Commands necessary to run a CI Build
+#        #  - script/pre-package    :: Commands necessary prior to packaging for deployment (run on the buildhost)
+#        #  - config/fpm.yml        :: All package metadata associated with package building
+#        description: Checks for the required scripts necessary to run a project through the build steps and deploy canary apps
+#        action: check_required_build_scripts
+#        input:
+#          host: $.build_host
+#          directory: $.build_directory
+#        on-error:
+#          - notify_does_not_meet_requirements
+#      notify_does_not_meet_requirements:
+#        action: notify
+#        input:
+#          message: "The project {{$.project}}/{{$.branch}} is not configured to use this pipeline. Please see XXX for more details"
+
+  # Factory to build out an APT package from a repository
+  #   Downloads repository, runs pre-package scripts, and bundles it all up.
+  #   TODO: Calculate a build host based on utilization?
+  #
+  #   Based on input, should
+  publish_apt_package:
+    description: Subflow to package up a project and make available for distribution via APT
+    type: direct
+    input:
+      - project
+      - branch
+      - commit
+      - url
+    output:
+      # TODO Where does responsibility for the final output of a master workflow lie?
+      - project_version
+    task-defaults:
+      # TODO: Expose a WARN or NOTICE type attribute return in the event a new project
+      #       is run through this pipeline but has not been setup properly yet.
+      on-error:
+        - cleanup
+        - pause
+    tasks:
+      query_build_host:
+        action: consul_get_host
+        description: Find an available build host to be used in this pipeline
+        input:
+          service: apt
+        publish:
+          build_host: $.host
+        on-success:
+          - download
+          - get_epoch_time
+      get_epoch_time:
+        action: get_epoch_time
+        description: Get the current epoch runtime for use in build
+        publish:
+          epoch: $.epoch
+      download:
+        action: git_clone
+        description: Download the application for packaging up
+        input:
+          hostname: $.build_host
+          directory: $.build_directory
+          url: $.url
+          branch: $.branch
+          commit: $.commit
+        on-success:
+          - load_package_metadata
+      get_package_metadata:
+        action: fpm_get_metadata
+        description: Load up metadata for a project to be used during package building.
+        input:
+          hostname: $.build_host
+          directory: $.build_directory
+        publish:
+          # TODO Simplify output variables in canary/pipeline / metadata
+          # there a way to avoid having to declare each option? Maybe something like $?
+          # metadata: $.localhost.stdout  ## If this were json, would it parse?
+          package_maintainer: $.maintainer
+          package_description: $.description
+          package_after_install: $.after_install
+          package_name: $.name
+          package_license: $.license
+          package_version: $.version
+        on-success:
+          - bootstrap
+      bootstrap:
+        action: run_pre_package_tasks
+        description: Run any pre-flight checks (script/pre-package) for the project
+        input:
+          hostname: $.build_host
+          directory: $.build_directory
+        on-success:
+          - package
+      package:
+        action: fpm_package
+        input:
+          name: $.name
+          license: $.license
+          maintainer: $.package_maintainer
+          description: $.description
+          after_install: $.after_install
+          hostname: $.build_host
+          directory: $.build_directory
+          version: $.version
+          revision: "{{$.epoch}}_${{.commit}}"
+        publish:
+          package_location: $.file
+          package_version: "{{$.version}}-{{$.epoch}}_{{$.commit}}" # For command line runs not returning json, where does a value like this come from? Does it require the user to have deep knowledge of the calling action?
+        on-success:
+          - upload
+      upload:
+        action: freight_add_package
+        description: Make the project available for download/distribution.
+        input:
+          hostname: $.build_host
+          file: $.package_location
+        on-success:
+          - deploy
+          - cleanup
+      cleanup:
+        action: cleanup_apt_package
+        description: Cleanup all build artifacts from build server.
+      deploy:
+        workflow: deploy
+        input:
+          project: $.project
+          version: $.package_version
+          production: false
+  ###
+  ### Deployment
+  ###
+  deploy:
+    type: direct
+    input:
+      - project
+      - version
+      - production
+    task-defaults:
+      on-error:
+        - pause # If I need to unset this, could I? For instance, hard failure vs pause
+    tasks:
+      # Not sure about this...
+      query_if_production:
+        description: Determine if the updated value should be to the canary, or production nodes
+        action: query_if_production
+        input: 
+          production: $.production
+        on-success:
+          - get_production_version
+        on-error:
+          - get_canary_version
+      get_production_version:
+        action: consul_get_key
+        description: Query the current production version advertized for deployment and hold for reference
+        input:
+          key: "{{$.project}}::production_version"
+        publish:
+          original_production_version: $.value
+        on-success:
+          - update_production_version
+          - get_production_hosts
+      get_canary_version:
+        action: consul_get_key
+        description: Query the current canary version advertized for deployment and hold for reference
+        input:
+          key: "{{$.project}}::canary_version"
+        publish:
+          original_canary_version: $.value
+        on-success:
+          - get_canary_hosts
+          - update_canary_version
+      get_canary_hosts:
+        action: consul_get_hosts
+        description: Query the CMDB and find all the hosts that are eligible for canary deploys
+        input:
+          key: "canary_fe.{{$.project}}"
+        publish:
+          hosts: $.hosts
+      get_production_hosts:
+        action: consul_get_hosts
+        description: Query the CMDB and find all the hosts that are eligible for production deploys
+        input:
+          key: "fe.{{$.project}}"
+        publish:
+          hosts: $.hosts
+      update_production_version:
+        action: consul_put_key
+        description: Change the version of the application advertised for production deploys
+        input:
+          key: "{{$.project}}::production_version"
+          value: $.version
+        on-success:
+          - run_puppet_on_hosts
+        on-error:
+          - reset_production_version
+      update_canary_version:
+        action: consul_put_key
+        input:
+          key: "{{$.project}}::canary_version"
+          value: $.version
+        on-success:
+          - run_puppet_on_hosts
+        on-error:
+          - reset_canary_version
+      run_puppet_on_hosts:
+        action: run_puppet
+        description: Run Puppet across eligible hosts to install/update currently deployed systems
+        input:
+          hosts: $.hosts
+        on-error:
+          - reset_canary_version
+      reset_canary_version:
+        action: consul_put_key
+        description: Failsafe action to reset the advertised canary version to its original value
+        input:
+          key: "{{$.project}}::canary_version"
+          value: $.original_canary_version
+      reset_production_version:
+        action: consul_put_key
+        description: Failsafe action to reset the advertized production version to its original value
+        input:
+          key: "{{$.project}}::production_version"
+          value: $.original_production_version
+###
+### Actions
+###
+actions:
+  consul_get_key:
+    description: Query Consul for a K/V pair
+    base: std.echo
+    base-input:
+      output: "Querying consul for {{$.key}}..."
+    output:
+      value: test-123
+  ### I am not a fan of the singular vs plural here. Would love input
+  consul_get_hosts:
+    description: Query consul for all servers with a given service tag.
+    base: std.echo
+    base-input:
+      output: "Querying consul for hosts matching {{$.service}} tag..."
+    input:
+      - service
+    output:
+      hosts:
+        - test_1
+        - test_2
+  consul_get_host:
+    description: Query consul for a single server with a given service tag.
+    base: std.echo
+    base-input:
+      output: "Querying consul a host matching {{$.service}} tag..."
+    input:
+      - service
+    output:
+      host: test 3
+  get_epoch_time:
+    description: Retrieve current epoch time
+    base: std.echo
+    base-input:
+      output: "Attempting to get current epoch time..."
+    output:
+      epoch: '999999999'
+  git_clone:
+    description: Clone git repository locally.
+    base: std.echo
+    base-input:
+      output: "Attempting to download {{$.url}}/{{$.branch}}..."
+    input:
+      - hostname
+      - build_directory
+      - url
+      - branch
+      - commit
+  fpm_get_metadata:
+    description: Load package metadata directly from the project itself.
+    base: std.echo
+    base-input:
+      output: "Attempting to load metadata from {{$.hostname}}:{{$.directory}} ..."
+    input:
+      - hostname
+      - directory
+    output:
+      metadata: Test Metadata
+      maintainer: Test Maintainer
+      description: Test Description
+      after_install: script/setup
+      name: test
+      license: Test License
+  run_pre_package_tasks:
+    description: Load up any pre-run scripts necessary prior to packaging up.
+    base: std.echo
+    base-input:
+      output: "Attempting to run pre-package tasks at {{$.hostname}}:{{$.directory}} ..."
+    input:
+      - hostname
+      - directory
+  fpm_package:
+    description: Package up a directory with fpm.
+    base: std.echo
+    base-input:
+      output: "Attempting to package repository with fpm at {{$.hostname}}:{{$.directory}} ..."
+    input:
+      - hostname
+      - directory
+      - name
+      - license
+      - maintainer
+      - description
+      - after_install
+      - version
+      - revision
+    output:
+      file: /tmp/testpackage.deb
+  freight_add_package:
+    description: Add package to freight cache.
+    base: std.echo
+    base-input:
+      output: "Adding {{$.file}} to freight cache..."
+    input:
+      - hostname
+      - file
+  cleanup_apt_package:
+    description: A step to clean up all remaining bits
+    base: std.echo
+    base-input:
+      output: "Removing all build artifacts..."
+  query_if_production:
+    description: Determine if the workflow should run production deployments
+    base: std.echo
+    base-input:
+      output: "Checking this workflow is deploying to production"
+  run_puppet:
+    description: Run puppet on the specified hosts...
+    base: std.echo
+    base-input:
+      output: "Running production on {{$.hosts}}"

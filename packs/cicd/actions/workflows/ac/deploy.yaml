@@ -1,0 +1,58 @@
+---
+  chain:
+    # This could use a better logic test here... maybe a better way to do this? #
+    -
+      name: query_if_production_deploy
+      ref: core.local
+      params:
+        cmd: '[ "{{production}}" = "true" ]'
+      on-success: get_production_version
+      on-failure: get_canary_version
+    -
+      name: get_production_version
+      ref: core.local
+      params:
+        cmd: 'echo get production version'
+      on-success: get_production_hosts
+    -
+      name: get_production_hosts
+      ref: core.local
+      params:
+        cmd: 'echo get production hosts'
+      on-success: update_production_version
+    -
+      name: update_production_version
+      ref: core.local
+      params:
+        cmd: 'echo update production version'
+      on-success: run_puppet_on_production_hosts
+    -
+      name: run_puppet_on_production_hosts
+      ref: core.local
+      params:
+        cmd: 'echo run puppet on production hosts'
+    -
+      name: get_canary_version
+      ref: core.local
+      params:
+        cmd: 'echo get canary version'
+      on-success: get_canary_hosts
+    -
+      name: get_canary_hosts
+      ref: core.local
+      params:
+        cmd: 'echo get canary hosts'
+      on-success: update_canary_version
+    -
+      name: update_canary_version
+      ref: core.local
+      params:
+        cmd: 'echo update canary version'
+      on-success: run_puppet_on_canary_hosts
+    -
+      name: run_puppet_on_canary_hosts
+      ref: core.local
+      params:
+        cmd: 'echo run puppet on canary hosts'
+  default: query_if_production_deploy
+

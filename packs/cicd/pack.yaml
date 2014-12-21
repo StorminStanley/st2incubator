@@ -1,0 +1,8 @@
+### Place information about your pack version here.
+---
+name: cicd
+description: Continuous Delivery / Continous Integration pipeline. Accompanies CI/CD Infrastructure seed
+version: 0.0.1
+author: James Fryman
+email: james@fryman.io
+

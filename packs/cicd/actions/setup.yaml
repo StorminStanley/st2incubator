@@ -1,0 +1,15 @@
+# Chose to do this here as opposed to generic `linux` pack. Too destructive until
+# we have better controls in place.
+---
+name: setup
+description: Remote runner to run application setup scripts
+runner_type: run-remote
+enabled: true
+entry_point: 'setup.sh'
+parameters:
+  # AS 'dir' makes weird things happen
+  path:
+    type: string
+    description: Directory where application bootstrap exists
+    required: true
+    position: 1

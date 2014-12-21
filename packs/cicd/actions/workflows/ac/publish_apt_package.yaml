@@ -1,0 +1,124 @@
+---
+  chain:
+    ### Main Workflow ###
+    -
+      name: query_build_host
+      ref: consul.query_service
+      params:
+        service: 'apt'
+      on-success: get_random_build_dir
+
+    # Build dir published as {{get_random_build_dir.localhost.stdout}}
+    -
+      name: get_random_build_dir
+      ref: core.local
+      params:
+        cmd: 'mktemp -d'
+      on-success: get_epoch_time
+
+    # Epoch published as {{get_epoch_time.localhost.stdout}}
+    -
+      name: get_epoch_time
+      ref: core.local
+      params:
+        cmd: 'date +%s'
+      on-success: download_application
+
+    -
+      name: download_application
+      ref: git.clone
+      params:
+        source: "{{url}}"
+        destination: "{{get_random_build_dir.localhost.stdout}}"
+        ref: "{{branch}}"
+        hosts: "{{query_build_host.result[0]['Address']}}"
+      on-success: get_package_metadata
+
+    # This is a really odd work-around to load data from a client-side. #
+    -
+      name: get_package_metadata
+      ref: core.remote
+      params:
+        cmd: "cat {{get_random_build_dir.localhost.stdout}}/fpm.json"
+        hosts: "{{query_build_host.result[0]['Address']}}"
+      on-success: parse_metadata
+    -
+      name: parse_metadata
+      ref: json.parse
+      params:
+        string: "{{get_package_metadata[query_build_host.result[0]['Address']].stdout}}"
+      on-success: package_application
+    # Another hack. Attempted to do this with core.remote, but it did
+    # not behave as I would have expected it to.
+    # `dir` attribute did not appear to work with relative path.
+    # no such file or directory.
+    # Turns out I didn't end up using this, warrants a discussion?
+    # -
+    #   name: bootstrap_application
+    #   ref: core.remote
+    #   params:
+    #     cmd: "script/setup"
+    #     dir: "{{get_random_build_dir.localhost.stdout}}"
+    #     hosts: "{{query_build_host.result[0]['Address']}}"
+    #   on-success: package_application
+    #
+    # Attempt with shim
+    # -
+    #   name: bootstrap_application
+    #   ref: cicd.setup
+    #   params:
+    #     path: "{{get_random_build_dir.localhost.stdout}}"
+    #     hosts: "{{query_build_host.result[0]['Address']}}"
+    #   on-success: pacakge_application
+    #-
+    #  name: package_application
+    #  ref: fpm.create_deb_from_dir
+    #  params:
+    #    name: "{{project}}"
+    #    description: "{{parse_metadata.result.description}}"
+    #    version: "{{parse_metadata.result.version}}"
+    #    revision: "{{get_epoch_time.localhost.stdout}}"
+    #    input: '.'
+    #    prefix: "/opt/{{project}}"
+    #    after_install: "{{get_random_build_dir.localhost.stdout}}/script/setup"
+    #    chdir: "{{get_random_build_dir.localhost.stdout}}"
+    #    architecture: 'all'
+    #    hosts: "{{query_build_host.result[0]['Address']}}"
+    #  on-success: parse_fpm_metadata
+    #-
+    #  name: parse_fpm_metadata
+    #  ref: json.parse
+    #  params:
+    #    string: "{{package_application[query_build_host.result[0]['Address']].stdout}}"
+    -
+      name: upload_package_to_repository
+      ref: freight.add_package
+      params:
+        file: "/tmp/{{parse_fpm_metadata.result.path}}"
+        distribution: "precise trusty wheezy jesse"
+        hosts: "{{query_build_host.result[0]['Address']}}"
+      on-success: update_repository
+
+    -
+      name: update_repository
+      ref: freight.update_cache
+      params:
+        hosts: "{{query_build_host.result[0]['Address']}}"
+
+    -
+      name: deploy_package
+      ref: core.local
+      params:
+        cmd: 'echo handoff to deploy workflow'
+      on-success: cleanup
+
+    -
+      name: cleanup
+      ref: core.remote
+      params:
+        cmd: "rm -rf {{get_random_build_dir.localhost.stdout}}"
+        hostname: "{{query_build_host.result[0]['Address']}}"
+
+    ### Notifications ###
+    ### END CHAIN ###
+  default: query_build_host

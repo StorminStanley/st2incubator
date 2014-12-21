@@ -1,0 +1,24 @@
+---
+name: canary.deploy.mistral
+pack: cicd
+runner_type: mistral-v2
+description: "Deploy Canary Pipeline"
+enabled: false
+entry_point: workflows/mistral/canary.yaml
+parameters:
+  workflow:
+    type: string
+    default: cicd.canary.deploy
+    immutable: true
+  project:
+    type: string
+  branch:
+    type: string
+    default: master
+  url:
+    type: string
+  commit:
+    type: string
+  production:
+    type: string
+    default: false
