@@ -14,6 +14,7 @@ parser.add_argument('--action', action="store", dest="action", required=True)
 parser.add_argument('--params', action="store", dest="params")
 
 args = parser.parse_args()
+runner = None
 
 def runAction(action_ref,params):
     st2_endpoints = {
@@ -23,6 +24,9 @@ def runAction(action_ref,params):
     }
 
     client = Client(st2_endpoints)
+    action_exec_mgr = client.managers['ActionExecution']
+    runner_mgr = client.managers['RunnerType']
+
     execution = models.ActionExecution()
     execution.action = action_ref
     execution.parameters = param_parser(params)
@@ -35,6 +39,18 @@ def runAction(action_ref,params):
 
     return actionexec
 
+def normalize(name, value):
+    if name in runner.runner_parameters:
+        param = runner.runner_parameters[name]
+        if 'type' in param and param['type'] in transformer:
+            return transformer[param['type']](value)
+
+    if name in action.parameters:
+        param = action.parameters[name]
+        if 'type' in param and param['type'] in transformer:
+            return transformer[param['type']](value)
+    return value
+
 def param_parser(params):
     parameters = {}
     if params is not None:
@@ -42,6 +58,9 @@ def param_parser(params):
         for p in param_list:
             if '=' in p:
                 k, v = p.split('=',1)
+                if ',' in v:
+                    v = filter(None,v.split(','))
+                    
             else:
                 k = 'cmd'
                 v = p
@@ -51,6 +70,6 @@ def param_parser(params):
 actionexec = runAction(action_ref=args.action,params=args.params)
 output = {args.name: actionexec.result}
 
-print output
+print json.dumps(output)
 if actionexec.status != 'succeeded':
     sys.exit(2)

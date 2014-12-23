@@ -9,7 +9,11 @@
       type: "string"
       description: "Host to upgrade st2 on"
       required: true
-    act: 
+    action: 
       type: "string"
       description: "Action to run after upgrade"
-      default: "st2 core.local date"
+      default: "core.local"
+    action_params:
+      type: "string"
+      description: "Parameters of action to be run"
+      default: "date"

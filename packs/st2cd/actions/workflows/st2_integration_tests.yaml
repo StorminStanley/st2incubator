@@ -26,25 +26,15 @@
       params:
         name: "core_remote_single_host"
         action: "core.remote"
-        params: "hostname"
+        params: "hosts={{hostname}} hostname"
         hosts: "{{hostname}}"
-      on-success: "packs_install"
-      on-failure: "packs_install"
+      on-success: "linux_diag_loadavg"
+      on-failure: "linux_diag_loadavg"
     -
-      name: "packs_install"
+      name: "linux_diag_loadavg"
       ref: "st2cd.action_run"
       params:
-        name: "packs_install"
-        action: "packs.install"
-        params: "packs=linux"
-        hosts: "{{hostname}}"
-      on-success: "action_chain_diag_loadavg"
-      on-failure: "action_chain_diag_loadavg"
-    -
-      name: "action_chain_diag_loadavg"
-      ref: "st2cd.action_run"
-      params:
-        name: "action_chain_diag_loadavg"
+        name: "linux_diag_loadavg"
         action: "linux.diag_loadavg"
         params: "hostname={{hostname}}"
         hosts: "{{hostname}}"
