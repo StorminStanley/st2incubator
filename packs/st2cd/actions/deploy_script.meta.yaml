@@ -1,0 +1,35 @@
+---
+  name: "deploy_script"
+  runner_type: "action-chain"
+  description: "Tests st2 deployment script that is used in st2express"
+  enabled: true
+  entry_point: "workflows/st2_deploy_script.yaml"
+  parameters:
+    version: 
+      type: "string"
+      description: "Version of StackStorm to deploy"
+      default: "0.6.0"
+    image_id:
+      type: "string"
+      description: "AWS image id to create instance from"
+      default: "ami-3d50120d"
+    instance_type:
+      type: "string"
+      description: "Flavor of to use for instance creation"
+      default: "t2.medium"
+    subnet_id:
+      type: "string"
+      description: "ID of the subnet to launch instance in"
+      default: "subnet-23b66654"
+    key_name:
+      type: "string"
+      description: "SSH key to use during intial instance creation"
+      default: "st2_deploy"
+    base_user:
+      type: "string"
+      description: "Username for initial ssh test"
+      default: "ubuntu"
+    keyfile:
+      type: "string"
+      description: "Path to local private key that corresponds to {{key_name}}"
+      default: "/home/stanley/.ssh/stanley_rsa"

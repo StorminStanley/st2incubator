@@ -46,7 +46,6 @@
       name: "update_cache"
       ref: "freight.update_cache"
       params: 
-        sudo: true
         hosts: "{{dl_server}}"
       on-success: "build_increment"
     -

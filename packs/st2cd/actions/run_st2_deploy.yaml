@@ -1,0 +1,19 @@
+---
+  name: "run_st2_deploy"
+  runner_type: "run-remote-script"
+  description: "Run st2 deployment script"
+  enabled: true
+  entry_point: "st2_deploy.sh"
+  parameters: 
+    dir: 
+      default: "/tmp/"
+    sudo: 
+      immutable: true
+      default: true
+    version: 
+      type: "string"
+      default: "0.6.0"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+

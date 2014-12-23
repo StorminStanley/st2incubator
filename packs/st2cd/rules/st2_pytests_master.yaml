@@ -8,6 +8,9 @@
         trigger.body.ref:
             pattern: "refs/heads/master"
             type: "equals"
+        trigger.repository.full_name:
+            pattern: "DoriftoShoes/st2"
+            type: "equals"
     action:
         ref: "st2cd.pytests"
         parameters:

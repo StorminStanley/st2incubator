@@ -1,0 +1,41 @@
+---
+  chain:
+    -
+      name: "core_local_date"
+      ref: "st2cd.action_run"
+      params:
+        name: "core_local_date"
+        action: "core.local"
+        params: "date"
+        hosts: "{{hostname}}"
+      on-success: "core_http_google"
+      on-failure: "core_http_google"
+    -
+      name: "core_http_google"
+      ref: "st2cd.action_run"
+      params:
+        name: "core_http_google"
+        action: "core.http"
+        params: "url=http://www.google.com"
+        hosts: "{{hostname}}"
+      on-success: "core_remote_single_host"
+      on-failure: "core_remote_single_host"
+    -
+      name: "core_remote_single_host"
+      ref: "st2cd.action_run"
+      params:
+        name: "core_remote_single_host"
+        action: "core.remote"
+        params: "hosts={{hostname}} hostname"
+        hosts: "{{hostname}}"
+      on-success: "linux_diag_loadavg"
+      on-failure: "linux_diag_loadavg"
+    -
+      name: "linux_diag_loadavg"
+      ref: "st2cd.action_run"
+      params:
+        name: "linux_diag_loadavg"
+        action: "linux.diag_loadavg"
+        params: "hostname={{hostname}}"
+        hosts: "{{hostname}}"
+  default: "core_local_date"

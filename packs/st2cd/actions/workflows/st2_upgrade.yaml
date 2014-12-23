@@ -1,0 +1,44 @@
+---
+  chain:
+    -
+      name: "update_apt"
+      ref: "st2cd.apt_get"
+      params:
+        hosts: "{{hostname}}"
+        act: "update"
+        packages: ""
+      on-success: "upgrade_st2"
+    -
+      name: "upgrade_st2"
+      ref: "st2cd.apt_get"
+      params:
+        hosts: "{{hostname}}"
+        act: "install -y"
+        packages: "st2common st2reactor st2actions st2api st2auth"
+      on-success: "upgrade_st2client"
+    -
+      name: "upgrade_st2client"
+      ref: "st2cd.apt_get"
+      params:
+        hosts: "{{hostname}}"
+        act: "install -y"
+        packages: "python-st2client"
+      on-success: "restart_st2"
+    -
+      name: "restart_st2"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "st2ctl reload && nohup bg st2ctl restart >& /dev/null < /dev/null; sleep 20"
+        sudo: true
+      on-success: "action_run"
+    -
+      name: "action_run"
+      ref: "st2cd.action_run"
+      params:
+        hosts: "{{hostname}}"
+        name: "core.local-date"
+        action: "{{action}}"
+        params: "{{action_params}}"
+
+  default: "update_apt"
