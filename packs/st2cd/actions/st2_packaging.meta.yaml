@@ -30,3 +30,6 @@
       type: "string"
       description: ""
       required: true
+    environment:
+      type: "string"
+      description: ""
