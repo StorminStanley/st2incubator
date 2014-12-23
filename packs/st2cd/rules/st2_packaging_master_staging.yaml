@@ -19,3 +19,4 @@
             branch: "master"
             dl_server: "dl-staging201"
             build_number: "{{system.st2_build}}"
+            environment: "staging"

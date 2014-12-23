@@ -11,11 +11,15 @@
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
     action:
         ref: "st2cd.packaging"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             build_server: "{{trigger.parameters.build_server}}"
-            branch: "master"
+            branch: "{{trigger.parameters.branch}}"
             dl_server: "dl-origin001"
             build_number: "{{system.st2_build}}"
+            environment: "production"
