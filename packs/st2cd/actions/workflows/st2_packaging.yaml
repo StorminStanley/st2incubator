@@ -47,12 +47,6 @@
       ref: "freight.update_cache"
       params: 
         hosts: "{{dl_server}}"
-      on-success: "build_increment"
-    -
-      name: "build_increment"
-      ref: "st2cd.build_increment"
-      params: 
-        build: "{{build_number}}"
       on-success: "clean_repo"
     - 
       name: "clean_repo"
