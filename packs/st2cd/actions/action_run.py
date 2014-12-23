@@ -30,7 +30,6 @@ def runAction(action_ref,params):
     execution = models.ActionExecution()
     execution.action = action_ref
     execution.parameters = param_parser(params)
-    action_exec_mgr = client.managers['ActionExecution']
     actionexec = action_exec_mgr.create(execution)
 
     while actionexec.status not in END_STATES:
