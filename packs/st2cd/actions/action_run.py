@@ -39,18 +39,6 @@ def runAction(action_ref,params):
 
     return actionexec
 
-def normalize(name, value):
-    if name in runner.runner_parameters:
-        param = runner.runner_parameters[name]
-        if 'type' in param and param['type'] in transformer:
-            return transformer[param['type']](value)
-
-    if name in action.parameters:
-        param = action.parameters[name]
-        if 'type' in param and param['type'] in transformer:
-            return transformer[param['type']](value)
-    return value
-
 def param_parser(params):
     parameters = {}
     if params is not None:
