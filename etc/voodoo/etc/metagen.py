@@ -14,8 +14,14 @@ parser.add_argument('--dry_run', action="store_true", dest="dry_run")
 parser.add_argument('--prefix', action="store", dest="action_prefix", default=None)
 parser.add_argument('--author', action="store", dest="author", default="Estee Tew")
 parser.add_argument('--email', action="store", dest="email", default="")
+parser.add_argument('--version', action="store", dest="version", default="0.1")
+parser.add_argument('--required', action="store", dest='required', default=None)
+parser.add_argument('--optional', action="store", dest='optional', default=None)
 
 args = parser.parse_args()
+
+add_required = {}
+add_optional = {}
 
 module = importlib.import_module(args.module)
 
@@ -29,6 +35,22 @@ if args.clss is not None:
 else:
   obj = module
 
+def parseAdditional(adds):
+    add_dict = {}
+    for add in adds.split():
+        if re.search('=',add):
+            k,v = adds.split('=',1)
+            add_dict[k] = v
+        else:
+            add_dict[add] = None
+    return add_dict
+
+if args.required is not None:
+    add_required = parseAdditional(args.required)
+
+if args.optional is not None:
+    add_optional = parseAdditional(args.optional)
+
 def create_pack(pack):
     pack_dir = 'output/packs/%s' % pack
     if os.path.isdir(pack_dir):
@@ -40,7 +62,7 @@ def create_manifest(pack):
    manifest = {}
    manifest['name'] = pack
    manifest['description'] = ""
-   manifest['version'] = "0.1.0"
+   manifest['version'] = args.version
    manifest['author'] = args.author
    manifest['email'] = args.email
    return manifest
@@ -63,6 +85,14 @@ def get_all(modpath):
           for p in items[item]:
             if isinstance(items[item][p], tuple):
                 items[item][p] = map(list, items[item][p])
+        for req in add_required:
+            items[member][req] = 'required'
+        for opt in add_optional:
+            if add_optional[opt] is not None:
+                items[member][opt] = add_optional[opt]
+            else:
+                items[member][opt] = None
+         
   return items
 
 def build_action_list(obj):
