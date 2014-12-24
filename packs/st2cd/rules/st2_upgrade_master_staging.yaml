@@ -11,9 +11,16 @@
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
     action:
         ref: "st2cd.st2_upgrade"
         parameters:
             action: "core.local"
             action_params: "hostname"
             hostname: "st2stage201"
+            repo: "{{trigger.parameters.repo}}"
+            build_server: "{{trigger.parameters.build_server}}"
+            branch: "{{trigger.parameters.branch}}"
+            environment: "{{trigger.parameters.environment}}"

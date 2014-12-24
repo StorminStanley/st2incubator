@@ -9,3 +9,15 @@
       type: "string"
       description: "Host to run tests on"
       required: true
+    repo:
+      type: "string"
+      description: ""
+    build_server:
+      type: "string"
+      description: ""
+    branch:
+      type: "string"
+      description: ""
+    environment:
+      type: "string"
+      description: ""
