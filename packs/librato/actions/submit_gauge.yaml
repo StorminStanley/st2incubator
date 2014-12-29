@@ -13,7 +13,8 @@ parameters:
     type: string
     description: Data value to submit as gauge to said metric
     required: true
-  description:
+  source:
     type: string
-    description: Description of metric to be submitted with gauge
+    description: Describes the originating source of a measurement
+    required: true
 
