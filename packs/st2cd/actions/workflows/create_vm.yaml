@@ -1,0 +1,58 @@
+---
+  chain:
+    -
+      name: "run_instance"
+      ref: "aws.ec2_run_instances"
+      params:
+        image_id: "{{image_id}}"
+        instance_type: "{{instance_type}}"
+        subnet_id: "{{subnet_id}}"
+        key_name: "{{key_name}}"
+      on-success: "wait_for_instance"
+    -
+      name: "wait_for_instance"
+      ref: "aws.ec2_wait_for_state"
+      params:
+        instance_id: "{{run_instance.result[0][0].id}}"
+        state: "running"
+      on-success: "wait_for_ssh"
+    -
+      name: "wait_for_ssh"
+      ref: "linux.wait_for_ssh"
+      params:
+        hostname: "{{run_instance.result[0][0].private_ip_address}}"
+        username: "stanley"
+        keyfile: "{{keyfile}}"
+        timeout: 20
+        retries: 30
+      on-success: "add_apt_repo"
+    -
+      name: "add_apt_repo"
+      ref: "st2cd.add_apt_repo"
+      params:
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        name: "stackstorm"
+        repo: "http://dl-staging201/deb/"
+      on-success: "get_apt_key"
+    -
+      name: "get_apt_key"
+      ref: "st2cd.get_apt_key"
+      params:
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        name: "stackstorm"
+        url: "http://dl-staging201/deb/keyring.gpg"
+      on-success: "add_cname"
+    -
+      name: "add_cname"
+      ref: "aws.r53_zone_add_cname"
+      params:
+        name: "{{hostname}}"
+        value: "{{run_instance.result[0][0].private_dns_name}}"
+        zone: "{{dns_zone}}"
+      on-success: "puppet_bootstrap"
+    -
+      name: "puppet_bootstrap"
+      ref: "st2cd.puppet_bootstrap"
+      params:
+        hosts: "{{run_instance.result[0][0].private_dns_name}}"
+  default: "run_instance"
