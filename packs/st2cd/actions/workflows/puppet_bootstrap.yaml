@@ -1,0 +1,21 @@
+---
+  chain: 
+    - 
+      name: "fetch_puppet_bootstrap_script"
+      ref: "default.fetch_puppet_bootstrap"
+      params: 
+        hosts: "{{hosts}}"
+        file: "bootstrap-puppet"
+      on-success: "run_puppet_bootstrap"
+    - 
+      name: "run_puppet_bootstrap"
+      ref: "default.run_puppet_bootstrap"
+      params: 
+        hosts: "{{hosts}}"
+      on-success: "run_puppet_apply"
+    - 
+      name: "run_puppet_apply"
+      ref: "default.run_puppet_apply"
+      params: 
+        hosts: "{{hosts}}"
+  default: "fetch_puppet_bootstrap_script"
