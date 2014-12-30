@@ -1,0 +1,24 @@
+---
+  name: "fetch_puppet_bootstrap"
+  runner_type: "run-remote"
+  description: "Download puppet bootstrap script"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    cmd: 
+      immutable: true
+      default: "curl -XGET -o {{dir}}{{file}} https://raw.githubusercontent.com/StackStorm/st2puppet/production/script/{{file}}?token={{token}}"
+    file: 
+      type: "string"
+    token: 
+      type: "string"
+      default: "827643cdbd9e8c5908749e1e7d0166b8fe07792a"
+    kwarg_op: 
+      immutable: true
+      default: "--"
