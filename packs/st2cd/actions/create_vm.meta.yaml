@@ -32,7 +32,7 @@
     dns_zone:
       type: "string"
       description: "Route53 DNS Zone to add host to"
-      default: "uswest2.stakstorm.net"
+      default: "uswest2.stackstorm.net"
     hostname:
       type: "string"
       description: "Short hostname"
