@@ -19,7 +19,7 @@
       default: "date"
     repo:
       type: "string"
-      description": "Git repository for this project"
+      description: "Git repository for this project"
     build_server:
       type: "string"
       description: ""
