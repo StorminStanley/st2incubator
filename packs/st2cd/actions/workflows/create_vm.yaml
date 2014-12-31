@@ -25,6 +25,21 @@
         keyfile: "{{keyfile}}"
         timeout: 20
         retries: 30
+      on-success: "add_name_tag"
+    -
+      name: "add_name_tag"
+      ref: "aws.ec2_create_tags"
+      params:
+        resource_ids: "{{run_instance.result[0][0].id}}"
+        tags: "Name={{hostname}}"
+      on-success: "add_cname"
+    -
+      name: "add_cname"
+      ref: "aws.r53_zone_add_cname"
+      params:
+        name: "{{hostname}}.{{dns_zone}}"
+        value: "{{run_instance.result[0][0].private_dns_name}}"
+        zone: "{{dns_zone}}"
       on-success: "add_apt_repo"
     -
       name: "add_apt_repo"
@@ -41,14 +56,13 @@
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
         url: "http://dl-staging201/deb/keyring.gpg"
-      on-success: "add_cname"
+      on-success: "set_hostname"
     -
-      name: "add_cname"
-      ref: "aws.r53_zone_add_cname"
+      name: "set_hostname"
+      ref: "st2cd.set_hostname_cloud"
       params:
-        name: "{{hostname}}"
-        value: "{{run_instance.result[0][0].private_dns_name}}"
-        zone: "{{dns_zone}}"
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        hostname: "{{hostname}}"
       on-success: "puppet_bootstrap"
     -
       name: "puppet_bootstrap"
