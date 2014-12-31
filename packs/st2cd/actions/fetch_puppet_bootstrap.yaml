@@ -13,12 +13,17 @@
       default: true
     cmd: 
       immutable: true
-      default: "curl -XGET -o {{dir}}{{file}} https://raw.githubusercontent.com/StackStorm/st2puppet/production/script/{{file}}?token={{token}}"
+      default: "curl -XGET -o {{dir}}{{file}} -u {{token}}:x-oauth-basic https://raw.githubusercontent.com/StackStorm/st2puppet/{{branch}}/script/{{file}}"
+    branch:
+      type: "string"
+      description: "Branch of the st2puppet repo to retrive script from"
+      default: "production"
     file: 
       type: "string"
+      default: "bootstrap-puppet"
     token: 
       type: "string"
-      default: "827643cdbd9e8c5908749e1e7d0166b8fe07792a"
+      default: "c5b76113cc70d20cf399cda8148085f9c0773c8d"
     kwarg_op: 
       immutable: true
       default: "--"
