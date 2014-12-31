@@ -33,3 +33,6 @@
       type: "string"
       description: "Path to local private key that corresponds to {{key_name}}"
       default: "/home/stanley/.ssh/stanley_rsa"
+    hostname:
+      type: "string"
+      required: true
