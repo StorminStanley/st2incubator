@@ -62,7 +62,7 @@
       ref: "st2cd.set_hostname_cloud"
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
-        hostname: "{{hostname}}"
+        hostname: "{{hostname}}.{{dns_zone}}"
       on-success: "puppet_bootstrap"
     -
       name: "puppet_bootstrap"
