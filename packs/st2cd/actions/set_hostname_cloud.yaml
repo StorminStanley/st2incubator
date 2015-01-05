@@ -17,7 +17,7 @@
       required: true
     cmd: 
       immutable: false
-      default: 'sed -e "s/\(preserve_hostname: \)false/\1true/" /etc/cloud/cloud.cfg && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
+      default: 'sed -i -e "s/\(preserve_hostname: \)false/\1true/" /etc/cloud/cloud.cfg && echo "{{hostname}}" > /etc/hostname && && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
     kwarg_op: 
       immutable: true
       default: "--"
