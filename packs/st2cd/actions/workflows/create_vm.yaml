@@ -63,6 +63,24 @@
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         hostname: "{{hostname}}.{{dns_zone}}"
+      on-success: "reboot"
+    -
+      name: "reboot"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        sudo: true
+        cmd: "reboot"
+      on-success: "wait_for_ssh_post_reboot"
+    -
+      name: "wait_for_ssh_post_reboot"
+      ref: "linux.wait_for_ssh"
+      params:
+        hostname: "{{run_instance.result[0][0].private_ip_address}}"
+        username: "stanley"
+        keyfile: "{{keyfile}}"
+        timeout: 30
+        retries: 10
       on-success: "puppet_bootstrap"
     -
       name: "puppet_bootstrap"
