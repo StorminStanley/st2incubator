@@ -1,0 +1,17 @@
+---
+name: apt_get_install
+description: Install a package from APT
+runner_type: run-remote
+enabled: true
+entry_point: 'apt-get-install.sh'
+parameters:
+  package:
+    type: string
+    description: Name of the package to be installed
+    required: true
+    position: 1
+  version:
+    type: string
+    description: Version of the package to be installed
+    position: 2
+

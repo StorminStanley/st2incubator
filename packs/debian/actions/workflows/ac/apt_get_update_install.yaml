@@ -1,0 +1,16 @@
+---
+  chain:
+    -
+      name: apt_get_update
+      ref: debian.apt_get_update
+      params:
+        hosts: "{{hosts}}"
+      on-success: apt_get_install
+    -
+      name: apt_get_install
+      ref: debian.apt_get_install
+      params:
+        package: "{{package}}"
+        version: "{{version}}"
+        hosts: "{{hosts}}"
+  default: apt_get_update
