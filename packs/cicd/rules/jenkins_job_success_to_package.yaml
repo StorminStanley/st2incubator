@@ -15,7 +15,7 @@
         pattern: "SUCCESS"
         type: equals
     action:
-      ref: cicd.canary.publish_apt_package
+      ref: cicd.publish_apt_package
       parameters:
         project:  "{{trigger.body.name}}"
         url: "{{trigger.body.scm.url}}"

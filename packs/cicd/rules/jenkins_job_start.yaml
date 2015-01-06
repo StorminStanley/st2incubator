@@ -13,6 +13,7 @@
         type: equals
     # TODO Make Jenkins Start Build go to ChatOps somewhere. Workflow?
     action:
-      ref: core.local
+      ref: slack.post_message
       parameters:
-        cmd: "echo 'Build for {{trigger.body.name}}/{{trigger.body.scm.branch}} started. Details at {{trigger.body.build.full_url}}' >> /tmp/st2.jenkins.cicd.out"
+        message: "Build for {{trigger.body.name}}/{{trigger.body.scm.branch}} started. Details at {{trigger.body.build.full_url}}"
+        channel: '#bot-testing'

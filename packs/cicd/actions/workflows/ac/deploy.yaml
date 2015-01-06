@@ -1,58 +1,113 @@
 ---
   chain:
-    # This could use a better logic test here... maybe a better way to do this? #
+    # Non-ideal logic test, but helps keep things DRY. Still could
+    # stand a bit more consolidation
     -
       name: query_if_production_deploy
       ref: core.local
       params:
-        cmd: '[ "{{production}}" = "true" ]'
+        cmd: '"{{production}}" = "true"'
+      on-success: deploy_production
+      on-failure: deploy_canary
+
+    ## Begin Production Workflow ##
+    -
+      name: deploy_production
+      ref: slack.post_message
+      params:
+        message: "Beginning deployment of {{project}}-{{version}} to production..."
+        channel: '#bot-testing'
       on-success: get_production_version
-      on-failure: get_canary_version
     -
       name: get_production_version
-      ref: core.local
+      ref: consul.get
       params:
-        cmd: 'echo get production version'
+        key: "{{project}}::version"
       on-success: get_production_hosts
     -
       name: get_production_hosts
-      ref: core.local
+      ref: consul.query_service
       params:
-        cmd: 'echo get production hosts'
+        service: "{{project}}"
+        tag: "{{app_role}}"
       on-success: update_production_version
     -
       name: update_production_version
-      ref: core.local
+      ref: consul.put
       params:
-        cmd: 'echo update production version'
-      on-success: run_puppet_on_production_hosts
+        key: "{{project}}::version"
+        value: "{{version}}"
+      on-success: update_application_on_production_hosts
     -
-      name: run_puppet_on_production_hosts
-      ref: core.local
+      name: update_application_on_production_hosts
+      ref: debian.apt_get_update_and_install
       params:
-        cmd: 'echo run puppet on production hosts'
+        package: "{{project}}"
+        version: "{{version}}"
+        hosts: "{{get_production_hosts.result}}"
+      on-success: notify_successful_production_deployment
+      on-failure: notify_unsuccessful_production_deployment
+    -
+      name: notify_unsuccessful_production_deployment
+      ref: slack.post_message
+      params:
+        message: "Something went wrong with deployment... rolling back..."
+        channel: '#bot-testing'
+    -
+      name: notify_successful_production_deployment
+      ref: slack.post_message
+      params:
+        message: "SUCCESS!! {{project}}-{{version}} has been deployed to production!"
+        channel: '#bot-testing'
+    ## End Production Workflow ##
+
+    ## Begin Canary Workflow ##
+    -
+      name: deploy_canary
+      ref: slack.post_message
+      params:
+        message: "Beginning deployment of {{project}}-{{version}} to canary..."
+        channel: '#bot-testing'
+      on-success: get_canary_version
     -
       name: get_canary_version
-      ref: core.local
+      ref: consul.get
       params:
-        cmd: 'echo get canary version'
+        key: "{{project}}::canary_version"
       on-success: get_canary_hosts
     -
       name: get_canary_hosts
-      ref: core.local
+      ref: consul.query_service
       params:
-        cmd: 'echo get canary hosts'
+        service: "{{project}}"
+        tag: "canary_{{app_role}}"
       on-success: update_canary_version
     -
       name: update_canary_version
-      ref: core.local
+      ref: consul.put
       params:
-        cmd: 'echo update canary version'
-      on-success: run_puppet_on_canary_hosts
+        key: "{{project}}::canary_version"
+        value: "{{version}}"
+      on-success: update_application_on_canary_hosts
     -
-      name: run_puppet_on_canary_hosts
-      ref: core.local
+      name: update_application_on_canary_hosts
+      ref: debian.apt_get_update_and_install
       params:
-        cmd: 'echo run puppet on canary hosts'
+        package: "{{project}}"
+        version: "{{version}}"
+        hosts: "{{get_canary_hosts.result}}"
+      on-success: notify_successful_canary_deployment
+      on-failure: notify_unsuccessful_canary_deployment
+    -
+      name: notify_unsuccessful_canary_deployment
+      ref: slack.post_message
+      params:
+        message: "Something went wrong with deployment... rolling back..."
+        channel: '#bot-testing'
+    -
+      name: notify_successful_canary_deployment
+      ref: slack.post_message
+      params:
+        message: "SUCCESS!! {{project}}-{{version}} has been deployed to canary!"
+        channel: '#bot-testing'
   default: query_if_production_deploy
-
