@@ -46,11 +46,6 @@ DEFAULT_PARAMETERS = {
     'type' => 'string',
     'description' => 'Package output type for fpm',
   },
-  'output_file' => {
-    'type' => 'string',
-    'description' => 'The package file path to output.',
-    'required' => 'true',
-  },
   'prefix' => {
     'type' => 'string',
     'description' => 'A path to prefix files with when building the target package.',
@@ -77,7 +72,7 @@ DEFAULT_PARAMETERS = {
     'default' => 'root@product-flashflirt.stage.office.airg.lan',
   },
   'cmd' => {
-    'default' => 'fpm -s {{source}} -t {{output}} -n {{name}} --version {{version}} --iteration {{revision}} --prefix {{prefix}} --after-install {{after_install}} -C {{chdir}} --maintainer {{maintainer}} --description "{{description}}" --architecture {{architecture}} -p {{output_file}} {{input}}',
+    'default' => 'fpm -s {{source}} -t {{output}} -n {{name}} --version {{version}} --iteration {{revision}} --prefix {{prefix}} --after-install {{after_install}} -C {{chdir}} --maintainer {{maintainer}} --description "{{description}}" --architecture {{architecture}} {{input}}',
     'immutable' => true,
   },
 }
