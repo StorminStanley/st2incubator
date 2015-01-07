@@ -42,7 +42,7 @@
       on-failure: "aggregator"
     -
       name: "aggregator"
-      ref: "st2cd.results_aggregator"
+      ref: "st2cd.result_aggregator"
       params:
         results: "{{__results}}"
   default: "core_local_date"
