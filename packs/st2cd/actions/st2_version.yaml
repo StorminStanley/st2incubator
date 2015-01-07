@@ -1,0 +1,24 @@
+---
+  name: "st2_version"
+  runner_type: "run-remote"
+  description: "st2_version"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    repo:
+      type: "string"
+      required: true
+      default: "st2_master"
+    cmd: 
+      immutable: false
+      default: "cd {{repo}} && grep '__version__' st2common/st2common/__init__.py | awk '{print $3}' | sed -e \"s/'//g\""
+    kwarg_op: 
+      immutable: true
+      default: "--"
+

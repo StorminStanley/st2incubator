@@ -47,7 +47,7 @@
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
-        repo: "http://dl-staging201/deb/"
+        repo: "http://{{system.apt_repo_staging}}/deb/"
       on-success: "get_apt_key"
     -
       name: "get_apt_key"
@@ -55,7 +55,7 @@
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
-        url: "http://dl-staging201/deb/keyring.gpg"
+        url: "http://{{system.apt_repo_staging}}/deb/keyring.gpg"
       on-success: "set_hostname"
     -
       name: "set_hostname"

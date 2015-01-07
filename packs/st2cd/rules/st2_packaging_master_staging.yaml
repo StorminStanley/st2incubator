@@ -15,8 +15,6 @@
         ref: "st2cd.packaging"
         parameters:
             repo: "{{trigger.parameters.repo}}"
-            build_server: "{{trigger.parameters.build_server}}"
             branch: "master"
-            dl_server: "dl-staging201"
-            build_number: "{{system.st2_build}}"
+            dl_server: "{{system.apt_repo_staging}}"
             environment: "staging"

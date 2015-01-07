@@ -27,7 +27,3 @@
       type: "string"
       description: ""
       required: true
-    build_number: 
-      type: "string"
-      description: ""
-      required: true
