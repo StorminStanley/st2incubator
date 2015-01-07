@@ -18,4 +18,3 @@
             revision: "{{trigger.body.head_commit.id}}"
             branch: "master"
             author: "{{trigger.body.head_commit.author.username}}"
-            build_number: "{{system.st2_build}}"

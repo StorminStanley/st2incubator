@@ -17,5 +17,4 @@
             repo: "{{trigger.parameters.repo}}"
             branch: "master"
             dl_server: "{{system.apt_repo_staging}}"
-            build_number: "{{system.st2_build}}"
             environment: "staging"

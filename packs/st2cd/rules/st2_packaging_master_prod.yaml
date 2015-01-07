@@ -20,5 +20,4 @@
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_repo_prod}}"
-            build_number: "{{system.st2_build}}"
             environment: "production"
