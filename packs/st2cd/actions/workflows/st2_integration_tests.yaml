@@ -38,4 +38,11 @@
         action: "linux.diag_loadavg"
         params: "hostname={{hostname}}"
         hosts: "{{hostname}}"
+      on-success: "aggregator"
+      on-failure: "aggregator"
+    -
+      name: "aggregator"
+      ref: "st2cd.results_aggregator"
+      params:
+        results: "{{__results}}"
   default: "core_local_date"
