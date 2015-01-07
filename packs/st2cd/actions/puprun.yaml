@@ -1,0 +1,20 @@
+---
+  name: "puprun"
+  runner_type: "run-remote"
+  description: "Executes puprun command"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    cmd: 
+      immutable: false
+      default: "puprun"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+
