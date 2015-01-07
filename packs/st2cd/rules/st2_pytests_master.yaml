@@ -15,7 +15,6 @@
         ref: "st2cd.pytests"
         parameters:
             repo: "{{trigger.body.repository.clone_url}}"
-            build_server: "ubuntu-build001"
             revision: "{{trigger.body.head_commit.id}}"
             branch: "master"
             author: "{{trigger.body.head_commit.author.username}}"

@@ -21,6 +21,5 @@
             action_params: "hostname"
             hostname: "st2stage201"
             repo: "{{trigger.parameters.repo}}"
-            build_server: "{{trigger.parameters.build_server}}"
             branch: "{{trigger.parameters.branch}}"
             environment: "{{trigger.parameters.environment}}"

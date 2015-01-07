@@ -18,8 +18,7 @@
         ref: "st2cd.packaging"
         parameters:
             repo: "{{trigger.parameters.repo}}"
-            build_server: "{{trigger.parameters.build_server}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "dl-origin001"
+            dl_server: "{{system.apt_repo_prod}}"
             build_number: "{{system.st2_build}}"
             environment: "production"
