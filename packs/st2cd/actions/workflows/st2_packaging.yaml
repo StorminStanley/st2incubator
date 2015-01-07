@@ -1,6 +1,21 @@
 ---
   chain:
     -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "build_inc"
+    -
+      name: "build_inc"
+      ref: "st2cd.kvstore"
+      params:
+        action: "update"
+        key: "st2_{{branch}}_build_number"
+        value: "{% set build = get_current_build.result|int +1 %} {{build}}"
+      on-success: "get_build_server"
+    -
       name: "get_build_server"
       ref: "linux.dig"
       params:
@@ -16,6 +31,13 @@
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+      on-success: "version"
+    -
+      name: "version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
@@ -23,7 +45,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-        build: "{{build_number}}"
+        build: "{{build_inc.result.value}}"
       on-success: "make_debs"
     - 
       name: "make_debs"
@@ -63,4 +85,4 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
 
-  default: "get_build_server"
+  default: "get_current_build"
