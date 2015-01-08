@@ -1,0 +1,28 @@
+---
+    name: "st2_upgrade_master_nightly"
+    description: "Upgrade StackStorm on staging hosts nightly"
+    enabled: true
+    trigger:
+        type: "core.st2.IntervalTimer"
+        parameters:
+            hour: 20
+            minute: 0
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd.packaging"
+            type: "equals"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_upgrade"
+        parameters:
+            action: "core.local"
+            action_params: "hostname"
+            hostname: "{{system.st2_nightly_host}}"
+            repo: "{{trigger.parameters.repo}}"
+            branch: "{{trigger.parameters.branch}}"
+            environment: "{{trigger.parameters.environment}}"
