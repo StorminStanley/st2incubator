@@ -43,12 +43,12 @@
       name: "slack_success"
       ref: "slack.post_message"
       params:
-        channel: "#thunderdome"
+        channel: "#opstown"
         message: "```[Deploy St2 {{version}} Instance]\n STATUS: SUCCESS\n ENVIRONMENT: {{environment}}.\n  HOSTNAME: {{hostname}}\n  TYPE: {{instance_type}}```"
     -
       name: "slack_failure"
       ref: "slack.post_message"
       params:
-        channel: "#thunderdome"
+        channel: "#opstown"
         message: "```[Deploy St2 {{version}} Instance]\n STATUS: FAILURE\n ENVIRONMENT: {{environment}}.\n  HOSTNAME: {{hostname}}\n  TYPE: {{instance_type}}```"
   default: "create_vm"
