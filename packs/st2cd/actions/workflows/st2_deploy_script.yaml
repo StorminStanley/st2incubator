@@ -5,19 +5,24 @@
       ref: "st2cd.create_vm"
       params:
         hostname: "{{hostname}}"
+        instance_type: "{{instance_type}}"
+        environment: "{{environment}}"
+        key_name: "{{key_name}}"
+        keyfile: "{{keyfile}}"
+        image_id: "{{image_id}}"
       on-success: "run_st2_deploy"
     -
       name: "run_st2_deploy"
       ref: "st2cd.run_st2_deploy"
       params:
-        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        hosts: "{{hostname}}"
         version: "{{version}}"
       on-success: "start_st2"
     -
       name: "start_st2"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        hosts: "{{hostname}}"
         cmd: "st2ctl reload && nohup bg st2ctl start >& /dev/null < /dev/null; sleep 20"
         sudo: true
       on-success: "action_run"
@@ -25,7 +30,7 @@
       name: "action_run"
       ref: "st2cd.action_run"
       params:
-        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+        hosts: "{{hostname}}"
         act: "core.local date"
 
   default: "create_vm"
