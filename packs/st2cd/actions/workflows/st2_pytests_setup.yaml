@@ -1,0 +1,68 @@
+---
+  chain:
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2build.service.consul"
+        rand: true
+        count: 1
+      on-success: "setup_github_rule_for_branch"
+    -
+      name: "setup_github_rule_for_branch"
+      ref: "st2cd.create_version_release_rule"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        st2-base-url: "{{st2_base_url}}"
+        branch: "v{{st2_release_version}}"
+      on-success: "branch_st2_contrib"
+    -
+      name: "clone_st2_repo"
+      ref: "st2cd.git_simple_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_repo}}"
+        target: "{{st2_repo_target}}"
+      on-success: "clone_st2_contrib_repo"
+    -
+      name: "clone_st2_contrib_repo"
+      ref: "st2cd.git_simple_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_contrib_repo}}"
+        target: "{{st2_contrib_repo_target}}"
+      on-success: "clone_st2_express_repo"
+    -
+      name: "clone_st2_express_repo"
+      ref: "st2cd.git_simple_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_express_repo}}"
+        target: "{{st2_express_repo_target}}"
+      on-success: "clone_st2_express_repo"
+    -
+      name: "branch_st2_contrib"
+      ref: "st2cd.git_simple_branch"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_contrib_repo_target}}"
+        branch: "v{{st2_release_version}}"
+      on-success: "branch_st2_express"
+    -
+      name: "branch_st2_express"
+      ref: "st2cd.git_simple_branch"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_express_repo_target}}"
+        branch: "v{{st2_release_version}}"
+      on-success: "branch_st2_express"
+    -
+      name: "branch_st2"
+      ref: "st2cd.git_branch"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_repo_target}}"
+        version: "{{st2_release_version}}"
+        branch: "v{{st2_release_version}}"
+
+  default: "get_build_server"
