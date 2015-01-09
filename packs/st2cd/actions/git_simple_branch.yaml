@@ -11,9 +11,9 @@
       required: true
       position: 0
       default: "/home/stanley/st2/"
-    version:
+    branch:
       type: "string"
-      description: "Version to use for the branch. Branch name will be v${version_number}"
+      description: "Branch name to use. Example: v${version_number}."
       required: true
       position: 1
       default: "release"

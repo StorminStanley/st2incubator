@@ -13,10 +13,16 @@
       default: "/home/stanley/st2/"
     version:
       type: "string"
-      description: "Version to use for the branch. Branch name will be v${version_number}"
+      description: "Version to use. Example: 0.7.0."
       required: true
       position: 1
       default: "release"
+    branch:
+      type: "string"
+      description: "Branch name to use. Example: v${version_number}."
+      required: true
+      position: 2
+      default: "v{{version}}"
     dir:
       immutable: true
       default: "/home/stanley/"

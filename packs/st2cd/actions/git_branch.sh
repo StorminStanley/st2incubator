@@ -4,7 +4,7 @@ GIT=`which git`
 REPO=$1
 DATE=`date +%s`
 VERSION=$2
-BRANCH=v$2
+BRANCH=$3
 FILE="st2common/st2common/__init__.py"
 OUTPUT=/tmp/git-output-$DATE
 

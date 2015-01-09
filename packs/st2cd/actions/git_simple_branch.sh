@@ -3,8 +3,7 @@
 GIT=`which git`
 REPO=$1
 DATE=`date +%s`
-VERSION=$2
-BRANCH=v$2
+BRANCH=$2
 OUTPUT=/tmp/git-output-$DATE
 
 cd ${REPO}
