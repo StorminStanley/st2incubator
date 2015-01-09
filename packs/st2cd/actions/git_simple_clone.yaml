@@ -1,0 +1,31 @@
+---
+  name: "git_simple_clone"
+  runner_type: "run-remote-script"
+  description: "Clone a git repo"
+  enabled: true
+  entry_point: "git_simple_clone.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Git repository to clone"
+      required: true
+      position: 0
+      default: null
+    target:
+      type: "string"
+      description: "Where to clone the repo to"
+      required: true
+      position: 1
+      default: null
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
