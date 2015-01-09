@@ -100,5 +100,5 @@
       name: "puppet_bootstrap"
       ref: "st2cd.puppet_bootstrap"
       params:
-        hosts: "{{run_instance.result[0][0].private_dns_name}}"
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
   default: "get_subnet_id"
