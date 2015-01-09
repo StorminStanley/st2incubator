@@ -1,0 +1,31 @@
+---
+  name: "git_simple_branch"
+  runner_type: "run-remote-script"
+  description: "Branch st2 repo and push to remote."
+  enabled: true
+  entry_point: "git_simple_branch.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of st2 cloned git repo on disk."
+      required: true
+      position: 0
+      default: "/home/stanley/st2/"
+    version:
+      type: "string"
+      description: "Version to use for the branch. Branch name will be v${version_number}"
+      required: true
+      position: 1
+      default: "release"
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
