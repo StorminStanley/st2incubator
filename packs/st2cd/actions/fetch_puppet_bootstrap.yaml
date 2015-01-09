@@ -23,7 +23,7 @@
       default: "bootstrap-puppet"
     token: 
       type: "string"
-      default: "c5b76113cc70d20cf399cda8148085f9c0773c8d"
+      default: ""
     kwarg_op: 
       immutable: true
       default: "--"
