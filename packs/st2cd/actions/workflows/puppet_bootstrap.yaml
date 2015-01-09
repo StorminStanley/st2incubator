@@ -6,7 +6,7 @@
       params:
         action: "get"
         key: "st2_github_token"
-      on-success: "fetch_puppet_bootstrap"
+      on-success: "fetch_puppet_bootstrap_script"
     - 
       name: "fetch_puppet_bootstrap_script"
       ref: "st2cd.fetch_puppet_bootstrap"
