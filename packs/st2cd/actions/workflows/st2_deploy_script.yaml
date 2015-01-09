@@ -25,7 +25,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "nohup bg st2ctl start; st2ctl reload; sleep 20"
+        cmd: "nohup bg st2ctl restart; st2ctl reload; sleep 20"
         sudo: true
       on-success: "action_run"
       on-failure: "slack_failure"
