@@ -16,7 +16,7 @@
     instance_type:
       type: "string"
       description: "Flavor of to use for instance creation"
-      default: "t2.medium"
+      default: "m3.medium"
     environment:
       type: "string"
       description: "Environment to deploy host to"

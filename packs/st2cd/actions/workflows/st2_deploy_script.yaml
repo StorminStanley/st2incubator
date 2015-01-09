@@ -31,6 +31,6 @@
       ref: "st2cd.action_run"
       params:
         hosts: "{{hostname}}"
-        act: "core.local date"
+        action: "core.local date"
 
   default: "create_vm"
