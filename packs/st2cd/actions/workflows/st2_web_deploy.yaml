@@ -1,11 +1,20 @@
 ---
   chain:
     -
+      name: "stop_st2web"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "screen -S st2web -X quit"
+      on-success: "current_timestamp"
+      on-failure: "slack_failure"
+    -
       name: "curent_timestamp"
       ref: "core.local"
       params:
-        cmd: "date +%s"
+        cmd: "date +%s | tee /home/stanley/PREVIOUS_WEB"
       on-success: "backup_repo"
+      on-failure: "slack_failure"
     -
       name: "backup_repo"
       ref: "linux.mv"
@@ -16,6 +25,7 @@
         recursive: true
         force: true
       on-success: "clone_repo"
+      on-failure: "slack_failure"
     -
       name: "clone_repo"
       ref: "st2cd.git_clone"
@@ -25,6 +35,7 @@
         branch: "{{branch}}"
         target: "st2web"
       on-success: "npm_install"
+      on-failure: "slack_failure"
     -
       name: "npm_install"
       ref: "core.remote"
@@ -32,6 +43,7 @@
         hosts: "{{hostname}}"
         cmd: "cd /home/stanley/st2web && npm install"
       on-success: "bower_install"
+      on-failure: "slack_failure"
     -
       name: "bower_install"
       ref: "core.remote"
@@ -39,38 +51,43 @@
         hosts: "{{hostname}}"
         cmd: "cd /home/stanley/st2web && bower install"
       on-success: "update_st2_config"
+      on-failure: "slack_failure"
     -
       name: "update_st2_config"
-      ref: "core.remote"
+      ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: ""
+        sudo: true
+        cmd: 'sed -e "s~# \(allow_origin = \).*~\1 http://{{hostname}}:3000~g" /etc/st2/st2.conf'
       on-success: "update_web_config"
+      on-failure: "slack_failure"
     -
       name: "update_web_config"
       ref: "core.remote"
       params:
         hosts: "{{hostname}}"
-        cmd: ""
+        cmd: 'sed -e "s~Express~`hostname -s`~g" -e "s~172\.168\.90\.50~{{hostname}}~g" /home/stanley/st2web/config.js'
       on-success: "gulp_in_screen"
+      on-failure: "slack_failure"
     -
       name: "gulp_in_screen"
       ref: "core.remote"
       params:
         hosts: "{{hostname}}"
-        cmd: "install -y"
+        cmd: "cd /home/stanley/st2web && screen -S st2web -d -m gulp"
       on-success: "slack_success"
+      on-failure: "slack_failure"
     -
       name: "slack_success"
       ref: "slack.post_message"
       params:
         channel: "#thunderdome"
-        message: "st2ctl reload && nohup bg st2ctl restart >& /dev/null < /dev/null; sleep 20"
+        message: "```[st2web deploy]\n STATUS: SUCCESS\n HOSTNAME: {{hostname}}\n BRANCH: {{branch}}```"
     -
       name: "slack_failure"
       ref: "slack.post_message"
       params:
-        channel: "{{hostname}}"
-        message: "update"
+        channel: "#thunderdome"
+        message: "```[st2web deploy]\n STATUS: FAILURE\n HOSTNAME: {{hostname}}\n BRANCH: {{branch}}```"
 
-  default: "current_timestamp"
+  default: "stop_st2web"
