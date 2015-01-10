@@ -1,6 +1,21 @@
 ---
   chain:
     -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_v{{st2_release_version}}_build_number"
+        action: "get"
+      on-success: "build_inc"
+    -
+      name: "build_inc"
+      ref: "st2cd.kvstore"
+      params:
+        action: "update"
+        key: "st2_v{{st2_release_version}}_build_number"
+        value: "{% set build = get_current_build.result|int +1 %} {{build}}"
+      on-success: "get_build_server"
+    -
       name: "get_build_server"
       ref: "linux.dig"
       params:
