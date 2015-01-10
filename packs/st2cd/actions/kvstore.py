@@ -2,19 +2,19 @@ from st2actions.runners.pythonrunner import Action
 from st2client.client import Client
 from st2client.models.datastore import KeyValuePair
 
+
 class KVPAction(Action):
 
-    def run(self,key,action,st2host='localhost',value=""):
-
+    def run(self, key, action, st2host='localhost',value=""):
         st2_endpoints = {
-	      'action': "http://%s:9101" % st2host,
-	      'reactor': "http://%s:9102" % st2host,
-	      'datastore': "http://%s:9103" % st2host
-	}
+            'action': "http://%s:9101" % st2host,
+            'reactor': "http://%s:9102" % st2host,
+            'datastore': "http://%s:9103" % st2host
+        }
 
         try:
             client = Client(st2_endpoints)
-        except Exception, e:
+        except Exception as e:
             return e
 
         if action == 'get':
@@ -22,7 +22,7 @@ class KVPAction(Action):
                 kvp = client.keys.get_by_name(key)
                 if not kvp:
                     raise Exception('Key error with %s.' % key)
-            except Exception, e:
+            except Exception as e:
                 return e
             return kvp.value
         else:
@@ -37,7 +37,7 @@ class KVPAction(Action):
             try:
                 kvstore = getattr(client.keys,action)
                 kvp = kvstore(instance)
-            except Exception, e:
+            except Exception as e:
                 return e
 
             if action == 'delete':
