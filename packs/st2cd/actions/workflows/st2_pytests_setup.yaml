@@ -6,14 +6,14 @@
       params:
         key: "st2_v{{st2_release_version}}_build_number"
         action: "get"
-      on-success: "build_inc"
+      on-error: "build_inc"
     -
-      name: "build_inc"
+      name: "build_set"
       ref: "st2cd.kvstore"
       params:
         action: "update"
         key: "st2_v{{st2_release_version}}_build_number"
-        value: "{% set build = get_current_build.result|int +1 %} {{build}}"
+        value: "1"
       on-success: "get_build_server"
     -
       name: "get_build_server"
