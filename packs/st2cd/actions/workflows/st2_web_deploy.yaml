@@ -7,7 +7,7 @@
         hosts: "{{hostname}}"
         cmd: "screen -S st2web -X quit"
       on-success: "current_timestamp"
-      on-failure: "slack_failure"
+      on-failure: "current_timestamp"
     -
       name: "curent_timestamp"
       ref: "core.local"
@@ -21,11 +21,11 @@
       params:
         hosts: "{{hostname}}"
         source: "/home/stanley/st2web"
-        destination: "/home/stanley/{{backup_dir}}_{{current_timestamp.localhost.stdout}}"
+        destination: "{{backup_dir}}/{{current_timestamp.localhost.stdout}}"
         recursive: true
         force: true
       on-success: "clone_repo"
-      on-failure: "slack_failure"
+      on-failure: "clone_repo"
     -
       name: "clone_repo"
       ref: "st2cd.git_clone"
