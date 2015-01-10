@@ -1,0 +1,76 @@
+---
+  chain:
+    -
+      name: "stop_st2web"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "screen -S st2web -X quit"
+      on-success: "previous"
+      on-failure: "previous"
+    -
+      name: "previous"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cat /home/stanley/PREVIOUS_WEB"
+      on-success: "restore_repo"
+      on-failure: "slack_failure"
+    -
+      name: "restore_repo"
+      ref: "linux.mv"
+      params:
+        hosts: "{{hostname}}"
+        source: "{{backup_dir}}/{{previous[hostname].stdout}}"
+        destination: "/home/stanley/"
+        force: true
+      on-success: "restore_current_web"
+      on-failure: "slack_failure"
+    -
+      name: "restore_current_web"
+      ref: "linux.mv"
+      params:
+        hosts: "{{hostname}}"
+        source: "/home/stanley/PREVIOUS_WEB"
+        destination: "/home/stanley/CURRENT_WEB"
+        force: true
+      on-success: "npm_install"
+      on-failure: "slack_failure"
+    -
+      name: "npm_install"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd /home/stanley/{{previous[hostname].stdout}} && npm install"
+      on-success: "bower_install"
+      on-failure: "slack_failure"
+    -
+      name: "bower_install"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd /home/stanley/{{previous[hostname].stdout}} && bower install"
+      on-success: "gulp_in_screen"
+      on-failure: "slack_failure"
+    -
+      name: "gulp_in_screen"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd /home/stanley/{{previous[hostname].stdout}} && screen -S st2web -d -m gulp"
+      on-success: "slack_success"
+      on-failure: "slack_failure"
+    -
+      name: "slack_success"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[st2web rollback]\n STATUS: SUCCESS\n HOSTNAME: {{hostname}}\n CURRENT_WEB: {{previous[hostname].stdout}}\n URL: http://{{hostname}}:3000```"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[st2web rollback]\n STATUS: FAILURE\n HOSTNAME: {{hostname}}\n ```"
+
+  default: "stop_st2web"

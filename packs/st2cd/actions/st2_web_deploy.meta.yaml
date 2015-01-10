@@ -12,7 +12,7 @@
     repo_url:
       type: "string"
       description: "Composite url including token"
-      immutable: "true"
+      immutable: true
       default: "https://{{auth_string}}github.com/{{repo_path}}"
     token:
       type: "string"
@@ -23,7 +23,7 @@
       type: "string"
       description: "Composite auth string based on token param"
       immutable: true
-      default: "{% if token != "" -%}{{token}}:x-oauth-basic@{% endif -%}"
+      default: "{% if token != '' -%}{{token}}:x-oauth-basic@{% endif -%}"
     hostname:
       type: "string"
       description: "Hostname to deploy st2web on"
@@ -36,3 +36,11 @@
       type: "string"
       description: "The branch to clone"
       default: "master"
+    revision:
+      type: "string"
+      description: ""
+      required: false
+    author:
+      type: "string"
+      description: ""
+      required: false
