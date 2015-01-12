@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import pprint, os, shutil
+import pprint, os, shutil, sys
 import inspect, json, yaml, re, argparse, imp
 import importlib
 
 parser = argparse.ArgumentParser(description='StackStorm Action Metadata Generator for Python modules')
 
-parser.add_argument('--module', action="store", dest="module", required=True)
+parser.add_argument('--module', action="store", dest="module", default=None)
 parser.add_argument('--class', action="store", dest="clss")
 parser.add_argument('--pack', action="store", dest="pack", required=True)
 parser.add_argument('--ignore', action="store", dest="ignore")
@@ -17,23 +17,27 @@ parser.add_argument('--email', action="store", dest="email", default="")
 parser.add_argument('--version', action="store", dest="version", default="0.1")
 parser.add_argument('--required', action="store", dest='required', default=None)
 parser.add_argument('--optional', action="store", dest='optional', default=None)
+parser.add_argument('--empty', action='store_true', dest='empty', default=False)
 
 args = parser.parse_args()
 
 add_required = {}
 add_optional = {}
 
-module = importlib.import_module(args.module)
+if args.module is None and args.empty is False:
+    print "Either --empty or --module is required"
+    sys.exit(2)
+elif args.module is not None and args.empty is False:
+    module = importlib.import_module(args.module)
+    if args.clss is not None:
+        obj = getattr(module,args.clss)
+    else:
+        obj = module
 
 if args.ignore:
   ignores = args.ignore.split(',')
 else:
   ignores = []
-
-if args.clss is not None:
-  obj = getattr(module,args.clss)
-else:
-  obj = module
 
 def parseAdditional(adds):
     add_dict = {}
@@ -51,21 +55,42 @@ if args.required is not None:
 if args.optional is not None:
     add_optional = parseAdditional(args.optional)
 
-def create_pack(pack):
+def create_pack(pack,empty=True):
     pack_dir = 'output/packs/%s' % pack
     if os.path.isdir(pack_dir):
         shutil.rmtree(pack_dir)
     os.mkdir(pack_dir)
-    shutil.copytree('actions',pack_dir + "/actions")
+    os.mkdir("%s/rules" % pack_dir)
+    os.mkdir("%s/sensors" % pack_dir)
+    if empty is False:
+        shutil.copytree('actions',pack_dir + "/actions")
+    else:
+        os.mkdir("%s/actions" % pack_dir)
+
 
 def create_manifest(pack):
-   manifest = {}
-   manifest['name'] = pack
-   manifest['description'] = ""
-   manifest['version'] = args.version
-   manifest['author'] = args.author
-   manifest['email'] = args.email
-   return manifest
+    manifest = {}
+    manifest['name'] = pack
+    manifest['description'] = ""
+    manifest['version'] = args.version
+    manifest['author'] = args.author
+    manifest['email'] = args.email
+    fh = open('output/packs/%s/pack.yaml' % pack, 'w')
+    fh.write(yaml.dump(manifest,default_flow_style=False))
+    fh.close()
+
+def create_md(pack):
+    readme = open('output/packs/%s/README.md' % pack, 'w')
+    readme.write("%s\n=====" % pack)
+    readme.close()
+
+    changes = open('output/packs/%s/CHANGES.md' % pack, 'w')
+    changes.write("%s\n=====" % pack)
+    changes.close()
+
+    config = open('output/packs/%s/config.yaml' % pack, 'w')
+    config.write("---\n")
+    config.close()
 
 def get_all(modpath):
   items = {}
@@ -103,14 +128,9 @@ def build_action_list(obj):
     actions['cls'] = obj.__name__
   return actions
 
-def generate_meta(actions,pack):
-  manifest = create_manifest(pack)
+def generate_meta(obj,pack):
 
-  if not args.dry_run:
-    create_pack(pack)
-    fh = open('output/packs/%s/pack.yaml' % pack, 'w')
-    fh.write(yaml.dump(manifest,default_flow_style=False))
-    fh.close()
+  actions = build_action_list(obj)
 
   class_param = {}
   if 'cls' in actions.keys():
@@ -164,5 +184,9 @@ def generate_meta(actions,pack):
       print filename
       print(yaml.dump(action_meta,default_flow_style=False))
 
-actions = build_action_list(obj)
-generate_meta(actions,args.pack)
+create_pack(args.pack,empty=args.empty)
+create_manifest(args.pack)
+create_md(args.pack)
+
+if args.empty is not True:
+    generate_meta(obj,args.pack)
