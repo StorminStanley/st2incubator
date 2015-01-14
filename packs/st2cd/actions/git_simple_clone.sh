@@ -2,8 +2,13 @@
 
 GIT=`which git`
 REPO=$1
-DATE=`date +%s`
-TARGET="${2}_${DATE}"
+TARGET="${2}"
+
+if [[ -d $TARGET ]]
+then
+    echo $TARGET
+    exit 0
+fi
 
 GITOUTPUT=`$GIT clone $REPO $TARGET`
 
