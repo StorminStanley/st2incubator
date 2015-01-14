@@ -1,0 +1,6 @@
+---
+name: apt_get_update
+description: Update the APT cache
+runner_type: run-remote
+entry_point: 'apt-get-update.sh'
+enabled: true

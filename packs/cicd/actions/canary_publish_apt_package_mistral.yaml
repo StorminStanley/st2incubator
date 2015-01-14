@@ -1,0 +1,21 @@
+---
+name: canary.publish_apt_package.mistral
+pack: cicd
+runner_type: mistral-v2
+description: "Build an APT Package from Canary Pipeline"
+enabled: false
+entry_point: workflows/mistral/canary.yaml
+parameters:
+  workflow:
+    type: string
+    default: cicd.canary.publish_apt_package
+    immutable: true
+  project:
+    type: string
+  branch:
+    type: string
+    default: master
+  url:
+    type: string
+  commit:
+    type: string

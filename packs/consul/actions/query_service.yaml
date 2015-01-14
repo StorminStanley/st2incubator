@@ -9,3 +9,7 @@ parameters:
         description: "Service to query in Consul"
         required: true
         position: 0
+    tag:
+        type: string
+        description: "Optional tags to query"
+        position: 1

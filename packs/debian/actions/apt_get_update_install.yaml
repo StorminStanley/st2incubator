@@ -1,0 +1,21 @@
+---
+name: apt_get_update_install
+runner_type: action-chain
+description: Update APT cache and install a package
+enabled: true
+entry_point: workflows/ac/apt_get_update_install.yaml
+parameters:
+  package:
+    type: string
+    description: Name of the package to be installed
+    required: true
+    position: 1
+  version:
+    type: string
+    description: Version of the package to be installed
+    position: 2
+  hosts:
+    type: string
+    description: Remote hosts to execute this command on
+    position: 3
+
