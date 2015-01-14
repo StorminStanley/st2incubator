@@ -39,7 +39,7 @@
         hosts: "{{get_build_server.result[0]}}"
         st2-base-url: "{{st2_base_url}}"
         branch: "v{{st2_release_version}}"
-      on-success: "branch_st2_contrib"
+      on-success: "clone_st2_repo"
     -
       name: "clone_st2_repo"
       ref: "st2cd.git_simple_clone"
@@ -63,7 +63,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo}}"
         target: "{{st2_express_repo_target}}"
-      on-success: "clone_st2_express_repo"
+      on-success: "branch_st2_contrib"
     -
       name: "branch_st2_contrib"
       ref: "st2cd.git_simple_branch"
@@ -79,7 +79,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo_target}}"
         branch: "v{{st2_release_version}}"
-      on-success: "branch_st2_express"
+      on-success: "branch_st2"
     -
       name: "branch_st2"
       ref: "st2cd.git_branch"
