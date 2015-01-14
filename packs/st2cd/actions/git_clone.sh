@@ -18,4 +18,5 @@ then
   echo $TARGET
 else
   echo $GITOUTPUT
+  exit 1
 fi

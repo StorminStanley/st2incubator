@@ -17,8 +17,10 @@ then
   else
     cat ${OUTPUT}
     rm ${OUTPUT}
+    exit 1
   fi
 else
   cat ${OUTPUT}
   rm ${OUTPUT}
+  exit 2
 fi
