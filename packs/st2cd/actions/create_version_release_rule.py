@@ -10,6 +10,10 @@ def create_rule(url, rule):
     headers = {'created-from': 'Action: ' + __name__}
     # TODO: Figure out AUTH
     resp = requests.post(url, data=json.dumps(rule), headers=headers)
+
+    if resp.status_code in [409]:
+        resp = requests.put(url, data=json.dumps(rule), headers=headers)
+
     if resp.status_code not in [200, 201]:
         raise Exception('Failed creating rule in st2. status code: %s' % resp.status_code)
 
@@ -71,6 +75,7 @@ def main(args):
         sys.stdout.write('Successfully created rule %s' % rule_meta['name'])
     except Exception as e:
         sys.stderr.write('Failed creating rule %s: %s' % (rule_meta['name'], str(e)))
+        sys.exit(1)
 
 
 if __name__ == '__main__':
