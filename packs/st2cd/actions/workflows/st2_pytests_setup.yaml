@@ -12,7 +12,7 @@
       name: "build_set"
       ref: "st2cd.kvstore"
       params:
-        action: "update"
+        action: "create"
         key: "st2_v{{st2_release_version}}_build_number"
         value: "1"
       on-success: "get_build_server"
