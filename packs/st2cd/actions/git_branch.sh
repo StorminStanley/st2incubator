@@ -12,7 +12,7 @@ cd ${REPO}
 OUT=`$GIT pull origin master -q > $OUTPUT && $GIT branch ${BRANCH} -q && $GIT checkout ${BRANCH} -q`
 if [[ $? == 0 ]]
 then
-  VERSIONOUT=`sed -i '' "s/\(__version__ = \).*/\1'${VERSION}'/" ${FILE}`
+  VERSIONOUT=`sed -i -e "s/\(__version__ = \).*/\1'${VERSION}'/" ${FILE}`
   if [[ $? == 0 ]]
   then
     OUT=`$GIT add $FILE && $GIT commit -aqm "Cutting branch for release - ${VERSION}" && $GIT push origin -q $BRANCH`
