@@ -9,7 +9,7 @@
             pattern: "refs/heads/master"
             type: "equals"
         trigger.body.repository.full_name:
-            pattern: "DoriftoShoes/st2"
+            pattern: "StackStorm/st2"
             type: "equals"
     action:
         ref: "st2cd.pytests"

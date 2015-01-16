@@ -1,0 +1,46 @@
+---
+  name: "st2_web_deploy"
+  runner_type: "action-chain"
+  description: "Deploys the latest st2web on a server"
+  enabled: true
+  entry_point: "workflows/st2_web_deploy.yaml"
+  parameters:
+    repo_path:
+      type: "string"
+      description: "Relative GitHub repo path [USERNAME/REPO.git]"
+      default: "StackStorm/st2web.git"
+    repo_url:
+      type: "string"
+      description: "Composite url including token"
+      immutable: true
+      default: "https://{{auth_string}}github.com/{{repo_path}}"
+    token:
+      type: "string"
+      description: "GitHub OAuth Token"
+      required: true
+      default: ""
+    auth_string:
+      type: "string"
+      description: "Composite auth string based on token param"
+      immutable: true
+      default: "{% if token != '' -%}{{token}}:x-oauth-basic@{% endif -%}"
+    hostname:
+      type: "string"
+      description: "Hostname to deploy st2web on"
+      required: true
+    backup_dir:
+      type: "string"
+      description: "Location to backup old st2web to"
+      default: "/home/stanley/backup"
+    branch:
+      type: "string"
+      description: "The branch to clone"
+      default: "master"
+    revision:
+      type: "string"
+      description: ""
+      required: false
+    author:
+      type: "string"
+      description: ""
+      required: false

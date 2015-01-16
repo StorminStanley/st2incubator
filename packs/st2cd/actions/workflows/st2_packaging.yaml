@@ -6,14 +6,6 @@
       params:
         key: "st2_{{branch}}_build_number"
         action: "get"
-      on-success: "build_inc"
-    -
-      name: "build_inc"
-      ref: "st2cd.kvstore"
-      params:
-        action: "update"
-        key: "st2_{{branch}}_build_number"
-        value: "{% set build = get_current_build.result|int +1 %} {{build}}"
       on-success: "get_build_server"
     -
       name: "get_build_server"
@@ -45,7 +37,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-        build: "{{build_inc.result.value}}"
+        build: "{{get_current_build.result}}"
       on-success: "make_debs"
     - 
       name: "make_debs"

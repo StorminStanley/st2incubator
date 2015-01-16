@@ -13,10 +13,10 @@
       type: "string"
       description: "Flavor of to use for instance creation"
       default: "t2.medium"
-    subnet_id:
+    environment:
       type: "string"
-      description: "ID of the subnet to launch instance in"
-      default: "subnet-23b66654"
+      description: "Environment to deploy to"
+      default: "staging"
     key_name:
       type: "string"
       description: "SSH key to use during intial instance creation"

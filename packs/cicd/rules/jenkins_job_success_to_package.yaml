@@ -1,0 +1,24 @@
+---
+    # TODO Document Jenkins Job Status for CI/CD workflow
+    name: 'st2.webhook.cicd.jenkins.job_success_to_package'
+    enabled: true
+    description: 'Webhook listening for responses from Jenkins'
+    trigger:
+        type: core.st2.webhook
+        parameters:
+            url: cicd/jenkins
+    criteria:
+      trigger.body.phase:
+        pattern: "FINALIZED"
+        type: equals
+      trigger.body.build.status:
+        pattern: "SUCCESS"
+        type: equals
+    action:
+      ref: cicd.publish_apt_package
+      parameters:
+        project:  "{{trigger.body.name}}"
+        url: "{{trigger.body.scm.url}}"
+        branch: "{{trigger.body.scm.branch}}"
+        commit: "{{trigger.body.scm.commit}}"
+

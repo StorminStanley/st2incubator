@@ -1,12 +1,26 @@
 ---
   chain:
     -
+      name: "get_subnet_id"
+      ref: "st2cd.kvstore"
+      params:
+        key: "{{environment}}_subnet"
+        action: "get"
+      on-success: "get_apt_repo"
+    -
+      name: "get_apt_repo"
+      ref: "st2cd.kvstore"
+      params:
+        key: "apt_repo_{{environment}}"
+        action: "get"
+      on-success: "run_instance"
+    -
       name: "run_instance"
       ref: "aws.ec2_run_instances"
       params:
         image_id: "{{image_id}}"
         instance_type: "{{instance_type}}"
-        subnet_id: "{{subnet_id}}"
+        subnet_id: "{{get_subnet_id.result}}"
         key_name: "{{key_name}}"
       on-success: "wait_for_instance"
     -
@@ -47,7 +61,7 @@
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
-        repo: "http://{{system.apt_repo_staging}}/deb/"
+        repo: "http://{{get_apt_repo.result}}/deb/"
       on-success: "get_apt_key"
     -
       name: "get_apt_key"
@@ -55,7 +69,7 @@
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
-        url: "http://{{system.apt_repo_staging}}/deb/keyring.gpg"
+        url: "http://{{get_apt_repo.result}}/deb/keyring.gpg"
       on-success: "set_hostname"
     -
       name: "set_hostname"
@@ -86,5 +100,5 @@
       name: "puppet_bootstrap"
       ref: "st2cd.puppet_bootstrap"
       params:
-        hosts: "{{run_instance.result[0][0].private_dns_name}}"
-  default: "run_instance"
+        hosts: "{{run_instance.result[0][0].private_ip_address}}"
+  default: "get_subnet_id"

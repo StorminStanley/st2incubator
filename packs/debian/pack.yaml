@@ -1,0 +1,8 @@
+### Place information about your pack version here.
+---
+name: debian
+description: Actions specific to the Debian/Ubuntu family of OSes
+version: 0.0.1
+author: James Fryman
+email: james@fryman.io
+
