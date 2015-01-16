@@ -3,7 +3,6 @@
 GIT=`which git`
 REPO=$1
 TARGET="${2}"
-BRANCH=$3
 
 if [[ -d $TARGET ]]
 then
@@ -11,7 +10,7 @@ then
     exit 0
 fi
 
-GITOUTPUT=`$GIT clone -b ${BRANCH} --single-branch $REPO $TARGET`
+GITOUTPUT=`$GIT clone $REPO $TARGET`
 
 if [[ $? == 0 ]]
 then
