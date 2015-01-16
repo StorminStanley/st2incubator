@@ -1,0 +1,120 @@
+---
+  chain:
+    -
+      name: "stop_st2web"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "screen -S st2web -X quit"
+      on-success: "mv_previous_timestamp"
+      on-failure: "mv_previous_timestamp"
+    -
+      name: "mv_previous_timestamp"
+      ref: "linux.mv"
+      params:
+        hosts: "{{hostname}}"
+        source: "/home/stanley/CURRENT_WEB"
+        destination: "/home/stanley/PREVIOUS_WEB"
+        force: true
+      on-success: "previous"
+      on-failure: "previous"
+    -
+      name: "previous"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cat /home/stanley/PREVIOUS_WEB"
+      on-success: "backup_repo"
+      on-failure: "backup_repo"
+    -
+      name: "backup_repo"
+      ref: "linux.mv"
+      params:
+        hosts: "{{hostname}}"
+        source: "{{previous[hostname].stdout}}"
+        destination: "{{backup_dir}}/"
+        force: true
+      on-success: "clone_repo"
+      on-failure: "clone_repo"
+    -
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{hostname}}"
+        repo: "{{repo_url}}"
+        branch: "{{branch}}"
+        target: "st2web"
+      on-success: "current"
+      on-failure: "slack_failure"
+    -
+      name: "current"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "echo {{clone_repo[hostname].stdout}} > /home/stanley/CURRENT_WEB"
+      on-success: "npm_install"
+      on-failure: "slack_failure"
+    -
+      name: "npm_install"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd {{clone_repo[hostname].stdout}} && npm install"
+      on-success: "bower_install"
+      on-failure: "slack_failure"
+    -
+      name: "bower_install"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd {{clone_repo[hostname].stdout}} && bower install"
+      on-success: "update_st2_config"
+      on-failure: "slack_failure"
+    -
+      name: "update_st2_config"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        sudo: true
+        cmd: 'sed -i -e "s~# \(allow_origin = \).*~\1 \*~g" /etc/st2/st2.conf'
+      on-success: "update_web_config"
+      on-failure: "slack_failure"
+    -
+      name: "update_web_config"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: 'sed -i -e "s~Express~`hostname -s`~g" -e "s~172\.168\.90\.50~{{hostname}}~g" {{clone_repo[hostname].stdout}}/config.js'
+      on-success: "restart_st2"
+      on-failure: "slack_failure"
+    -
+      name: "restart_st2"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        sudo: true
+        cmd: "st2ctl restart"
+      on-success: "gulp_in_screen"
+      on-failure: "slack_failure"
+    -
+      name: "gulp_in_screen"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cd {{clone_repo[hostname].stdout}} && screen -S st2web -d -m gulp"
+      on-success: "slack_success"
+      on-failure: "slack_failure"
+    -
+      name: "slack_success"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[st2web deploy]\n STATUS: SUCCESS\n HOSTNAME: {{hostname}}\n BRANCH: {{branch}}\n SHA: {{revision}}\n URL: http://{{hostname}}:3000```"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[st2web deploy]\n STATUS: FAILURE\n HOSTNAME: {{hostname}}\n BRANCH: {{branch}}\n SHA: {{revision}}```"
+
+  default: "stop_st2web"

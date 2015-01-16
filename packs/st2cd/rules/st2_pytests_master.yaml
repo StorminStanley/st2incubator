@@ -9,14 +9,12 @@
             pattern: "refs/heads/master"
             type: "equals"
         trigger.body.repository.full_name:
-            pattern: "DoriftoShoes/st2"
+            pattern: "StackStorm/st2"
             type: "equals"
     action:
         ref: "st2cd.pytests"
         parameters:
             repo: "{{trigger.body.repository.clone_url}}"
-            build_server: "ubuntu-build001"
             revision: "{{trigger.body.head_commit.id}}"
             branch: "master"
             author: "{{trigger.body.head_commit.author.username}}"
-            build_number: "{{system.st2_build}}"

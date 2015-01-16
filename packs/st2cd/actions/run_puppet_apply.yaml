@@ -1,0 +1,19 @@
+---
+  name: "run_puppet_apply"
+  runner_type: "run-remote"
+  description: "Run puppet apply"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    cmd: 
+      immutable: true
+      default: "bash /etc/puppet/script/puppet-apply"
+    kwarg_op: 
+      immutable: true
+      default: "--"

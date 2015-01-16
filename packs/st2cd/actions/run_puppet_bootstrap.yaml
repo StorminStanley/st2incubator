@@ -1,0 +1,22 @@
+---
+  name: "run_puppet_bootstrap"
+  runner_type: "run-remote"
+  description: "Run puppet bootstrap script"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    cmd: 
+      immutable: true
+      default: "bash {{dir}}{{file}}"
+    file:
+      type: "string"
+      default: "bootstrap-puppet"
+    kwarg_op: 
+      immutable: true
+      default: "--"

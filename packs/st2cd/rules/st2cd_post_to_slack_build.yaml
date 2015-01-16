@@ -11,4 +11,4 @@
     action:
         ref: "slack.post_message"
         parameters:
-            message: "{{trigger.action_name}} {{trigger.status}} on {{trigger.parameters.build_server}}"
+            message: "{{trigger.action_name}} {{trigger.status}} on {{trigger.result.get_build_server.result[0]}}"

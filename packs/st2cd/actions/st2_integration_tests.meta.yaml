@@ -12,9 +12,6 @@
     repo:
       type: "string"
       description: ""
-    build_server:
-      type: "string"
-      description: ""
     branch:
       type: "string"
       description: ""

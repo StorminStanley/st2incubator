@@ -1,34 +1,56 @@
 ---
   chain:
+    -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "get_build_server"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2packaging.service.consul"
+        rand: true
+        count: 1
+      on-success: "clone_repo"
     - 
       name: "clone_repo"
       ref: "st2cd.git_clone"
       params: 
-        hosts: "{{build_server}}"
+        hosts: "{{get_build_server.result[0]}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+      on-success: "version"
+    -
+      name: "version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
       ref: "st2cd.version_hack"
       params: 
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
-        build: "{{build_number}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        build: "{{get_current_build.result}}"
       on-success: "make_debs"
     - 
       name: "make_debs"
       ref: "st2cd.make_debs"
       params: 
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "rsync_debs"
     - 
       name: "rsync_debs"
       ref: "linux.rsync"
       params: 
-        hosts: "{{build_server}}"
+        hosts: "{{get_build_server.result[0]}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/debbuild/*.deb"
         dest_server: "{{dl_server}}"
@@ -52,7 +74,7 @@
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params:
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
 
-  default: "clone_repo"
+  default: "get_current_build"
