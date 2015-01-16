@@ -1,8 +1,7 @@
 ---
-    # TODO Document Jenkins Job Status for CI/CD workflow
-    name: 'st2.webhook.cicd.jenkins.job_failure'
+    name: 'cicd.jenkins.incoming.failure'
     enabled: true
-    description: 'Webhook listening for responses from Jenkins'
+    description: 'Webhook listening for responses from Jenkins job failures'
     trigger:
         type: core.st2.webhook
         parameters:
@@ -14,12 +13,9 @@
       trigger.body.build.status:
         pattern: "FAILURE"
         type: equals
-
-    # TODO Make Jenkins Start Build go to ChatOps somewhere. Workflow?
-    # This should go to a more complex workflow then? Where do I splay out from here?
     action:
       ref: slack.post_message
       parameters:
         message: "Build for {{trigger.body.name}}/{{trigger.body.scm.branch}} failed!. Details at {{trigger.body.build.full_url}}"
-        channel: "#bot-testing"
+        channel: "#console"
 

@@ -1,0 +1,18 @@
+---
+    name: 'cicd.github.incoming'
+    name: 'st2.webhook.cicd.events'
+    description: 'Webhook listening for pushes to our CI/CD Pipeline from GitHub'
+    trigger:
+        type: core.st2.webhook
+        parameters:
+            url: cicd/github
+    criteria:
+        trigger.headers['X-GitHub-Event']:
+            pattern: "push"
+            type: "eq"
+    action:
+        ref: jenkins.build_job
+        parameters:
+            project: "{{trigger.body.repository.name}}"
+            branch: "{{trigger.body.ref}}"
+    enabled: true

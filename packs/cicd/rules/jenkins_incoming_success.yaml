@@ -1,6 +1,5 @@
 ---
-    # TODO Document Jenkins Job Status for CI/CD workflow
-    name: 'st2.webhook.cicd.jenkins.job_success_to_package'
+    name: 'cicd.jenkins.incoming.success'
     enabled: true
     description: 'Webhook listening for responses from Jenkins'
     trigger:
