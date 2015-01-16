@@ -88,5 +88,19 @@
         repo: "{{st2_repo_target}}"
         version: "{{st2_release_version}}"
         branch: "v{{st2_release_version}}"
+      on-success: "slack_success"
+      on-failure: "slack_failure"
+    -
+      name: "slack_success"
+      ref: "slack.post_message"
+      params:
+        channel: "#releasemgmt"
+        message: "```[RELEASE_SETUP]\n STATUS: SUCCESS\n VERSION: {{st2_release_version}}```"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#releasemgmt"
+        message: "```[RELEASE_SETUP]\n STATUS: FAILURE\n VERSION: {{st2_release_version}}```"
 
   default: "get_current_build"
