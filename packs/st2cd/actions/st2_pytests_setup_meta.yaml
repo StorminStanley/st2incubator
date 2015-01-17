@@ -40,7 +40,7 @@
     auth_string:
       type: "string"
       description: "Composite auth string"
-      default: "{% if token != '' set auth='token::x-oauth-basic@' %} {{auth}}"
+      default: "{% if token != '' set auth='token::x-oauth-basic@' -%} {{auth}}{% endif -%}"
     st2-base-url:
       type: "string"
       description: "St2 base url."
