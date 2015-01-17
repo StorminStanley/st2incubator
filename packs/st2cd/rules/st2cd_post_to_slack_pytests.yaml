@@ -1,0 +1,14 @@
+---
+    name: "st2cd_post_to_slack_pytests"
+    description: "Post results of st2cd workflows to slack"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.pytests"
+            type: "matchregex"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    BUILD_NUMBER: {% set build = trigger.result.get_current_build.result|int +1 %}{{build}}\n     BUILD_HOST: {{trigger.result.get_build_server.result[0]}}\n    BRANCH: {{trigger.parameters.branch}}```"

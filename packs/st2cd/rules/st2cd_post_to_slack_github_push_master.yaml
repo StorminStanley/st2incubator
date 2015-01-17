@@ -1,0 +1,17 @@
+---
+    name: "st2cd_post_to_slack_github_push_master"
+    description: "Post to Slack on matching GitHub event"
+    enabled: true
+    trigger:
+        type: "webhooks.github_event"
+    criteria:
+        trigger.body.ref:
+            pattern: "refs/heads/master"
+            type: "equals"
+        trigger.body.repository.full_name:
+            pattern: "StackStorm/st2"
+            type: "equals"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            message: "```[GITHUB - {{trigger.repository.full_name}}: {{trigger.body.ref.split(.)[-1]}}]\n    PUSHER: {{trigger.body.pusher.name}}\n     HEAD_COMMIT_SHA:: {{trigger.body.head_commit.id}}\n    MESSAGE: {{trigger.body.head_commit.message}}```"
