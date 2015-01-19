@@ -1,17 +1,17 @@
 ---
-    name: 'cicd.jenkins.incoming.start'
-    enabled: true
-    description: 'Webhook listening for responses from Jenkins'
-    trigger:
-        type: core.st2.webhook
-        parameters:
-            url: cicd/jenkins
-    criteria:
-      trigger.body.phase:
-        pattern: "STARTED"
-        type: equals
-    action:
-      ref: slack.post_message
-      parameters:
-        message: "Build for {{trigger.body.name}}/{{trigger.body.scm.branch}} started. Details at {{trigger.body.build.full_url}}"
-        channel: '#console'
+  name: cicd.jenkins.incoming.start
+  enabled: true
+  description: Webhook listening for Jenkins starting a CI Build
+  trigger:
+    type: core.st2.webhook
+    parameters:
+      url: cicd/jenkins
+  criteria:
+    trigger.body.build.phase:
+      pattern: STARTED
+      type: equals
+  action:
+    ref: cicd.ci_start
+    parameters:
+      project: "{{trigger.body.name}}"
+      branch: "{{trigger.body.build.scm.branch}}"

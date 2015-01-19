@@ -1,0 +1,24 @@
+---
+  chain:
+    -
+      name: notify_success
+      ref: slack.post_message
+      params:
+        message: "Build of `{{project}}/{{branch}}` successful! See details at {{details_url}}"
+        channel: '#console'
+      on-success: clean_build_ref
+    -
+      name: clean_build_ref
+      ref: core.local
+      params:
+        cmd: "echo {{branch}} | awk -F '/' '{print $2}'"
+      on-success: build_package
+    -
+      name: build_package
+      ref: cicd.publish_apt_package
+      params:
+        project: "{{project}}"
+        url: "{{repo_url}}"
+        branch: "{{clean_build_ref.localhost.stdout}}"
+        commit: "{{commit}}"
+  default: notify_success

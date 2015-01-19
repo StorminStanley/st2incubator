@@ -1,0 +1,16 @@
+---
+  chain:
+    -
+      name: notify_push
+      ref: slack.post_message
+      params:
+        message: "{{user}} pushed `{{project}}/{{branch}}` to GitHub ({{detail_url}})"
+        channel: '#console'
+      on-success: start_ci_build
+    -
+      name: start_ci_build
+      ref: jenkins.build_job
+      params:
+        project: "{{project}}"
+        branch: "{{branch}}"
+  default: notify_push

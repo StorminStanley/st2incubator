@@ -1,0 +1,31 @@
+---
+name: git_push
+runner_type: action-chain
+description: Entry point for responding to SCM code upload
+enabled: true
+entry_point: 'workflows/ac/git_push.yaml'
+parameters:
+  project:
+    type: string
+    description: Name of the project to be deployed (must match CI Project Name)
+    required: true
+    position: 1
+  branch:
+    type: string
+    description: Branch of the Project to build.
+    required: true
+    position: 2
+  user:
+    type: string
+    description: User who requested CI Build
+    default: 'A nameless wanderer'
+    position: 3
+  commit:
+    type: string
+    description: Revision of code being deployed
+    required: true
+    position: 4
+  detail_url:
+    type: string
+    description: URL providing additional context to change.
+    position: 5

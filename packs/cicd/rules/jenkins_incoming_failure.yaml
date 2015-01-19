@@ -7,15 +7,16 @@
         parameters:
             url: cicd/jenkins
     criteria:
-      trigger.body.phase:
+      trigger.body.build.phase:
         pattern: "FINALIZED"
         type: equals
       trigger.body.build.status:
         pattern: "FAILURE"
         type: equals
     action:
-      ref: slack.post_message
-      parameters:
-        message: "Build for {{trigger.body.name}}/{{trigger.body.scm.branch}} failed!. Details at {{trigger.body.build.full_url}}"
-        channel: "#console"
+      ref: cicd.ci_failure
+	parameters:
+          project: "{{trigger.body.name}}"
+          branch: "{{trigger.body.build.scm.branch}}"
+          details_url: "{{trigger.body.build.full_url}}"	
 
