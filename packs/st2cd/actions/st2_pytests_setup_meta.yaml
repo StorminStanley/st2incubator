@@ -1,0 +1,39 @@
+---
+  name: "pytests-setup"
+  runner_type: "action-chain"
+  description: "Look at workflows/st2_pytests_setup.yaml"
+  enabled: true
+  entry_point: "workflows/st2_pytests_setup.yaml"
+  parameters:
+    st2_repo:
+      type: "string"
+      description: "Url of the st2 repo to clone"
+      default: "https://github.com/lakshmi-kannan/st2.git"
+    st2_contrib_repo:
+      type: "string"
+      description: "Url of the st2contrib repo to clone"
+      default: "https://github.com/lakshmi-kannan/st2contrib.git"
+    st2_express_repo:
+      type: "string"
+      description: "Url of the st2express repo to clone"
+      default: "https://github.com/lakshmi-kannan/st2express.git"
+    st2_repo_target:
+      type: "string"
+      default: "/home/stanley/st2"
+      description: "Path to clone st2 repo to."
+    st2_contrib_repo_target:
+      type: "string"
+      default: "/home/stanley/st2contrib"
+      description: "Path to clone st2contrib repo to."
+    st2_express_repo_target:
+      type: "string"
+      default: "/home/stanley/st2express"
+      description: "Path to clone st2express repo to."
+    st2_release_version:
+      type: "string"
+      description: "Version to use for the release."
+      required: true
+    st2_base_url:
+      type: "string"
+      description: "st2 API URL."
+      default: "http://localhost:9101/v1/"

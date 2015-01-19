@@ -16,5 +16,5 @@
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "master"
-            dl_server: "{{system.apt_repo_staging}}"
+            dl_server: "{{system.apt_origin_staging}}"
             environment: "staging"
