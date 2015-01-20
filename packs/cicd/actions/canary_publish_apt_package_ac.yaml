@@ -5,7 +5,8 @@
   enabled: true
   entry_point: workflows/ac/publish_apt_package.yaml
   parameters:
-    projecttype: string
+    project:
+      type: string
       description: 'Name of the project to be built (must match CI Project Name)'
       required: true
     branch:

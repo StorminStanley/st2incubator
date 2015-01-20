@@ -1,0 +1,17 @@
+---
+name: rollback
+runner_type: action-chain
+description: Rollback canary pipeline to known production version
+enabled: true
+entry_point: 'workflows/ac/rollback.yaml'
+parameters:
+  project:
+    type: string
+    description: Name of the project to be deployed (must match CI Project Name)
+    required: true
+    position: 1
+  app_role:
+    type: string
+    description: Application server role to deploy code to
+    default: fe
+    position: 2

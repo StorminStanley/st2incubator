@@ -1,22 +1,21 @@
 ---
-    name: 'cicd.jenkins.incoming.failure'
-    enabled: true
-    description: 'Webhook listening for responses from Jenkins job failures'
-    trigger:
-        type: core.st2.webhook
-        parameters:
-            url: cicd/jenkins
-    criteria:
-      trigger.body.build.phase:
-        pattern: "FINALIZED"
-        type: equals
-      trigger.body.build.status:
-        pattern: "FAILURE"
-        type: equals
-    action:
-      ref: cicd.ci_failure
-	parameters:
-          project: "{{trigger.body.name}}"
-          branch: "{{trigger.body.build.scm.branch}}"
-          details_url: "{{trigger.body.build.full_url}}"	
-
+  name: cicd.jenkins.incoming.failure
+  enabled: true
+  description: 'Webhook listening for responses for Jenkins job failures'
+  trigger:
+    type: core.st2.webhook
+    parameters:
+      url: cicd/jenkins
+  criteria:
+    trigger.body.build.phase:
+      pattern: FINALIZED
+      type: eq
+    trigger.body.build.status:
+      pattern: FAILURE
+      type: eq
+  action:
+    ref: cicd.ci_failure
+    parameters:
+      project: "{{trigger.body.name}}"
+      branch: "{{trigger.body.build.scm.branch}}"
+      details_url: "{{trigger.body.build.url}}"

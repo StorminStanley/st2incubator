@@ -1,0 +1,57 @@
+---
+  chain:
+    -
+      name: get_production_version
+      ref: consul.get
+      params:
+        key: "{{project}}::version"
+      on-success: get_canary_hosts
+      on-failure: notify_rollback_failure
+    -
+      name: get_canary_hosts
+      ref: consul.query_service
+      params:
+        service: "{{project}}"
+        tag: "canary_{{app_role}}"
+      on-success: notify_rollback_start
+      on-failure: notify_rollback_failure
+    -
+      name: notify_rollback_start
+      ref: slack.post_message
+      params:
+        message: "Beginning rollback of {{project}} to {{get_production_version.result.Value}}..."
+        room: '#console'
+      on-success: update_canary_version
+      on-failure: notify_rollback_failure
+    -
+      name: update_canary_version
+      ref: consul.put
+      params:
+        key: "{{project}}::canary_version"
+        value: "{{get_production_version.result.Value}}"
+      on-success: update_application_on_canary_hosts
+      on-failure: notify_rollback_failure
+    -
+      name: update_application_on_canary_hosts
+      ref: debian.apt_get_update_install
+      params:
+        package: "{{project}}"
+        version: "{{get_production_version.result.Value}}"
+        hosts: "{{get_canary_hosts.result}}"
+      on-success: notify_rollback_success
+      on-failure: notify_rollback_failure
+    -
+      name: notify_rollback_failure
+      ref: slack.post_message
+      params:
+        message: "Something went wrong with the rollback of {{project}} to version {{get_production_version.result.Value}} on canary nodes..."
+        channel: '#console'
+    -
+      name: notify_rollback_success
+      ref: slack.post_message
+      params:
+        value: "{{get_canary_version.result.Value}}"
+        message: "SUCCESS!! {{project}} has been rolled to production on canary nodes! (`{{get_production_version.result.Value}}`)"
+        channel: '#console'
+    ## End Production Workflow ##
+  default: get_production_version
