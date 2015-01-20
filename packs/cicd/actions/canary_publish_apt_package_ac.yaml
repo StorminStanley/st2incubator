@@ -13,7 +13,7 @@
       type: string
       description: Branch to build
       required: true
-    url:
+    repo_url:
       type: string
       description: Location of the URL holding with Git Data
       required: true

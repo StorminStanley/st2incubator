@@ -3,58 +3,6 @@ name: 'cicd.canary'
 version: '2.0'
 description: Pipeline used to guide projects through a canary deployment. Accompanies Infrastructure Seed CI/CD
 workflows:
-
-#  # Entry point: Webhook Listener for cicd pipeline. Will be called prior to CI build even begins
-#  # Just experimenting here... not actually in use.
-#  validate_compatable_project:
-#    description: Subflow to perform validation on the input project to determine if eligible for running through the canary pipeline
-#    type: direct
-#    input:
-#      - project
-#      - branch
-#      - build_host
-#      - build_directory: "/tmp/{{$.project}}"
-#    task-defaults:
-#      # TODO: Expose a WARN or NOTICE type attribute return in the event a new project
-#      #       is run through this pipeline but has not been setup properly yet.
-#      on-error:
-#        - pause
-#    tasks:
-#      clone_repository:
-#        action: clone_repository
-#        description: Clone repository for processing
-#        input:
-#          project: $.project
-#          host: $.build_host
-#          directory: $.build_directory
-#        on-success:
-#          - check_required_build_scripts
-#        on-error:
-#          - notify_clone_failure
-#      notify_clone_failure:
-#        action: notify
-#        input:
-#          message: "The project {{$.project}}/{{$.branch}} failed to clone."
-#      check_required_build_scripts:
-#        # Should return true/false
-#        #
-#        # Required are:
-#        #  - script/cisetup        :: Any pre-flight checks that may need to be run prior to a cibuild
-#        #  - script/cibuild        :: Commands necessary to run a CI Build
-#        #  - script/pre-package    :: Commands necessary prior to packaging for deployment (run on the buildhost)
-#        #  - config/fpm.yml        :: All package metadata associated with package building
-#        description: Checks for the required scripts necessary to run a project through the build steps and deploy canary apps
-#        action: check_required_build_scripts
-#        input:
-#          host: $.build_host
-#          directory: $.build_directory
-#        on-error:
-#          - notify_does_not_meet_requirements
-#      notify_does_not_meet_requirements:
-#        action: notify
-#        input:
-#          message: "The project {{$.project}}/{{$.branch}} is not configured to use this pipeline. Please see XXX for more details"
-
   # Factory to build out an APT package from a repository
   #   Downloads repository, runs pre-package scripts, and bundles it all up.
   #   TODO: Calculate a build host based on utilization?

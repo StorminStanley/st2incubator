@@ -1,0 +1,9 @@
+---
+  chain:
+    -
+      name: notify_failure
+      ref: slack.post_message
+      params:
+        message: "Build for {{project}}/{{branch}} failed! Details can be found at {{details_url}}"
+        channel: "#console" 
+  default: notify_failure

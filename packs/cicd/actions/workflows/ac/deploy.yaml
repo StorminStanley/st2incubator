@@ -1,7 +1,11 @@
 ---
   chain:
-    # Non-ideal logic test, but helps keep things DRY. Still could
-    # stand a bit more consolidation
+    -
+      name: get_canary_version
+      ref: consul.get
+      params:
+        key: "{{project}}::canary_version"
+      on-success: query_if_production_deploy
     -
       name: query_if_production_deploy
       ref: core.local
@@ -15,8 +19,8 @@
       name: deploy_production
       ref: slack.post_message
       params:
-        message: "Beginning deployment of {{project}}-{{version}} to production..."
-        channel: '#bot-testing'
+        message: "Beginning deployment of {{project}} to production..."
+        channel: '#console'
       on-success: get_production_version
     -
       name: get_production_version
@@ -36,11 +40,11 @@
       ref: consul.put
       params:
         key: "{{project}}::version"
-        value: "{{version}}"
+        value: "{{get_canary_version.result.Value}}"
       on-success: update_application_on_production_hosts
     -
       name: update_application_on_production_hosts
-      ref: debian.apt_get_update_and_install
+      ref: debian.apt_get_update_install
       params:
         package: "{{project}}"
         version: "{{version}}"
@@ -51,14 +55,14 @@
       name: notify_unsuccessful_production_deployment
       ref: slack.post_message
       params:
-        message: "Something went wrong with deployment... rolling back..."
-        channel: '#bot-testing'
+        message: "Something went wrong with the deployment of {{project}} to production nodes..."
+        channel: '#console'
     -
       name: notify_successful_production_deployment
       ref: slack.post_message
       params:
-        message: "SUCCESS!! {{project}}-{{version}} has been deployed to production!"
-        channel: '#bot-testing'
+        message: "SUCCESS!! {{project}} has been deployed to production! (`{{get_canary_version.result.Value}}`)"
+        channel: '#console'
     ## End Production Workflow ##
 
     ## Begin Canary Workflow ##
@@ -66,14 +70,8 @@
       name: deploy_canary
       ref: slack.post_message
       params:
-        message: "Beginning deployment of {{project}}-{{version}} to canary..."
-        channel: '#bot-testing'
-      on-success: get_canary_version
-    -
-      name: get_canary_version
-      ref: consul.get
-      params:
-        key: "{{project}}::canary_version"
+        message: "Beginning deployment of {{project}} to canary hosts..."
+        channel: '#console'
       on-success: get_canary_hosts
     -
       name: get_canary_hosts
@@ -91,7 +89,7 @@
       on-success: update_application_on_canary_hosts
     -
       name: update_application_on_canary_hosts
-      ref: debian.apt_get_update_and_install
+      ref: debian.apt_get_update_install
       params:
         package: "{{project}}"
         version: "{{version}}"
@@ -102,12 +100,12 @@
       name: notify_unsuccessful_canary_deployment
       ref: slack.post_message
       params:
-        message: "Something went wrong with deployment... rolling back..."
-        channel: '#bot-testing'
+        message: "Something went wrong with the deployment of {{project}} to canary nodes..."
+        channel: '#console'
     -
       name: notify_successful_canary_deployment
       ref: slack.post_message
       params:
-        message: "SUCCESS!! {{project}}-{{version}} has been deployed to canary!"
-        channel: '#bot-testing'
-  default: query_if_production_deploy
+        message: "SUCCESS!! {{project}}-{{version}} has been deployed to canary nodes!"
+        channel: '#console'
+  default: get_canary_version
