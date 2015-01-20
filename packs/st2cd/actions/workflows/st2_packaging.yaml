@@ -14,6 +14,13 @@
         hostname: "st2packaging.service.consul"
         rand: true
         count: 1
+      on-success: "clean_build_env"
+    -
+      name: "clean_build_env"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
