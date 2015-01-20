@@ -38,7 +38,7 @@
       name: download_application
       ref: git.clone
       params:
-        source: "{{url}}"
+        source: "{{repo_url}}"
         destination: "{{get_random_build_dir.localhost.stdout}}"
         ref: "{{branch}}"
         hosts: "{{query_build_host.result}}"
