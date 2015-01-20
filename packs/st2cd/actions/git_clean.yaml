@@ -16,7 +16,7 @@
       default: "master"
     cmd: 
       immutable: false
-      default: "rm -Rf {{repo}}* && echo '{{repo}} deleted'"
+      default: "rm -Rf {{repo}} && echo '{{repo}} deleted'"
     kwarg_op: 
       immutable: true
       default: "--"
