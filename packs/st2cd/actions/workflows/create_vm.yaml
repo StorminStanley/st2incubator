@@ -75,6 +75,7 @@
       name: "set_hostname"
       ref: "st2cd.set_hostname_cloud"
       params:
+        distro: "UBUNTU14"
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         hostname: "{{hostname}}.{{dns_zone}}"
       on-success: "reboot"
