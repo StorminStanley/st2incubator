@@ -18,49 +18,62 @@ DEFAULT_PARAMETERS = {
     'description' => 'Package Name (e.g.: libpq)',
     'required' => true,
   },
+  'description' => {
+    'type' => 'string',
+    'description' => 'Package Description (e.g.: Provides PostgreSQL Client libs)',
+    'default' => 'Autobuilt package {{name}} by StackStorm + FPM Integration',
+  },
   'source' => {
     'type' => 'string',
     'description' => 'Source type for fpm',
   },
-  'output' => {
-    'type' => 'string',
-    'description' => 'Package output type for fpm',
-  },
   'version' => {
     'type' => 'string',
-    'description' => 'Package Versioni (e.g.: 0.1.1)',
+    'description' => 'Package Version (e.g.: 0.1.1)',
     'required' => true,
   },
   'revision' => {
     'type' => 'string',
     'description' => 'Package Revision (e.g: 2)',
     'default' => '1',
+  },
+  'input' => {
+    'type' => 'string',
+    'description' => "Inputs to the source package type. For the 'dir' type, this is the files and directories you want to include in the package. For others, like 'gem', it specifies the packages to download and use as the gem input",
     'required' => true,
   },
-  'cmd' => {
-    'default' => 'fpm -s {{source}} -t {{output}} -n {{name}} --version {{version}} --iteration {{revision}}',
-    'immutable' => true,
-  },
-}
-
-### These need to be re-added once https://github.com/StackStorm/st2/issues/887
-### is resolved
-OPTIONAL = {
-  'description' => {
+  'output' => {
     'type' => 'string',
-    'description' => 'Package Description (e.g.: Provides PostgreSQL Client libs)',
-  },
-  'maintainer' => {
-    'type' => 'string',
-    'description' => 'The maintainer of this package. (default: "<root@product-flashflirt.stage.office.airg.lan>")',
-  },
-  'c' => {
-    'type' => 'string',
-    'description' => '(chroot) Change directory to here before searching for files',
+    'description' => 'Package output type for fpm',
   },
   'prefix' => {
     'type' => 'string',
-    'description' => "A path to prefix files with when building the target package. This may be necessary for all input packages. For example, the 'gem' type will prefix with your gem directory automatically.",
+    'description' => 'A path to prefix files with when building the target package.',
+    'default' => "/opt/{{name}}"
+  },
+  'after_install' => {
+    'type' => 'string',
+    'description' => 'A script to be run after package removal',
+    'default' => '/bin/true',
+  },
+  'chdir' => {
+    'type' => 'string',
+    'description' => 'Change directory to here before searching for files',
+    'default' => '{{dir}}',
+  },
+  'architecture' => {
+    'type' => 'string',
+    'description' => 'The architecture name. (usually matches `uname -a`). Use `all` for noarch',
+    'default' => 'x86_64',
+  },
+  'maintainer' => {
+    'type' => 'string',
+    'description' => 'Maintainer of this package',
+    'default' => 'root@product-flashflirt.stage.office.airg.lan',
+  },
+  'cmd' => {
+    'default' => 'fpm -s {{source}} -t {{output}} -n {{name}} --version {{version}} --iteration {{revision}} --prefix {{prefix}} --after-install {{after_install}} -C {{chdir}} --maintainer {{maintainer}} --description "{{description}}" --architecture {{architecture}} {{input}}',
+    'immutable' => true,
   },
 }
 

@@ -1,0 +1,22 @@
+---
+  chain:
+    -
+      name: clean_branch
+      ref: core.local
+      params:
+        cmd: "echo {{branch}} | awk -F '/' '{print $3}'"
+      on-success: notify_push
+    -
+      name: notify_push
+      ref: slack.post_message
+      params:
+        message: "{{user}} pushed `{{project}}/{{clean_branch.localhost.stdout}}` to GitHub ({{detail_url}})"
+        channel: '#console'
+      on-success: start_ci_build
+    -
+      name: start_ci_build
+      ref: jenkins.build_job
+      params:
+        project: "{{project}}"
+        branch: "{{clean_branch.localhost.stdout}}"
+  default: clean_branch

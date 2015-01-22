@@ -1,0 +1,14 @@
+---
+description: 'Aggregate workflow results to mark determine status'
+enabled: true
+entry_point: result_aggregator.py
+name: result_aggregator
+parameters:
+  results:
+    required: True
+    type: string
+  fields:
+    type: string
+  max_failures:
+    type: integer
+runner_type: run-python

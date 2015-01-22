@@ -1,4 +1,4 @@
-rom lib import action
+from lib import action
 
 class ConsulListNodesAction(action.ConsulBaseAction):
     def run(self):

@@ -1,0 +1,9 @@
+---
+  chain:
+    -
+      name: notify_start_ci
+      ref: slack.post_message
+      params:
+        message: "Starting CI build for `{{project}}/{{branch}}`..."
+        channel: "#console" 
+  default: notify_start_ci

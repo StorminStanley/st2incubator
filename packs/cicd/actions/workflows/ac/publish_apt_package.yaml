@@ -1,0 +1,126 @@
+---
+  chain:
+    ### Main Workflow ###
+    -
+      name: notify_package_start
+      ref: slack.post_message
+      params:
+        message: "Beginning packaging of `{{project}}@{{branch}}` ({{commit}})"
+        channel: '#console'
+      on-success: query_build_host
+      on-failure: notify_package_failure
+    -
+      name: query_build_host
+      ref: consul.query_service
+      params:
+        service: 'apt'
+      on-success: get_random_build_dir
+      on-failure: notify_package_failure
+
+    # Build dir published as {{get_random_build_dir.localhost.stdout}}
+    -
+      name: get_random_build_dir
+      ref: core.local
+      params:
+        cmd: 'mktemp -d'
+      on-success: get_epoch_time
+      on-failure: notify_package_failure
+
+    # Epoch published as {{get_epoch_time.localhost.stdout}}
+    -
+      name: get_epoch_time
+      ref: core.local
+      params:
+        cmd: 'date +%s'
+      on-success: download_application
+      on-failure: notify_package_failure
+    -
+      name: download_application
+      ref: git.clone
+      params:
+        source: "{{repo_url}}"
+        destination: "{{get_random_build_dir.localhost.stdout}}"
+        ref: "{{branch}}"
+        hosts: "{{query_build_host.result}}"
+      on-success: get_package_metadata
+      on-failure: notify_package_failure
+
+    -
+      name: get_package_metadata
+      ref: core.remote
+      params:
+        cmd: "cat {{get_random_build_dir.localhost.stdout}}/fpm.json"
+        hosts: "{{query_build_host.result}}"
+      on-success: parse_metadata
+      on-failure: notify_package_failure
+    -
+      name: parse_metadata
+      ref: json.parse
+      params:
+        string: "{{get_package_metadata[query_build_host.result].stdout}}"
+      on-success: package_application
+      on-failure: notify_package_failure
+    -
+      name: package_application
+      ref: fpm.create_deb_from_dir
+      params:
+        name: "{{project}}"
+        description: "{{parse_metadata.result.description}}"
+        version: "{{parse_metadata.result.version}}"
+        revision: "{{get_epoch_time.localhost.stdout}}-{{commit}}"
+        input: '.'
+        prefix: "/opt/{{project}}"
+        after_install: "{{get_random_build_dir.localhost.stdout}}/script/post-install"
+        chdir: "{{get_random_build_dir.localhost.stdout}}"
+        architecture: 'all'
+        hosts: "{{query_build_host.result}}"
+      on-success: upload_package_to_repository
+      on-failure: notify_package_failure
+    -
+      name: upload_package_to_repository
+      ref: freight.add_package
+      params:
+        file: "/home/stanley/{{project}}_{{parse_metadata.result.version}}-{{get_epoch_time.localhost.stdout}}-{{commit}}_all.deb"
+        distribution: "trusty"
+        hosts: "{{query_build_host.result}}"
+      on-success: update_repository
+      on-failure: notify_package_failure
+    -
+      name: update_repository
+      ref: freight.update_cache
+      params:
+        hosts: "{{query_build_host.result}}"
+      on-success: notify_success
+      on-failure: notify_package_failure
+    -
+      name: notify_success
+      ref: slack.post_message
+      params:
+        message: "Successfully built {{project}}-{{parse_metadata.result.version}}-{{get_epoch_time.localhost.stdout}}-{{commit}}"
+        channel: '#console'
+      on-success: deploy_package
+    -
+      name: deploy_package
+      ref: cicd.deploy
+      params:
+        project: "{{project}}"
+        version: "{{parse_metadata.result.version}}-{{get_epoch_time.localhost.stdout}}-{{commit}}"
+        app_role: fe
+      on-success: cleanup
+    -
+      name: cleanup
+      ref: core.remote
+      params:
+        cmd: "rm -rf {{get_random_build_dir.localhost.stdout}}"
+        hosts: "{{query_build_host.result}}"
+    -
+      name: notify_package_failure
+      ref: slack.post_message
+      params:
+        message: "Oops! Something went wrong with building package for `{{project}}@{{branch}}`. Please check `st2` history for more info"
+        channel: '#console'
+      on-success: cleanup
+    ### Notifications ###
+
+    ### END CHAIN ###
+  default: notify_package_start

@@ -1,0 +1,11 @@
+---
+  name: "puppet_bootstrap"
+  runner_type: "action-chain"
+  description: "Bootstrap a new host for St2 masterless Puppet"
+  enabled: true
+  entry_point: "workflows/puppet_bootstrap.yaml"
+  parameters: 
+    hosts: 
+      type: "string"
+      description: "Host to run build on"
+      required: true

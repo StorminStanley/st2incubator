@@ -1,0 +1,26 @@
+---
+name: deploy
+runner_type: action-chain
+description: Deploy canary pipeline (ActionChain)
+enabled: true
+entry_point: 'workflows/ac/deploy.yaml'
+parameters:
+  project:
+    type: string
+    description: Name of the project to be deployed (must match CI Project Name)
+    required: true
+    position: 1
+  version:
+    type: string
+    description: Version of the project to deploy
+    position: 2
+  app_role:
+    type: string
+    description: Application server role to deploy code to
+    default: fe
+    position: 3
+  production:
+    type: string
+    description: 'Deploy to production (default: false)'
+    default: 'false'
+    position: 4

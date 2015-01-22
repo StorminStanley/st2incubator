@@ -1,0 +1,39 @@
+---
+  name: "add_apt_repo"
+  runner_type: "run-remote"
+  description: "Add apt-get repository"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: true
+    name:
+      type: "string"
+      description: "name to be used for list file"
+      required: true
+    archive_type:
+      type: "string"
+      description: "Debian archive type"
+      default: "deb"
+    repo:
+      type: "string"
+      required: true
+      description: "Url of the apt-get repo"
+    distribution:
+      type: "string"
+      description: "Debian distro"
+      default: "trusty"
+    component:
+      type: "string"
+      description: ""
+      default: "main"
+    cmd: 
+      immutable: true
+      default: "echo '{{archive_type}} {{repo}} {{distribution}} {{component}}' > /etc/apt/sources.list.d/{{name}}.list"
+    kwarg_op: 
+      immutable: true
+      default: "--"

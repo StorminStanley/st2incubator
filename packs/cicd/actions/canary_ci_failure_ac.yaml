@@ -1,0 +1,22 @@
+---
+name: ci_success
+runner_type: action-chain
+description: Workflow to notify success of a CI Build
+enabled: true
+entry_point: 'workflows/ac/ci_success.yaml'
+parameters:
+  project:
+    type: string
+    description: Name of the project to be deployed (must match CI Project Name)
+    required: true
+    position: 1
+  branch:
+    type: string
+    description: Branch of the Project to build.
+    required: true
+    position: 2
+  details_url:
+    type: string
+    description: Location of the results of CI build data
+    required: true
+    position: 3

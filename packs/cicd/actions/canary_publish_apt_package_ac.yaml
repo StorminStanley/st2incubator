@@ -1,0 +1,24 @@
+---
+  name: publish_apt_package
+  runner_type: action-chain
+  description: Build an APT package from Canary Pipeline (ActionChain)
+  enabled: true
+  entry_point: workflows/ac/publish_apt_package.yaml
+  parameters:
+    project:
+      type: string
+      description: 'Name of the project to be built (must match CI Project Name)'
+      required: true
+    branch:
+      type: string
+      description: Branch to build
+      required: true
+    repo_url:
+      type: string
+      description: Location of the URL holding with Git Data
+      required: true
+    commit:
+      type: string
+      description: Specific commit to package up
+      required: true
+
