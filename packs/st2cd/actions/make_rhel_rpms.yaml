@@ -1,0 +1,29 @@
+{
+    "name": "make_rhel_rpms",
+    "runner_type": "run-remote",
+    "description": "Use make targets to build RHEL6 rpm packages",
+    "enabled": true,
+    "entry_point": "",
+    "parameters": {
+        "dir": {
+            "immutable": true,
+            "default": "/home/stanley/"
+        },
+        "sudo": {
+            "immutable": true,
+            "default": false
+        },
+        "repo": {
+            "type": "string",
+            "default": "st2"
+        },
+        "cmd": {
+            "immutable": false,
+            "default": "cd {{repo}} && make rhel-rpms"
+        },
+        "kwarg_op": {
+            "immutable": true,
+            "default": "--"
+        }
+    }
+}
