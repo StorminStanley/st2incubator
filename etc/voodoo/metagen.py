@@ -1,48 +1,13 @@
 #!/usr/bin/env python
 
-import os
-import shutil
-import inspect
-import yaml
-import re
 import argparse
 import importlib
-
-parser = argparse.ArgumentParser(
-    description='StackStorm Action Metadata Generator for Python modules')
-
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument('--module', action="store", dest="module", default=None)
-group.add_argument('--empty', action='store_true', dest='empty', default=False)
-
-parser.add_argument('--class', action="store", dest="clss")
-parser.add_argument('--pack', action="store", dest="pack", required=True)
-parser.add_argument('--ignore', action="store", dest="ignore")
-parser.add_argument('--dry_run', action="store_true", dest="dry_run")
-parser.add_argument('--prefix', action="store", dest="action_prefix", default=None)
-parser.add_argument('--author', action="store", dest="author", default="Estee Tew")
-parser.add_argument('--email', action="store", dest="email", default="")
-parser.add_argument('--version', action="store", dest="version", default="0.1")
-parser.add_argument('--required', action="store", dest='required', default=None)
-parser.add_argument('--optional', action="store", dest='optional', default=None)
-
-
-args = parser.parse_args()
-
-add_required = {}
-add_optional = {}
-
-if args.module:
-    module = importlib.import_module(args.module)
-    if args.clss:
-        obj = getattr(module, args.clss)
-    else:
-        obj = module
-
-if args.ignore:
-    ignores = args.ignore.split(',')
-else:
-    ignores = []
+import inspect
+import os
+import re
+import shutil
+import sys
+import yaml
 
 
 def parseAdditional(adds):
@@ -54,12 +19,6 @@ def parseAdditional(adds):
         else:
             add_dict[add] = None
     return add_dict
-
-if args.required is not None:
-    add_required = parseAdditional(args.required)
-
-if args.optional is not None:
-    add_optional = parseAdditional(args.optional)
 
 
 def create_pack(pack, empty=True):
@@ -75,7 +34,7 @@ def create_pack(pack, empty=True):
         os.mkdir("%s/actions" % pack_dir)
 
 
-def create_manifest(pack):
+def create_manifest(pack, args):
     manifest = {}
     manifest['name'] = pack
     manifest['description'] = ""
@@ -101,7 +60,7 @@ def create_md(pack):
     config.close()
 
 
-def get_all(modpath):
+def get_all(modpath, ignores, add_required, add_optional):
     items = {}
     pattern = re.compile('[^_].*')
     for member in dir(modpath):
@@ -131,8 +90,8 @@ def get_all(modpath):
     return items
 
 
-def build_action_list(obj):
-    items = get_all(obj)
+def build_action_list(obj, ignores, add_required, add_optional):
+    items = get_all(obj, ignores, add_required, add_optional)
     actions = {'items': items}
     actions['module_path'] = obj.__module__
     if inspect.isclass(obj) is True:
@@ -140,9 +99,9 @@ def build_action_list(obj):
     return actions
 
 
-def generate_meta(obj, pack):
+def generate_meta(obj, args, ignores, add_required, add_optional):
 
-    actions = build_action_list(obj)
+    actions = build_action_list(obj, ignores, add_required, add_optional)
 
     class_param = {}
     if 'cls' in actions.keys():
@@ -197,9 +156,59 @@ def generate_meta(obj, pack):
             print filename
             print(yaml.dump(action_meta, default_flow_style=False))
 
-create_pack(args.pack, empty=args.empty)
-create_manifest(args.pack)
-create_md(args.pack)
 
-if args.empty is not True:
-    generate_meta(obj, args.pack)
+def _parse_args(args):
+    parser = argparse.ArgumentParser(
+        description='StackStorm Action Metadata Generator for Python modules')
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--module', action="store", dest="module", default=None)
+    group.add_argument('--empty', action='store_true', dest='empty', default=False)
+
+    parser.add_argument('--class', action="store", dest="clss")
+    parser.add_argument('--pack', action="store", dest="pack", required=True)
+    parser.add_argument('--ignore', action="store", dest="ignore")
+    parser.add_argument('--dry_run', action="store_true", dest="dry_run")
+    parser.add_argument('--prefix', action="store", dest="action_prefix", default=None)
+    parser.add_argument('--author', action="store", dest="author", default="Estee Tew")
+    parser.add_argument('--email', action="store", dest="email", default="")
+    parser.add_argument('--version', action="store", dest="version", default="0.1")
+    parser.add_argument('--required', action="store", dest='required', default=None)
+    parser.add_argument('--optional', action="store", dest='optional', default=None)
+    return parser.parse_args()
+
+
+def main(args):
+    args = _parse_args(args)
+
+    add_required = {}
+    add_optional = {}
+
+    if args.module:
+        module = importlib.import_module(args.module)
+        if args.clss:
+            obj = getattr(module, args.clss)
+        else:
+            obj = module
+
+    if args.ignore:
+        ignores = args.ignore.split(',')
+    else:
+        ignores = []
+
+    if args.required is not None:
+        add_required = parseAdditional(args.required)
+
+    if args.optional is not None:
+        add_optional = parseAdditional(args.optional)
+
+    create_pack(args.pack, empty=args.empty)
+    create_manifest(args.pack, args)
+    create_md(args.pack)
+
+    if not args.empty:
+        generate_meta(obj, args, ignores, add_required, add_optional)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
