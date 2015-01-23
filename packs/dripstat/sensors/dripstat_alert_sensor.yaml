@@ -5,7 +5,7 @@
   poll_interval: 30
   trigger_types:
     -
-      name: "dripstat_alert"
+      name: "alert"
       description: "Trigger representing an active alert"
       payload_info:
         - "app_name"

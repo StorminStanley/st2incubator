@@ -8,24 +8,40 @@ __all_ = [
 BASE_URL = 'https://api.dripstat.com/api/v1'
 
 class DripstatAlertSensor(PollingSensor):
+    def __init__(self, sensor_service, config=None, poll_interval=None):
+        super(DripstatAlertSensor, self).__init__(sensor_service=sensor_service,
+                                                  config=config,
+                                                  poll_interval=poll_interval)
+        self._trigger_ref = 'dripstat.alert'
+
     def setup(self):
+        self._api_key = self._config['api_key']
         self._applications = self._api_request(self, endpoint='/apps')
 
     def poll(self):
         for application in self._applications:
             alerts = self._api_request(self, endpoint='/alerts', params={'appId': application['id']})
             for alert in alerts:
-                self._dispatch_trigger_for_alert(application=application['name'], alert=alert)
+                self._dispatch_trigger_for_alert(self, application=application['name'], alert=alert)
 
     def cleanup(self):
         pass
 
+    def add_trigger(self, trigger):
+        pass
+
+    def update_trigger(self, trigger):
+        pass
+
+    def remove_trigger(self, trigger):
+        pass
+
     def _api_request(self, endpoint, params={}):
         url = BASE_URL + endpoint
-        default_params = { 'clientId': self._config['api_key'] }
-        response = requests.get(url, params=params.update(default_params))
-        return response.json
-	
+        default_params = { 'clientId': self._api_key }
+        params.update(default_params)
+        response = requests.get(url, params=params)
+        return response.json()
 
     def _dispatch_trigger_for_alert(self, application, alert):
         trigger = self._trigger_ref
