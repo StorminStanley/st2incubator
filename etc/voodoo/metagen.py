@@ -2,7 +2,6 @@
 
 import os
 import shutil
-import sys
 import inspect
 import yaml
 import re
@@ -12,7 +11,10 @@ import importlib
 parser = argparse.ArgumentParser(
     description='StackStorm Action Metadata Generator for Python modules')
 
-parser.add_argument('--module', action="store", dest="module", default=None)
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('--module', action="store", dest="module", default=None)
+group.add_argument('--empty', action='store_true', dest='empty', default=False)
+
 parser.add_argument('--class', action="store", dest="clss")
 parser.add_argument('--pack', action="store", dest="pack", required=True)
 parser.add_argument('--ignore', action="store", dest="ignore")
@@ -23,19 +25,16 @@ parser.add_argument('--email', action="store", dest="email", default="")
 parser.add_argument('--version', action="store", dest="version", default="0.1")
 parser.add_argument('--required', action="store", dest='required', default=None)
 parser.add_argument('--optional', action="store", dest='optional', default=None)
-parser.add_argument('--empty', action='store_true', dest='empty', default=False)
+
 
 args = parser.parse_args()
 
 add_required = {}
 add_optional = {}
 
-if args.module is None and args.empty is False:
-    print "Either --empty or --module is required"
-    sys.exit(2)
-elif args.module is not None and args.empty is False:
+if args.module:
     module = importlib.import_module(args.module)
-    if args.clss is not None:
+    if args.clss:
         obj = getattr(module, args.clss)
     else:
         obj = module
