@@ -17,6 +17,11 @@ else
     SWITCH_TO=${OS_REPO_ROOT}    
 fi
 
+echo "ST2_REPO_ROOT: ${ST2_REPO_ROOT}"
+echo "OS_REPO_ROOT: ${OS_REPO_ROOT}"
+echo "REPO: ${REPO}"
+echo "SWITCH_TO: ${SWITCH_TO}"
+
 # Exit if expected paths do not exist.
 FOLDERS=(
     "${SWITCH_TO}"
@@ -48,11 +53,12 @@ ln -s ${SWITCH_TO}/mistral mistral
 cd ${SWITCH_TO}/python-mistralclient
 python setup.py develop
 
-# Restart the mistral service appropriately.
-SERVICE_STATUS=`service mistral status`
-IS_SERVICE_RUNNING=`echo ${SERVICE_STATUS} | grep "running"`
-if [[ "${IS_SERVICE_RUNNING}" != "" ]]; then
-    echo ""
+# Restart the mistral service appropriately
+echo ""
+IS_SERVICE_RUNNING=`service mistral status | grep running; exit 0`
+if [ -z "${IS_SERVICE_RUNNING}" ]; then
+    echo "Not restarting mistral. The mistral service was not running."
+else
     echo "Restarting mistral service..."
     service mistral restart
 fi
