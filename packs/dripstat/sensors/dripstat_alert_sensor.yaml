@@ -8,6 +8,7 @@
       name: "dripstat_alert"
       description: "Trigger representing an active alert"
       payload_info:
-        - "name"
+        - "app_name"
+        - "alert_name"
         - "started_at"
         - "jvm_host"

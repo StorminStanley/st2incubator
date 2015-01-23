@@ -1,7 +1,0 @@
----
-name: list_applications
-runner_type: run-python
-description: 'List all configured applications in Dripstat'
-enabled: true
-entry_point: list_applications.py
-parameters:

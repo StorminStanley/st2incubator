@@ -8,10 +8,6 @@ __all_ = [
 BASE_URL = 'https://api.dripstat.com/api/v1'
 
 class DripstatAlertSensor(PollingSensor):
-    def __init__(self, sensor_service, config=None, poll_interval=None):
-        super(DripstatAlertSensor, self).__init__(sensor_service=sensor_service,
-                                                  config=config,
-                                                  poll_interval=poll_interval)
     def setup(self):
         self._applications = self._api_request(self, endpoint='/apps')
 
@@ -24,19 +20,12 @@ class DripstatAlertSensor(PollingSensor):
     def cleanup(self):
         pass
 
-    def add_trigger(self):
-        pass
-
-    def update_trigger(self):
-        pass
-
-    def remove_trigger(self):
-        pass
-
     def _api_request(self, endpoint, params={}):
         url = BASE_URL + endpoint
-        default_params = { 'clientId': self.config['api_key'] }
-        return requests.get(url, params=params.update(default_params))
+        default_params = { 'clientId': self._config['api_key'] }
+        response = requests.get(url, params=params.update(default_params))
+        return response.json
+	
 
     def _dispatch_trigger_for_alert(self, application, alert):
         trigger = self._trigger_ref
