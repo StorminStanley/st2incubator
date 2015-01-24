@@ -16,13 +16,13 @@ class DripstatAlertSensor(PollingSensor):
 
     def setup(self):
         self._api_key = self._config['api_key']
-        self._applications = self._api_request(self, endpoint='/apps')
+        self._applications = self._api_request(endpoint='/apps')
 
     def poll(self):
         for application in self._applications:
-            alerts = self._api_request(self, endpoint='/alerts', params={'appId': application['id']})
+            alerts = self._api_request(endpoint='/alerts', params={'appId': application['id']})
             for alert in alerts:
-                self._dispatch_trigger_for_alert(self, application=application['name'], alert=alert)
+                self._dispatch_trigger_for_alert(application=application['name'], alert=alert)
 
     def cleanup(self):
         pass
@@ -46,10 +46,10 @@ class DripstatAlertSensor(PollingSensor):
     def _dispatch_trigger_for_alert(self, application, alert):
         trigger = self._trigger_ref
         payload = {
-            app_name: application,
-            alert_type: alert['name'],
-            started_at: alert['startedAt'],
-            jvm_host: alert['jvmHost']
+            'app_name': application,
+            'alert_type': alert['name'],
+            'started_at': alert['startedAt'],
+            'jvm_host': alert['jvmHost']
         }
         self._sensor_service.dispatch(trigger=trigger, payload=payload)
 
