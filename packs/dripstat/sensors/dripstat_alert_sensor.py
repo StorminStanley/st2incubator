@@ -7,6 +7,13 @@ __all_ = [
 
 BASE_URL = 'https://api.dripstat.com/api/v1'
 
+eventlet.monkey_patch(
+os=True,
+select=True,
+socket=True,
+thread=True,
+time=True)
+
 class DripstatAlertSensor(PollingSensor):
     def __init__(self, sensor_service, config=None, poll_interval=None):
         super(DripstatAlertSensor, self).__init__(sensor_service=sensor_service,
