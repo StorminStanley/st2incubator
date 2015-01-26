@@ -8,10 +8,23 @@
     st2-base-url:
       type: "string"
       description: "St2 base url."
-      default: "http://localhost:9101/v1/"
+      default: "http://{{st2_host}}:{{st2_port}}/{{st2_api_version}}/"
+      immutable: true
     branch:
       type: "string"
       description: "Github branch to setup the rule on."
+    st2_host:
+      type: "string"
+      description: "Hostname of the st2 API server"
+      default: "localhost"
+    st2_port:
+      type: "integer"
+      description: "Port number of the st2 API"
+      default: 9101
+    st2_api_version:
+      type: "string"
+      description: "St2 API version"
+      default: "v1"
     kwarg_op:
       immutable: true
       default: "--"

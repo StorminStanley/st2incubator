@@ -1,0 +1,27 @@
+---
+  name: "packaging_legacy"
+  runner_type: "action-chain"
+  description: "Clones a repo to a remote host and builds packages"
+  enabled: true
+  entry_point: "workflows/st2_packaging_legacy.yaml"
+  parameters: 
+    repo: 
+      type: "string"
+      description: "Url of the repo to clone"
+      required: true
+    repo_target:
+      type: "string"
+      default: "st2_{{branch}}"
+      description: "Dir to clone branch into"
+    branch:
+      type: "string"
+      description: "The branch to build"
+      default: "master"
+      required: true
+    rsync_target:
+      type: "string"
+      description: ""
+      required: true
+    environment:
+      type: "string"
+      description: ""

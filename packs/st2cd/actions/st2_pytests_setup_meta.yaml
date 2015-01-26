@@ -8,15 +8,15 @@
     st2_repo:
       type: "string"
       description: "Url of the st2 repo to clone"
-      default: "https://github.com/lakshmi-kannan/st2.git"
+      default: "https://{{auth_string}}github.com/lakshmi-kannan/st2.git"
     st2_contrib_repo:
       type: "string"
       description: "Url of the st2contrib repo to clone"
-      default: "https://github.com/lakshmi-kannan/st2contrib.git"
+      default: "https://{{auth_string}}github.com/lakshmi-kannan/st2contrib.git"
     st2_express_repo:
       type: "string"
       description: "Url of the st2express repo to clone"
-      default: "https://github.com/lakshmi-kannan/st2express.git"
+      default: "https://{{auth_string}}github.com/lakshmi-kannan/st2express.git"
     st2_repo_target:
       type: "string"
       default: "/home/stanley/st2"
@@ -33,7 +33,28 @@
       type: "string"
       description: "Version to use for the release."
       required: true
-    st2_base_url:
+    token:
       type: "string"
-      description: "st2 API URL."
-      default: "http://localhost:9101/v1/"
+      description: "GitHub OAuth token"
+      default: ""
+    auth_string:
+      type: "string"
+      description: "Composite auth string"
+      default: "{% if token != '' set auth='token::x-oauth-basic@' -%} {{auth}}{% endif -%}"
+    st2-base-url:
+      type: "string"
+      description: "St2 base url."
+      default: "http://{{st2_host}}:{{st2_port}}/{{st2_api_version}}/"
+      immutable: true
+    st2_host:
+      type: "string"
+      description: "Hostname of the st2 API server"
+      default: "localhost"
+    st2_port:
+      type: "integer"
+      description: "Port number of the st2 API"
+      default: 9101
+    st2_api_version:
+      type: "string"
+      description: "St2 API version"
+      default: "v1"
