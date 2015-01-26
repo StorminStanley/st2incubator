@@ -1,0 +1,30 @@
+---
+name: "which"
+pack: "mistral-dev"
+runner_type: "run-local-script"
+description: "Return which mistral repo is currently set for development."
+enabled: true
+entry_point: "which.sh"
+parameters:
+  st2_repo_root:
+    type: "string"
+    description: "Local root path to the StackStorm repositories."
+    position: 0
+    default: "/home/vagrant/code/stackstorm"
+  os_repo_root:
+    type: "string"
+    description: "Local root path to the OpenStack/StackForge repositories."
+    position: 1
+    default: "/home/vagrant/code/openstack"
+  cmd:
+    immutable: true
+    default: ""
+  sudo:
+    immutable: true
+    default: true
+  cwd:
+    immutable: true
+    default: "."
+  kwarg_op:
+    immutable: true
+    default: "--"
