@@ -1,0 +1,38 @@
+---
+  chain:
+    -
+      name: create_new_node
+      ref: libcloud.create_vm
+      params:
+        name: "{{name}}"
+        size_id: "{{vm_size_id}}"
+        image_id: "{{vm_image_id}}"
+        credentials: rax_compute
+      on-success: create_dns_record
+    -
+      name: create_dns_record
+      ref: libcloud.create_dns_record
+      params:
+        name: "{{name}}"
+        domain: "{{domain}}"
+        type: "A"
+        data: "{{create_new_node.result.public_ips}}"
+        credentials: rax_dns
+      on-success: provision_node_chef
+    -
+      name: provision_node_chef
+      ref: chef.solo
+      params:
+        hostname: "{{name}}.{{domain}}"
+        attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
+        recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
+      on-success: add_node_loadbalancer
+    -
+      name: add_node_loadbalancer
+      ref: rackspace.add_node_to_loadbalancer
+      params:
+        loadbalancer_id: "{{loadbalancer_id}}"
+        ip: "{{create_new_node.result.public_ips}}"
+        port: 8080
+  default: create_new_node
+

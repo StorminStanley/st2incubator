@@ -1,0 +1,27 @@
+---
+name: create_asg
+runner_type: action-chain
+description: Create a new AutoScale Group within StackStorm
+enabled: true
+entry_point: 'workflows/create_asg.yaml'
+parameters:
+  name:
+    type: string
+    description: Name of new AutoScale Group
+    required: true
+    position: 1
+  min_nodes:
+    type: string
+    descripton: Minimum number of nodes to keep provisioned.
+    required: true
+    postion: 2
+  max_nodes:
+    type: string
+    descripton: Maximum number of nodes allowed to be allocated
+    postion: 3
+  cooldown:
+    type: integer
+    description: The amount of time to wait while cooling down.
+    position: 4
+    default: 30
+

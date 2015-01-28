@@ -1,0 +1,11 @@
+---
+name: asg.teardown
+runner_type: action-chain
+description: Teardown autoscale group
+enabled: true
+entry_point: 'workflows/asg_teardown.yaml'
+parameters:
+  name:
+    type: string
+    description: Name of autoscale group to teardown
+    required: true

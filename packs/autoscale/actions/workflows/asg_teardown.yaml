@@ -1,0 +1,70 @@
+---
+  chain:
+    -
+      name: get_loadbalancer_id
+      ref: st2.key.get
+      params:
+        key: "asg.{{name}}.loadbalancer_id"
+      on-success: delete_loadbalancer
+    -
+      name: get_zone_id
+      ref: st2.key.get
+      params:
+        key: "asg.{{name}}.zone_id"
+      on-success: delete_loadbalancer
+    -
+      name: delete_loadbalancer
+      ref: rackspace.delete_loadbalancer
+      params:
+        loadbalancer_id: "{{get_loadbalancer_id.result}}"
+      on-success: delete_loadbalancer_key
+      on-failure: delete_zone
+    -
+      name: delete_loadbalancer_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.zone_id"
+      on-success: delete_zone
+    -
+      name: delete_zone
+      ref: rackspace.delete_dns_zone
+      params:
+        zone_id: "{{get_zone_id.result}}"
+      on-success: delete_zone_key
+      on-failure: delete_min_node_key
+    -
+      name: delete_zone_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.zone_id"
+      on-success: delete_min_node_key
+    -
+      name: delete_min_nodes_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.min_nodes"
+      on-success: delete_max_nodes_key
+    -
+      name: delete_max_nodes_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.max_nodes"
+      on-success: delete_vm_size_id_key
+    -
+      name: delete_vm_size_id_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.vm_size_id"
+      on-success: delete_vm_image_id_key
+    -
+      name: delete_vm_image_id_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.vm_image_id"
+      on-success: delete_domain_key
+    -
+      name: delete_domain_key
+      ref: st2.key.delete
+      params:
+        key: "asg.{{name}}.domain"
+  default: get_loadbalancer_id

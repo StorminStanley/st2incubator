@@ -1,0 +1,65 @@
+---
+  chain:
+    -
+      name: create_loadbalancer
+      ref: rackspace.cleate_loadbalancer
+      params:
+        name: "{{name}}"
+        port: "{{port}}"
+        protocol: "{{protocol}}"
+      on-success: set_asg_loadbalancer_id
+    -
+      name: set_asg_loadbalancer_id
+      ref: st2.key.put
+      params:
+        name: "asg.{{name}}.loadbalancer_id"
+        value: "{{create_loadbalancer.result.id}}"
+      on-success: create_dns_zone
+    -
+      name: create_dns_zone
+      ref: rackspace.create_zone
+      params:
+        name: "{{name}}.{{domain}}"
+      on-success: set_asg_zone_id
+    -
+      name: set_asg_zone_id
+      ref: st2.key.put
+      params:
+        key: "asg.{{name}}.zone_id"
+        value: "{{create_dns_zone.result.id}}"
+      on-success: set_asg_min_nodes
+    -
+      name: set_asg_min_nodes
+      ref: st2.key.put
+      params:
+        key: "asg.{{name}}.min_nodes"
+        value: "{{min_nodes}}"
+      on-success: set_asg_max_nodes
+    -
+      name: set_asg_max_nodes
+      ref: st2.key.put
+      params:
+        key: "asg.{{name}}.max_nodes"
+        value: "{{max_nodes}}"
+      on-success: set_asg_domain
+    -
+      name: set_asg_domain
+      ref: st2.key.put
+      params:
+        key: "key.{{name}}.domain"
+        value: "{{domain}}"
+      on-success: set_asg_vm_size_id
+    -
+      name: set_asg_vm_size_id
+      ref: st2.key.put
+      params:
+        key: "key.{{name}}.vm_size_id"
+        value: "{{vm_size_id}}"
+      on-success: set_asg_vm_image_id
+    -
+      name: set_asg_vm_image_id
+      ref: st2.key.put
+      params:
+        key: "key.{{name}}.vm_image_id"
+        value: "{{vm_image_id}}"
+  default: create_loadbalancer
