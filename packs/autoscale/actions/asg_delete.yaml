@@ -1,9 +1,9 @@
 ---
-name: asg.teardown
+name: asg.delete
 runner_type: action-chain
 description: Teardown autoscale group
 enabled: true
-entry_point: 'workflows/asg_teardown.yaml'
+entry_point: 'workflows/asg_delete.yaml'
 parameters:
   name:
     type: string

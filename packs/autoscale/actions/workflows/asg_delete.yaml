@@ -1,0 +1,82 @@
+---
+  chain:
+    -
+      name: get_loadbalancer_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{name}}.loadbalancer_id"
+      on-success: delete_loadbalancer
+    -
+      name: delete_loadbalancer
+      ref: rackspace.delete_loadbalancer
+      params:
+        loadbalancer_id: "{{get_loadbalancer_id.result}}"
+      on-success: delete_asg_loadbalancer_key
+      on-failure: get_asg_zone_id
+    -
+      name: delete_asg_loadbalancer_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.loadbalancer_id"
+      on-success: get_asg_zone_id
+    -
+      name: get_asg_zone_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{name}}.zone_id"
+      on-success: delete_asg_dns_zone
+    -
+      name: delete_asg_dns_zone
+      ref: rackspace.delete_dns_zone
+      params:
+        zone_id: "{{get_asg_zone_id.result}}"
+      on-success: delete_asg_dns_zone_key
+      on-failure: delete_asg_min_node_key
+    -
+      name: delete_asg_dns_zone_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.zone_id"
+      on-success: delete_asg_min_nodes_key
+    -
+      name: delete_asg_min_nodes_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.min_nodes"
+      on-success: delete_asg_max_nodes_key
+    -
+      name: delete_asg_max_nodes_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.max_nodes"
+      on-success: delete_asg_vm_size_id_key
+    -
+      name: delete_asg_vm_size_id_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.vm_size_id"
+      on-success: delete_asg_vm_image_id_key
+    -
+      name: delete_asg_vm_image_id_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.vm_image_id"
+      on-success: delete_asg_domain_key
+    -
+      name: delete_asg_domain_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.domain"
+      on-success: delete_asg_server_role_key
+    -
+      name: delete_asg_server_role_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.server_role"
+      on-success: delete_asg_cooldown_period_key
+    -
+      name: delete_asg_cooldown_period_key
+      ref: st2.kv.delete
+      params:
+        key: "asg.{{name}}.cooldown"
+  default: get_loadbalancer_id

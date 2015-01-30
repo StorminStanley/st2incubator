@@ -1,27 +1,51 @@
 ---
-name: create_asg
+name: asg.create
 runner_type: action-chain
 description: Create a new AutoScale Group within StackStorm
 enabled: true
-entry_point: 'workflows/create_asg.yaml'
+entry_point: 'workflows/asg_create.yaml'
 parameters:
   name:
     type: string
     description: Name of new AutoScale Group
     required: true
-    position: 1
-  min_nodes:
+  port:
+    type: integer
+    description: Port for front-end loadbalancer to listen on
+    default: 80
+  protocol:
     type: string
-    descripton: Minimum number of nodes to keep provisioned.
+    description: Protocol to proxy via loadbalancer
+    default: 'HTTP'
+  domain:
+    type: string
+    description: Subdomain used to manage ASG resources
     required: true
-    postion: 2
-  max_nodes:
+  admin_contact:
     type: string
-    descripton: Maximum number of nodes allowed to be allocated
-    postion: 3
+    description: e-mail address of admisistrative contact.
+    default: 'support@democompay.net'
+  min_nodes:
+    type: integer
+    description: Minimum number of nodes to keep provisioned.
+    default: 3
+  max_nodes:
+    type: integer
+    description: Maximum number of nodes allowed to be allocated
+    default: 6
+  vm_size_id:
+    type: string
+    description: VM Size ID (use rackspace.list_vm_sizes to discover)
+    default: '2'
+  vm_image_id:
+    type: string
+    description: VM Size ID (use rackspace.list_vm_sizes to discover)
+    default: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
+  server_role:
+    type: string
+    description: Server role to be provisioned on nodes
+    required: true
   cooldown:
     type: integer
-    description: The amount of time to wait while cooling down.
-    position: 4
+    description: The amount of time to wait while cooling down (in minutes).
     default: 30
-
