@@ -5,11 +5,8 @@ description: Add a node to an autoscale group
 enabled: true
 entry_point: 'workflows/asg_add_node.yaml'
 parameters:
-  name:
-    type: string
-    description: Name of new server
-    position: 1
   asg:
     type: string
     description: Autoscale group to add node
     position: 2
+    required: true

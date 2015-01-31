@@ -1,6 +1,12 @@
 ---
   chain:
     -
+      name: generate_new_hostname
+      ref: autoscale.generate_random_name
+      params:
+        count: 2
+      on-success: get_ssh_key
+    -
       name: get_ssh_key
       ref: st2.kv.get
       params:
@@ -40,7 +46,7 @@
       name: create_new_node
       ref: rackspace.create_vm
       params:
-        name: "{{name}}"
+        name: "{{generate_new_hostname.stdout}}"
         flavor_id: "{{get_vm_size_id.result}}"
         image_id: "{{get_vm_image_id.result}}"
         key_material: "{{get_ssh_key.result}}"
@@ -49,7 +55,7 @@
       name: create_ipv4_dns_record
       ref: rackspace.create_dns_record
       params:
-        name: "{{name}}.{{asg}}.{{get_domain.result}}"
+        name: "{{generate_new_hostname.stdout}}.{{asg}}.{{get_domain.result}}"
         zone_id: "{{get_dns_zone_id.result}}"
         type: "A"
         data: "{{create_new_node.result.public_ips[1]}}"
@@ -58,7 +64,7 @@
       name: create_ipv6_dns_record
       ref: rackspace.create_dns_record
       params:
-        name: "{{name}}.{{asg}}.{{get_domain.result}}"
+        name: "{{generate_new_hostname.stdout}}.{{asg}}.{{get_domain.result}}"
         zone_id: "{{get_dns_zone_id.result}}"
         type: "AAAA"
         data: "{{create_new_node.result.public_ips[0]}}"
@@ -92,4 +98,4 @@
         loadbalancer_id: "{{get_loadbalancer_id.result}}"
         ip: "{{create_new_node.result.public_ips[1]}}"
         port: 8080
-  default: get_ssh_key
+  default: generate_new_hostname
