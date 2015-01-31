@@ -9,7 +9,7 @@ parameters:
     type: string
     description: Name of server to destroy
     position: 1
-  group:
+  asg:
     type: string
     description: Autoscale group remove node from
     position: 2
