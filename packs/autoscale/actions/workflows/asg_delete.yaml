@@ -1,82 +1,96 @@
 ---
-  chain:
-    -
-      name: get_loadbalancer_id
-      ref: st2.kv.get
-      params:
-        key: "asg.{{name}}.loadbalancer_id"
-      on-success: delete_loadbalancer
-    -
-      name: delete_loadbalancer
-      ref: rackspace.delete_loadbalancer
-      params:
-        loadbalancer_id: "{{get_loadbalancer_id.result}}"
-      on-success: delete_asg_loadbalancer_key
-      on-failure: get_asg_zone_id
-    -
-      name: delete_asg_loadbalancer_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.loadbalancer_id"
-      on-success: get_asg_zone_id
-    -
-      name: get_asg_zone_id
-      ref: st2.kv.get
-      params:
-        key: "asg.{{name}}.zone_id"
-      on-success: delete_asg_dns_zone
-    -
-      name: delete_asg_dns_zone
-      ref: rackspace.delete_dns_zone
-      params:
-        zone_id: "{{get_asg_zone_id.result}}"
-      on-success: delete_asg_dns_zone_key
-      on-failure: delete_asg_min_node_key
-    -
-      name: delete_asg_dns_zone_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.zone_id"
-      on-success: delete_asg_min_nodes_key
-    -
-      name: delete_asg_min_nodes_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.min_nodes"
-      on-success: delete_asg_max_nodes_key
-    -
-      name: delete_asg_max_nodes_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.max_nodes"
-      on-success: delete_asg_vm_size_id_key
-    -
-      name: delete_asg_vm_size_id_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.vm_size_id"
-      on-success: delete_asg_vm_image_id_key
-    -
-      name: delete_asg_vm_image_id_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.vm_image_id"
-      on-success: delete_asg_domain_key
-    -
-      name: delete_asg_domain_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.domain"
-      on-success: delete_asg_server_role_key
-    -
-      name: delete_asg_server_role_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.server_role"
-      on-success: delete_asg_cooldown_period_key
-    -
-      name: delete_asg_cooldown_period_key
-      ref: st2.kv.delete
-      params:
-        key: "asg.{{name}}.cooldown"
-  default: get_loadbalancer_id
+name: autoscale.asg.delete
+version: "2.0"
+
+workflows:
+  main:
+    description: "Main workflow to delete an Autoscale Group"
+    type: direct
+    input:
+      - name
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      get_loadbalancer_id:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.name}.loadbalancer_id'
+        publish:
+          loadbalancer_id: '{$.get_loadbalancer_id.result}'
+        on-success:
+          - delete_loadbalancer
+      delete_loadbalancer:
+        action: rackspace.delete_loadbalancer
+        input:
+          loadbalancer_id: $.loadbalancer_id
+        on-success:
+          - delete_loadbalancer_key
+      delete_loadbalancer_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.loadbalancer_id'
+        on-success:
+          - get_dns_zone_id
+      get_dns_zone_id:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.name}.dns_zone_id'
+        publish:
+          dns_zone_id: '{$.get_dns_zone_id.result}'
+        on-success:
+          - delete_dns_zone
+      delete_dns_zone:
+        action: rackspace.delete_dns_zone
+        input:
+          zone_id: "{$.dns_zone_id}"
+        on-success:
+          - delete_dns_zone_key
+      delete_dns_zone_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.dns_zone_id'
+        on-success:
+          - delete_min_nodes_key
+      delete_min_nodes_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.min_nodes'
+        on-success:
+          - delete_max_nodes_key
+      delete_max_nodes_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.max_nodes'
+        on-success:
+          - delete_vm_size_id_key
+      delete_vm_size_id_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.vm_size_id'
+        on-success:
+          - delete_vm_image_id_key
+      delete_vm_image_id_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.vm_image_id'
+        on-success:
+          - delete_domain_key
+      delete_domain_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.domain'
+        on-success:
+          - delete_server_role
+      delete_server_role_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.server_role'
+        on-success:
+          - delete_cooldown_key
+      delete_cooldown_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.cooldown'
+
+

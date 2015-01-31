@@ -9,7 +9,7 @@ parameters:
     type: string
     description: Name of new server
     position: 1
-  group:
+  asg:
     type: string
     description: Autoscale group to add node
     position: 2

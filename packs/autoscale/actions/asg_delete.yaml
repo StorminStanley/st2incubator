@@ -1,6 +1,6 @@
 ---
 name: asg.delete
-runner_type: action-chain
+runner_type: mistral-v2
 description: Teardown autoscale group
 enabled: true
 entry_point: 'workflows/asg_delete.yaml'

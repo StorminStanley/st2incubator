@@ -1,38 +1,95 @@
 ---
   chain:
     -
-      name: create_new_node
-      ref: libcloud.create_vm
+      name: get_ssh_key
+      ref: st2.kv.get
       params:
-        name: "{{name}}"
-        size_id: "{{vm_size_id}}"
-        image_id: "{{vm_image_id}}"
-        credentials: rax_compute
-      on-success: create_dns_record
+        key: "ssh_pub_key"
+      on-success: get_loadbalancer_id
     -
-      name: create_dns_record
-      ref: libcloud.create_dns_record
+      name: get_loadbalancer_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.loadbalancer_id"
+      on-success: get_vm_size_id
+    -
+      name: get_vm_size_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.vm_size_id"
+      on-success: get_vm_image_id
+    -
+      name: get_vm_image_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.vm_image_id"
+      on-success: get_dns_zone_id
+    -
+      name: get_dns_zone_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.dns_zone_id"
+      on-success: get_domain
+    -
+      name: get_domain
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.domain"
+      on-success: create_new_node
+    -
+      name: create_new_node
+      ref: rackspace.create_vm
       params:
         name: "{{name}}"
-        domain: "{{domain}}"
+        flavor_id: "{{get_vm_size_id.result}}"
+        image_id: "{{get_vm_image_id.result}}"
+        key_material: "{{get_ssh_key.result}}"
+      on-success: create_ipv4_dns_record
+    -
+      name: create_ipv4_dns_record
+      ref: rackspace.create_dns_record
+      params:
+        name: "{{name}}.{{asg}}.{{get_domain.result}}"
+        zone_id: "{{get_dns_zone_id.result}}"
         type: "A"
-        data: "{{create_new_node.result.public_ips}}"
-        credentials: rax_dns
+        data: "{{create_new_node.result.public_ips[1]}}"
+      on-success: refresh_apt_cache
+    -
+      name: create_ipv6_dns_record
+      ref: rackspace.create_dns_record
+      params:
+        name: "{{name}}.{{asg}}.{{get_domain.result}}"
+        zone_id: "{{get_dns_zone_id.result}}"
+        type: "AAAA"
+        data: "{{create_new_node.result.public_ips[0]}}"
+      on-success: refresh_apt_cache
+    -
+      name: refresh_apt_cache
+      ref: debian.apt_get_update
+      params:
+        hosts: "{{create_new_node.result.public_ips[1]}}"
+      on-success: install_chef
+    -
+      name: install_chef
+      ref: chef.install
+      params:
+        hosts: "{{create_new_node.result.public_ips[1]}}"
       on-success: provision_node_chef
     -
       name: provision_node_chef
       ref: chef.solo
       params:
-        hostname: "{{name}}.{{domain}}"
+        # Use IP while DNS catches up
+        hosts: "{{create_new_node.result.public_ips[1]}}"
         attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
         recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
+        timeout: 600
       on-success: add_node_loadbalancer
     -
       name: add_node_loadbalancer
       ref: rackspace.add_node_to_loadbalancer
       params:
-        loadbalancer_id: "{{loadbalancer_id}}"
-        ip: "{{create_new_node.result.public_ips}}"
+        loadbalancer_id: "{{get_loadbalancer_id.result}}"
+        ip: "{{create_new_node.result.public_ips[1]}}"
         port: 8080
-  default: create_new_node
-
+  default: get_ssh_key
