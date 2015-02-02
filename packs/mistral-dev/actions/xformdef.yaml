@@ -1,12 +1,11 @@
 ---
-  name: "transform"
-  pack: "st2-mistral"
+  name: "xformdef"
   runner_type: "run-python"
   description: Wrap st2 action in the Mistral workbook or workflow definition with the st2.action proxy. This allows workflow author to write in native Mistral DSL.
   enabled: true
-  entry_point: "transformer.py"
+  entry_point: "xformdef.py"
   parameters:
     definition:
       type: "string"
-      description: "Definition of the Mistral workbook or workflow"
+      description: "Workbook/workflow file or definition."
       required: true
