@@ -8,5 +8,9 @@ parameters:
   asg:
     type: string
     description: Autoscale group to add node
-    position: 2
     required: true
+  number:
+    type: integer
+    description: Number of nodes to create
+    default: 1
+

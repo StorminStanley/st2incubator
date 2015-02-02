@@ -16,8 +16,8 @@ workflows:
       - max_nodes
       - vm_size_id
       - vm_image_id
-      - server_role
       - cooldown
+      - burst_nodes
     task-defaults:
       on-error:
         - fail
@@ -72,6 +72,8 @@ workflows:
         input:
           key: 'asg.{$.name}.min_nodes'
           value: "{$.min_nodes}"
+        publish:
+          nodes_to_provision: range(0,$.min_nodes}.list()
         on-success:
           - store_max_nodes
       store_max_nodes:
@@ -114,3 +116,25 @@ workflows:
         input:
           key: 'asg.{$.name}.server_role'
           value: '{$.server_role}'
+        on-success:
+          - store_burst_nodes
+      store_burst_nodes:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.burst_nodes'
+          value: '{$.burst_nodes}'
+        on-success:
+          - store_burst_delay
+      store_burst_delay:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.burst_delay'
+          value: '{$.burst_delay}'
+        on-success:
+          - create_servers
+      create_servers:
+        action: autoscale.asg.add_node
+        with-items: i in $.nodes_to_provision
+        input:
+          asg: '{$.name}'
+

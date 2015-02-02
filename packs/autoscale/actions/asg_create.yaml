@@ -10,9 +10,9 @@ parameters:
     description: Name of new AutoScale Group
     required: true
   port:
-    type: string
+    type: integer
     description: Port for front-end loadbalancer to listen on
-    default: '80'
+    default: 80
   protocol:
     type: string
     description: Protocol to proxy via loadbalancer
@@ -26,13 +26,17 @@ parameters:
     description: e-mail address of admisistrative contact.
     default: 'support@democompay.net'
   min_nodes:
-    type: string
+    type: integer
     description: Minimum number of nodes to keep provisioned.
-    default: '3'
+    default: 3
   max_nodes:
-    type: string
+    type: integer
     description: Maximum number of nodes allowed to be allocated
-    default: '6'
+    default: 20
+  burst_nodes:
+    type: integer
+    description: Number of nodes to burst at a time during auto-scaling
+    default: 5
   vm_size_id:
     type: string
     description: VM Size ID (use rackspace.list_vm_sizes to discover)
@@ -41,11 +45,7 @@ parameters:
     type: string
     description: VM Size ID (use rackspace.list_vm_sizes to discover)
     default: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
-  server_role:
-    type: string
-    description: Server role to be provisioned on nodes
-    required: true
   cooldown:
-    type: string
+    type: integer
     description: The amount of time to wait while cooling down (in minutes).
-    default: '30'
+    default: 30
