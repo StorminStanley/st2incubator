@@ -21,16 +21,20 @@ class MistralDSLTransformer(pythonrunner.Action):
 
         utils._eval_inline_params(spec, action_key, input_key)
 
-        name = spec.get(action_key)
+        action_ref = spec.get(action_key)
 
-        if self.st2client.actions.get_by_ref_or_id(name):
+        if self.st2client.actions.get_by_ref_or_id(action_ref):
             spec[action_key] = 'st2.action'
             spec[input_key] = {
-                'ref': name,
+                'ref': action_ref,
                 'parameters': spec[input_key]
             }
 
     def run(self, definition):
+        if os.path.isfile(definition):
+            with open(definition, 'r') as f:
+                definition = f.read()
+
         spec = yaml.safe_load(definition)
 
         if 'version' not in spec:
