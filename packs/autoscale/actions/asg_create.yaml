@@ -33,10 +33,22 @@ parameters:
     type: integer
     description: Maximum number of nodes allowed to be allocated
     default: 20
-  burst_nodes:
+  expand_by:
     type: integer
-    description: Number of nodes to burst at a time during auto-scaling
+    description: Number of nodes to expand-by at a time during auto-scaling
     default: 5
+  expand_delay:
+    type: integer
+    description: Length of time (in minutes) between autoscale expansion events
+    default: 10
+  deflate_by:
+    type: integer
+    description: Number of nodes to deflate-by at a time during auto-scaling
+    default: 2
+  deflate_delay:
+    type: integer
+    description: Length of time (in minutes) between autoscale deflation events
+    default: 30
   vm_size_id:
     type: string
     description: VM Size ID (use rackspace.list_vm_sizes to discover)
@@ -45,7 +57,3 @@ parameters:
     type: string
     description: VM Size ID (use rackspace.list_vm_sizes to discover)
     default: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
-  cooldown:
-    type: integer
-    description: The amount of time to wait while cooling down (in minutes).
-    default: 30

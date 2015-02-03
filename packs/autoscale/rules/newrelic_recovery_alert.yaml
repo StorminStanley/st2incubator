@@ -1,0 +1,17 @@
+---
+  name: 'autoscale.newrelic.recovery_alert'
+  description: 'Trigger automatic cleanup on New Relic failure'
+  enabled: true
+  trigger:
+    type: 'newrelic.ServerNormalTrigger'
+  criteria:
+    trigger.alert.alert_policy_name:
+      type: eq
+      pattern: 'Default server alert policy'
+    trigger.alert.long_description:
+      type: contains
+      pattern: 'Alert ended'
+  action:
+    ref: autoscale.asg.deflate
+    parameters:
+      asg: 'rsdemo'

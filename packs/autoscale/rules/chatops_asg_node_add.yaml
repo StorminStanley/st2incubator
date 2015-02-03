@@ -1,0 +1,15 @@
+---
+  name: 'autoscale.chatops.asg.node_add'
+  description: 'Delete AutoScale Group'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!asg node add'
+  action:
+    ref: autoscale.chatops.asg.node_add
+    parameters:
+      message: '{{trigger.text}}'
+      channel: '{{trigger.channel.room}}'

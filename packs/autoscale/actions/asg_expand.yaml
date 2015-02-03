@@ -1,0 +1,15 @@
+---
+name: asg.expand
+runner_type: mistral-v2
+description: "Safety wheels for ASG logic. Used by sensors to provision nodes in times of need."
+enabled: true
+entry_point: 'workflows/asg_expand.yaml'
+parameters:
+  asg:
+    type: string
+    description: Autoscale group to add node
+    required: true
+  force:
+    type: boolean
+    description: Force an expand event, regardless of expansion limits
+    default: false

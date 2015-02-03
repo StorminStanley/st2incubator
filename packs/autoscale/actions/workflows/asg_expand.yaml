@@ -1,0 +1,66 @@
+---
+name: autoscale.asg.expand
+version: '2.0'
+
+workflows:
+  main:
+    description: Guard rails to expand the number of new nodes in an autoscale group
+    type: direct
+    input:
+      - asg
+      - force
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      get_current_epoch:
+        action: st2.epoch
+        publish:
+          current_epoch: $.get_current_epoch.result
+        on-success:
+          - get_last_expand_timestamp
+      get_last_expand_timestamp:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.last_expand_timestamp'
+        publish:
+          last_expand_timestamp: int($.get_last_expand_timestamp.result)
+        on-success:
+          - get_expand_delay
+      get_expand_delay:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.expand_delay'
+        publish:
+          expand_delay: int($.get_expand_delay.result)
+        on-success:
+          - get_expand_by
+      get_expand_by:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.expand_by'
+        publish:
+          expand_by: int($.get_expand_by.result)
+        on-success:
+          - eval_provision
+      eval_provision:
+        action: core.local
+        input:
+          cmd: 'echo faking out noop'
+        publish:
+          should_provision: ($.last_expand_timestamp + ($.expand_delay * 60)) < $.current_epoch
+          nodes_to_provision: range(0, $.expand_by).list()
+        on-success:
+          - provision_new_nodes: $.should_provision # cannot 'or' here... failure
+      provision_new_nodes:
+        action: autoscale.asg.add_node # This does not work, fails
+        with-items: i in $.nodes_to_provision
+        input:
+          asg: $.asg
+        on-success:
+          - record_updated_timestamp
+      record_updated_timestamp:
+        action: st2.kv.put
+        input:
+          key: 'asg.{$.asg}.last_expand_timestamp'
+          value: $.current_epoch

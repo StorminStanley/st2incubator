@@ -82,15 +82,37 @@ workflows:
           key: 'asg.{$.name}.domain'
         on-success:
           - delete_server_role
-      delete_server_role_key:
+      delete_expand_by_key:
         action: st2.kv.delete
         input:
-          key: 'asg.{$.name}.server_role'
+          key: 'asg.{$.name}.expand_by'
         on-success:
-          - delete_cooldown_key
-      delete_cooldown_key:
+          - delete_expand_delay_key
+      delete_expand_delay_key:
         action: st2.kv.delete
         input:
-          key: 'asg.{$.name}.cooldown'
-
-
+          key: 'asg.{$.name}.expand_delay'
+        on-success:
+          - delete_last_expand_timestamp
+      delete_last_expand_timestamp:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.last_expand_timestamp'
+        on-success:
+          - delete_last_deflate_timestamp
+      delete_deflate_by_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.deflate_by'
+        on-success:
+          - delete_deflate_delay_key
+      delete_deflate_delay_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.deflate_delay'
+        on-success:
+          - delete_last_deflate_timestamp
+      delete_last_deflate_timestamp:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.last_deflate_timestamp'

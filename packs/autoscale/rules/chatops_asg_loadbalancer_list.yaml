@@ -1,0 +1,15 @@
+---
+  name: 'autoscale.chatops.asg.loadbalancer_list'
+  description: 'Delete AutoScale Group'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: eq
+      pattern: '!asg loadbalancer list'
+  action:
+    ref: autoscale.chatops.asg.loadbalancer_list
+    parameters:
+      message: '{{trigger.text}}'
+      channel: '{{trigger.channel.room}}'

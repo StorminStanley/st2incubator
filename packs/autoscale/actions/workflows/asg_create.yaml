@@ -16,18 +16,26 @@ workflows:
       - max_nodes
       - vm_size_id
       - vm_image_id
-      - cooldown
-      - burst_nodes
+      - expand_by
+      - expand_delay
+      - deflate_by
+      - deflate_delay
     task-defaults:
       on-error:
         - fail
     tasks:
+      get_current_epoch:
+        action: st2.epoch
+        publish:
+          current_epoch: $.get_current_epoch.result
+        on-success:
+          - create_loadbalancer
       create_loadbalancer:
         action: rackspace.create_loadbalancer
         input:
           name: 'asg_{$.name}_lb'
-          port: $.port
-          protocol: $.protocol
+          port: '{$.port}'
+          protocol: '{$.protocol}'
         publish:
           loadbalancer_id: "{$.create_loadbalancer.result.id}"
           loadbalancer_ipv4: "{$.create_loadbalancer.result.ipv4_public}"
@@ -103,33 +111,47 @@ workflows:
           key: 'asg.{$.name}.vm_image_id'
           value: "{$.vm_image_id}"
         on-success:
-          - store_cooldown_period
-      store_cooldown_period:
+          - store_expand_by_nodes
+      store_expand_by_nodes:
         action: st2.kv.set
         input:
-          key: 'asg.{$.name}.cooldown'
-          value: "{$.cooldown}"
+          key: 'asg.{$.name}.expand_by'
+          value: '{$.expand_by}'
         on-success:
-          - store_server_role
-      store_server_role:
+          - store_expand_delay
+      store_expand_delay:
         action: st2.kv.set
         input:
-          key: 'asg.{$.name}.server_role'
-          value: '{$.server_role}'
+          key: 'asg.{$.name}.expand_delay'
+          value: '{$.expand_delay}'
         on-success:
-          - store_burst_nodes
-      store_burst_nodes:
+          - store_last_expand_timestamp
+      store_last_expand_timestamp:
         action: st2.kv.set
         input:
-          key: 'asg.{$.name}.burst_nodes'
-          value: '{$.burst_nodes}'
+          key: 'asg.{$.name}.last_expand_timestamp'
+          value: '{$.current_epoch}'
         on-success:
-          - store_burst_delay
-      store_burst_delay:
+          - store_deflate_by_nodes
+      store_deflate_by_nodes:
         action: st2.kv.set
         input:
-          key: 'asg.{$.name}.burst_delay'
-          value: '{$.burst_delay}'
+          key: 'asg.{$.name}.deflate_by'
+          value: '{$.deflate_by}'
+        on-success:
+          - store_deflate_delay
+      store_deflate_delay:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.deflate_delay'
+          value: '{$.deflate_delay}'
+        on-success:
+          - store_last_deflate_timestamp
+      store_last_deflate_timestamp:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.last_deflate_timestamp'
+          value: '{$.current_epoch}'
         on-success:
           - create_servers
       create_servers:
@@ -137,4 +159,3 @@ workflows:
         with-items: i in $.nodes_to_provision
         input:
           asg: '{$.name}'
-

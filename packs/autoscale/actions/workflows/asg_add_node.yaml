@@ -20,6 +20,8 @@ workflows:
           - get_ssh_key
       get_ssh_key:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'ssh_pub_key'
         publish:
@@ -28,6 +30,8 @@ workflows:
           - get_loadbalancer_id
       get_loadbalancer_id:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'asg.{$.asg}.loadbalancer_id'
         publish:
@@ -36,6 +40,8 @@ workflows:
           - get_vm_size_id
       get_vm_size_id:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'asg.{$.act}.vm_size_id'
         publish:
@@ -44,6 +50,8 @@ workflows:
           - get_vm_image_id
       get_vm_image_id:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'asg.{$.asg}.vm_image_id'
         publish:
@@ -52,6 +60,8 @@ workflows:
           - get_dns_zone_id
       get_dns_zone_id:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'asg.{$.asg}.dns_zone_id'
         publish:
@@ -60,6 +70,8 @@ workflows:
           - get_domain
       get_domain:
         action: st2.kv.get
+        policies:
+          wait-before: 1
         input:
           key: 'asg.{$.asg}.domain'
         publish:
@@ -68,6 +80,8 @@ workflows:
           - create_new_node
       create_new_node:
         action: rackspace.create_vm
+        policies:
+          wait-before: 1
         input:
           name: $.hostname
           flavor_id: $.vm_size_id
@@ -78,9 +92,10 @@ workflows:
           ipv6_addresss: '{$.create_new_node.result.public_ips[0]}'
         on-success:
           - setup_ipv4_dns
-          - setup_ipv6_dns
       setup_ipv4_dns:
         action: rackspace.create_dns_record
+        policies:
+          wait-before: 1
         input:
           name: '{$.hostname}.{$.asg}.{$.domain}'
           zone_id: $.zone_id
@@ -88,25 +103,31 @@ workflows:
           data: $.ipv4_address
         on-success:
           - refresh_apt_cache
-      create_ipv6_dns:
-        action: rackspace.create_dns_record
-        input:
-          name: '{$.hostname}.{$.asg}.{$.domain}'
-          zone_id: $.zone_id
-          type: 'AAAA'
-          data: $.ipv6_address
-        on-success:
-          - refresh_apt_cache
+#      create_ipv6_dns:
+#        action: rackspace.create_dns_record
+#        input:
+#          name: '{$.hostname}.{$.asg}.{$.domain}'
+#          zone_id: $.zone_id
+#          type: 'AAAA'
+#          data: $.ipv6_address
+#        on-success:
+#          - refresh_apt_cache
       refresh_apt_cache:
         action: debian.apt_get_update hosts=$.ipv4_address
+        policies:
+          wait-before: 10
         on-success:
           - install_chef
       install_chef:
         action: chef.install hosts=$.ipv4_address
+        policies:
+          wait-before: 1
         on-success:
           - provision_node
       provision_node:
         action: chef.solo
+        policies:
+          wait-before: 1
         input:
           hosts: $.ipv4_address
           attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
@@ -114,16 +135,17 @@ workflows:
           timeout: 600
         on-success:
           - add_ipv4_loadbalancer
-          - add_ipv6_loadbalancer
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
+        policies:
+          wait-before: 1
         input:
           loadbalancer_id: $.loadbalancer_id
           ip: $.ipv4_address
           port: 8080
-      add_ipv6_loadbalancer:
-        action: rackspace.add_node_to_loadbalancer
-        input:
-          loadbalancer_id: $.loadbalancer_id
-          ip: $.ipv6_address
-          port: 8080
+#      add_ipv6_loadbalancer:
+#        action: rackspace.add_node_to_loadbalancer
+#        input:
+#          loadbalancer_id: $.loadbalancer_id
+#          ip: $.ipv6_address
+#          port: 8080

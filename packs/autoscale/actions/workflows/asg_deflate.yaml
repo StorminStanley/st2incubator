@@ -1,0 +1,50 @@
+---
+name: autoscale.asg.deflate
+version: '2.0'
+
+workflows:
+  main:
+    description: Guard rails to deflate the number of new nodes in an autoscale group
+    type: direct
+    input:
+      - asg
+      - force
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      get_current_epoch:
+        action: st2.epoch
+        publish:
+          current_epoch: $.get_current_epoch.result
+      get_last_deflate_timestamp:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.last_deflate_timestamp'
+        publish:
+          last_deflate_timestamp: int($.get_last_deflate_timestamp.result)
+      get_deflate_delay:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.deflate_delay'
+        publish:
+          deflate_delay: int($.get_deflate_delay.result)
+      get_deflate_by:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.deflate_by'
+        publish:
+          deflate_by: int($.get_deflate_by.result)
+        on-success:
+          - destroy_new_nodes: $.force or
+              (($.last_deflate_timestamp + ($.deflate_delay * 60)) < $.current_epoch)
+      destroy_nodes:
+        action: autoscale.asg.create_new_nodes
+        input:
+          asg: $.asg
+          number: $.deflate_by
+      record_updated_timestamp:
+        action: st2.kv.put
+        input:
+          key: 'asg.{$.asg}.last_deflate_timestamp'
+          value: $.current_epoch

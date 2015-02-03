@@ -1,0 +1,19 @@
+---
+name: eval_event
+runner_type: run-python
+description: Calculate whether to proceed with an autoscale event
+enabled: true
+entry_point: 'shell/eval_event.py'
+parameters:
+  current_time:
+    type: integer
+    description: Current time (epoch)
+    required: true
+  last_event:
+    type: integer
+    description: Last time expanded (epoch)
+    required: true
+  delay:
+    type: integer
+    description: Time to delay (minutes)
+    required: true

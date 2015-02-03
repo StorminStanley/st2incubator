@@ -1,0 +1,15 @@
+---
+  name: 'chatops-autoscale.asg.create'
+  description: 'Create a new ASG via ChatOps'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!asg new'
+  action:
+    ref: autoscale.chatops.asg.create
+    parameters:
+      message: '{{trigger.text}}'
+      channel: '{{trigger.channel.room}}'

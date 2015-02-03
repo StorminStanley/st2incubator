@@ -1,0 +1,15 @@
+---
+  name: 'autoscale.chatopn.asg.delete'
+  description: 'Delete AutoScale Group'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!asg delete'
+  action:
+    ref: autoscale.chatops.asg.delete
+    parameters:
+      message: '{{trigger.text}}'
+      channel: '{{trigger.channel.room}}'

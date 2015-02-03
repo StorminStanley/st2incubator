@@ -1,7 +1,7 @@
 ---
-name: asg.add_node
-runner_type: action-chain
-description: Add a node to an autoscale group
+name: simulate_failure
+runner_type: run-local
+description: Simulate failure 
 enabled: true
 entry_point: 'workflows/asg_add_node.yaml'
 parameters:
