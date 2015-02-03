@@ -24,11 +24,6 @@ workflows:
       on-error:
         - fail
     tasks:
-      chatops_report:
-        action: slack.post_message
-        input:
-          message: '{$.chatops_status}'
-          channel: '#bot-testing'
       get_current_epoch:
         action: st2.epoch
         publish:
@@ -45,10 +40,8 @@ workflows:
           loadbalancer_id: "{$.create_loadbalancer.result.id}"
           loadbalancer_ipv4: "{$.create_loadbalancer.result.ipv4_public}"
           loadbalancer_ipv6: "{$.create_loadbalancer.result.ipv6_public}"
-          chatops_status: '[ASG {$.name}]: Created new loadbalancer for autoscale group located at {$.loadbalancer_ipv4}'
         on-success:
           - store_loadbalancer_id
-          - chatops_report
       store_loadbalancer_id:
         action: st2.kv.set
         input:
@@ -80,10 +73,7 @@ workflows:
           type: 'A'
           name: 'lb.{$.name}.{$.domain}'
           data: '{$.loadbalancer_ipv4}'
-        publish:
-          chatops_status: '[ASG {$.name}]: Added DNS for lb.{$.name}.{$.domain} at {$.loadbalancer_ipv4}'
         on-success:
-          - chatops_report
           - store_min_nodes
       store_min_nodes:
         action: st2.kv.set
@@ -91,7 +81,7 @@ workflows:
           key: 'asg.{$.name}.min_nodes'
           value: "{$.min_nodes}"
         publish:
-          nodes_to_provision: range(0,$.min_nodes}.list()
+          nodes_to_provision: range(0,$.min_nodes).list()
         on-success:
           - store_max_nodes
       store_max_nodes:
@@ -162,10 +152,10 @@ workflows:
         input:
           key: 'asg.{$.name}.last_deflate_timestamp'
           value: '{$.current_epoch}'
-        on-success:
-          - create_servers
-      create_servers:
-        action: autoscale.asg.add_node
-        with-items: i in $.nodes_to_provision
-        input:
-          asg: '{$.name}'
+#        on-success:
+#          - create_servers
+#      create_servers:
+#        action: autoscale.asg.add_node
+#        with-items: i in $.nodes_to_provision
+#        input:
+#          asg: '{$.name}'

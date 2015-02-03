@@ -1,9 +1,9 @@
 ---
-name: autoscale.asg.create
+name: autoscale.asg.add_node
 version: '2.0'
 
 workflows:
-  main:
+  add_node:
     description: Add nodes to an autoscale group
     type: direct
     input:
@@ -14,17 +14,11 @@ workflows:
       on-error:
         - fail
     tasks:
-      chatops_report:
-        action: slack.post_message
-        input:
-          message: '{$.chatops_status}'
       generate_new_hostname:
         action: autoscale.generate_random_name count=2
         publish:
           hostname: '{$.generate_new_hostname.stdout}'
-          chatops_status: '[ASG: {$.asg}] Generating new host {$.generate_new_hostname.stdout}...'
         on-success:
-          - chatops_report
           - get_ssh_key
       get_ssh_key:
         action: st2.kv.get
@@ -51,7 +45,7 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.act}.vm_size_id'
+          key: 'asg.{$.asg}.vm_size_id'
         publish:
           vm_size_id: '{$.get_vm_size_id.result}'
         on-success:
@@ -95,12 +89,12 @@ workflows:
           flavor_id: $.vm_size_id
           image_id: $.vm_image_id
           key_material: $.ssh_pub_key
+          metadata:
+            asg: $.asg
         publish:
-          ipv4_addresss: '{$.create_new_node.result.public_ips[1]}'
-          ipv6_addresss: '{$.create_new_node.result.public_ips[0]}'
-          chatops_status: '[ASG: {$.asg}: Successfully created {$.hostname} at ${.ipv4_address}'
+          ipv4_address: '{$.create_new_node.result.public_ips[1]}'
+          ipv6_address: '{$.create_new_node.result.public_ips[0]}'
         on-success:
-          - chatops_report
           - setup_ipv4_dns
       setup_ipv4_dns:
         action: rackspace.create_dns_record
@@ -108,35 +102,28 @@ workflows:
           wait-before: 1
         input:
           name: '{$.hostname}.{$.asg}.{$.domain}'
-          zone_id: $.zone_id
+          zone_id: $.dns_zone_id
           type: 'A'
           data: $.ipv4_address
         on-success:
           - refresh_apt_cache
-#      create_ipv6_dns:
-#        action: rackspace.create_dns_record
-#        input:
-#          name: '{$.hostname}.{$.asg}.{$.domain}'
-#          zone_id: $.zone_id
-#          type: 'AAAA'
-#          data: $.ipv6_address
-#        on-success:
-#          - refresh_apt_cache
       refresh_apt_cache:
-        action: debian.apt_get_update hosts=$.ipv4_address
+        action: debian.apt_get_update
+        input:
+          hosts: $.ipv4_address
         policies:
-          wait-before: 10
+          wait-before: 5
         on-success:
           - install_chef
       install_chef:
-        action: chef.install hosts=$.ipv4_address
+        action: chef.install
+        input:
+          hosts: $.ipv4_address
         policies:
           wait-before: 1
         publish:
-          - chatops_status: '[ASG: {$.asg}]: Preparing to provision {$.hostname}....'
         on-success:
           - provision_node
-          - chatops_report
       provision_node:
         action: chef.solo
         policies:
@@ -151,18 +138,8 @@ workflows:
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
         policies:
-          wait-before: 1
+          wait-before: 4
         input:
-          loadbalancer_id: $.loadbalancer_id
+          loadbalancer_id: '{$.loadbalancer_id}'
           ip: $.ipv4_address
-          port: 8080
-        publish:
-          - chatops_status: '[ASG: {$.asg}]: {$.hostname} is successfully provisioned and added to loadbalancer {$.loadbalancer_id}'
-        on-success:
-          - chatops_report
-#      add_ipv6_loadbalancer:
-#        action: rackspace.add_node_to_loadbalancer
-#        input:
-#          loadbalancer_id: $.loadbalancer_id
-#          ip: $.ipv6_address
-#          port: 8080
+          port: '8080'
