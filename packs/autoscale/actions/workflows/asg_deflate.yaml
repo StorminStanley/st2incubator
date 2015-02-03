@@ -13,6 +13,11 @@ workflows:
       on-error:
         - fail
     tasks:
+      chatops_report:
+        action: slack.post_message
+        input:
+          message: '{$.chatops_status}'
+          channel: '#bot-testing'
       get_current_epoch:
         action: st2.epoch
         publish:
