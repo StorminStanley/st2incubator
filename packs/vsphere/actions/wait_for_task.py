@@ -10,7 +10,7 @@ class WaitTask(BaseAction):
 
     def run(self, task_id):
         # convert ids to stubs
-        task = inventory.get_task(self.service_instance, moid=task_id)
+        task = inventory.get_task(self.si_content, moid=task_id)
         while task.info.state == vim.TaskInfo.State.running:
             eventlet.sleep(1)
         result, error = None, None

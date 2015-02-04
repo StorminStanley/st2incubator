@@ -8,10 +8,10 @@ class VMCreateFromTemplate(BaseAction):
 
     def run(self, name, template_id, datacenter_id, resourcepool_id, datastore_id):
         # convert ids to stubs
-        template = inventory.get_virtualmachine(self.service_instance, template_id)
-        datacenter = inventory.get_datacenter(self.service_instance, datacenter_id)
-        resourcepool = inventory.get_resource_pool(self.service_instance, resourcepool_id)
-        datastore = inventory.get_datastore(self.service_instance, datastore_id)
+        template = inventory.get_virtualmachine(self.si_content, template_id)
+        datacenter = inventory.get_datacenter(self.si_content, datacenter_id)
+        resourcepool = inventory.get_resource_pool(self.si_content, resourcepool_id)
+        datastore = inventory.get_datastore(self.si_content, datastore_id)
         # prep objects for consumption
         target_folder = datacenter.vmFolder
 

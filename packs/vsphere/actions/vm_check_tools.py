@@ -10,7 +10,7 @@ class VMCheckTools(BaseAction):
 
     def run(self, vm_id):
         # convert ids to stubs
-        vm = inventory.get_virtualmachine(self.service_instance, moid=vm_id)
+        vm = inventory.get_virtualmachine(self.si_content, moid=vm_id)
 
         # To correctly understand tools status need to consult 3 properties
         # 'powerState' 'ttoolsVersionStatus2' and 'toolsRunningStatus'

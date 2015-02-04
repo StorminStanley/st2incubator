@@ -11,8 +11,6 @@ class BaseAction(Action):
         super(BaseAction, self).__init__(config)
         self.si = self._connect()
         self.si_content = self.si.RetrieveContent()
-        #service_instance is actually content here. Leaving for legacy.
-        self.service_instance = self.si.RetrieveContent()
 
     def _connect(self):
         si = connect.SmartConnect(host=self.config['host'], port=self.config['port'],

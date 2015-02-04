@@ -6,7 +6,7 @@ class VMDestroy(BaseAction):
 
     def run(self, vm_id):
         # convert ids to stubs
-        vm = inventory.get_virtualmachine(self.service_instance, moid=vm_id)
+        vm = inventory.get_virtualmachine(self.si_content, moid=vm_id)
 
         task = vm.Destroy_Task()
         success = self._wait_for_task(task)

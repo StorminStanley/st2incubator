@@ -7,4 +7,4 @@ from vmwarelib.actions import BaseAction
 class HellowVsphere(BaseAction):
 
     def run(self):
-        return self.service_instance.about.instanceUuid
+        return self.si_content.about.instanceUuid

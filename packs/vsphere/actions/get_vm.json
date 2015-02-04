@@ -63,7 +63,8 @@
         "no_recursion": {
             "type": "string",
             "description": "Specifies, whether or not to disable the recursive behavior or the command. By default it is False",
-            "required": false
+            "required": false,
+            "default": false
         }
     }
 }
