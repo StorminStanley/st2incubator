@@ -1,0 +1,64 @@
+{
+    "name": "get_vm",
+    "runner_type": "run-python",
+    "description": "Retrieves the virtual machines on a vCenter Server system.",
+    "enabled": true,
+    "entry_point": "get_vm.py",
+    "parameters": {
+        "name": {
+            "type": "string",
+            "description": "Coma-separated names of Virtual Machines to retrieve.",
+            "required": false
+        },
+        "datastore": {
+            "type": "string",
+            "description": "Coma-separated moId's of the Datastores accociated with searched VMs.",
+            "required": false
+        },
+        "datastore_cluster": {
+            "type": "string",
+            "description": "Coma-separated moId's of the Datastore Clusters accociated with searched VMs.",
+            "required": false
+        },
+        "resource_pool": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere ResourcePool objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "vapp": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere VApp objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "host": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere Host objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "folder": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere folder objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "cluster": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere compute cluster objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "datacenter": {
+            "type": "string",
+            "description": "Coma-separated moId's of the vSphere datacenter objects, where VMs are going to be searched.",
+            "required": false
+        },
+        "virtual_switch": {
+            "type": "string",
+            "description": "Coma-separated moId's of the Virtual Switches, to which the searched VMs' network adapters are attached.",
+            "required": false
+        },
+        "no_recursion": {
+            "type": "string",
+            "description": "Specifies, whether or not to disable the recursive behavior or the command. By default it is False",
+            "required": false
+        }
+    }
+}
