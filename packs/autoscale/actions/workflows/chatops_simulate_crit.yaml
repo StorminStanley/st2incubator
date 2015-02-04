@@ -1,23 +1,23 @@
 ---
-name: autoscale.simulate_crit
+name: autoscale.chatops.simulate_crit
 version: "2.0"
 
 workflows:
   main:
     description: 'Simulate a critical event via New Relic API'
     type: direct
+    input:
+      - channel
     task-defaults:
       on-error:
         - fail
     tasks:
+      send_webhook:
+        action: autoscale.simulate_crit
+        on-success:
+          - chatops_report
       chatops_report:
         action: slack.post_message
         input:
-          message: '{$.chatops_status}'
-          channel: '#bot-testing'
-      send_webhook:
-        action: autoscale.simulate_crit
-        publish:
-          chatops_status: 'Sending simulated New Relic alert to API endpoint...'
-        on-success:
-          - chatops_report
+          message: "Sent NewRelic Critical WebHook to StackStorm..."
+          channel: '{$.channel}'

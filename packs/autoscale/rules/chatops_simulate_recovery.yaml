@@ -1,5 +1,5 @@
 ---
-  name: 'autoscale.chatops.simulate_crit'
+  name: 'autoscale.chatops.simulate_recovery'
   description: 'Simulate New Relic event via ChatOps'
   enabled: true
   trigger:
@@ -7,8 +7,8 @@
   criteria:
     trigger.text:
       type: eq
-      pattern: '!asg simulate crit'
+      pattern: '!asg simulate recovery'
   action:
-    ref: autoscale.chatops.simulate_crit
+    ref: autoscale.chatops.simulate_recovery
     parameters:
       channel: '{{trigger.channel.room}}'

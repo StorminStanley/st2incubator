@@ -14,12 +14,26 @@ workflows:
       on-error:
         - fail
     tasks:
+      get_chatops_channel:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.channel'
+        output:
+          channel: "{$.get_chatops_channel.result}"
+        on-success:
+          - generate_new_hostname
       generate_new_hostname:
         action: autoscale.generate_random_name count=2
         publish:
           hostname: '{$.generate_new_hostname.stdout}'
         on-success:
           - get_ssh_key
+          - chatops_notify_create_node
+      chatops_notify_create_node:
+        action: slack.post_message
+        input:
+          message: "OK! Spinning up additional node {$.hostname} for ASG ${.asg}"
+          channel: '{$.channel}'
       get_ssh_key:
         action: st2.kv.get
         policies:
@@ -96,6 +110,12 @@ workflows:
           ipv6_address: '{$.create_new_node.result.public_ips[0]}'
         on-success:
           - setup_ipv4_dns
+          - chatops_success_node
+      chatops_success_node:
+        action: slack.post_message
+        input:
+          message: "Mission accomplished! Created new node {$.hostname}!"
+          channel: '{$.channel}'
       setup_ipv4_dns:
         action: rackspace.create_dns_record
         policies:
@@ -107,6 +127,12 @@ workflows:
           data: $.ipv4_address
         on-success:
           - refresh_apt_cache
+          - chatops_success_dns
+      chatops_success_dns:
+        action: slack.post_message
+        input:
+          message: "DNS now setup for ${.hostname}.${.asg}.{$.domain}"
+          channel: '{$.channel}'
       refresh_apt_cache:
         action: debian.apt_get_update
         input:
@@ -124,6 +150,12 @@ workflows:
         publish:
         on-success:
           - provision_node
+          - chatops_provision_node
+      chatops_provision_node:
+        action: slack.post_message
+        input:
+          message: "Starting Chef Provisioner for ${.hostname}..."
+          channel: '{$.channel}'
       provision_node:
         action: chef.solo
         policies:
@@ -135,6 +167,12 @@ workflows:
           timeout: 600
         on-success:
           - add_ipv4_loadbalancer
+          - chatops_success_chef
+      chatops_success_chef:
+        action: slack.post_message
+        input:
+          message: 'Node {$.hostname} successfully provisioned! Things are going so well!'
+          channel: '{$.channel}'
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
         policies:
@@ -143,3 +181,10 @@ workflows:
           loadbalancer_id: '{$.loadbalancer_id}'
           ip: $.ipv4_address
           port: '8080'
+        on-success:
+          - chatops_lb_add
+      chatops_lb_add:
+        action: slack.post_message
+        input:
+          message: 'Added ${.hostname} to lb.{$.asg}.{$.domain}.'
+          channel: '{$.channel}'

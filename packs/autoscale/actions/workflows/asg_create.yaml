@@ -20,10 +20,21 @@ workflows:
       - expand_delay
       - deflate_by
       - deflate_delay
+      - channel
     task-defaults:
       on-error:
         - fail
     tasks:
+      set_chatops_channel_key:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.channel'
+          value: '{$.channel}'
+      chatops_notify_begin:
+        action: slack.post_message
+        input:
+          message: 'Starting to assemble new autoscale group: {$.name}... standby...'
+          channel: '{$.channel}'
       get_current_epoch:
         action: st2.epoch
         publish:
@@ -42,6 +53,12 @@ workflows:
           loadbalancer_ipv6: "{$.create_loadbalancer.result.ipv6_public}"
         on-success:
           - store_loadbalancer_id
+          - chatops_successful_lb
+      chatops_successful_lb:
+        action: slack.post_message
+        input:
+          message: "Great Success! Just finished setting up Load Balancer for ${.name}. Working the on next bits..."
+          channel: '{$.channel}'
       store_loadbalancer_id:
         action: st2.kv.set
         input:
@@ -59,6 +76,12 @@ workflows:
           dns_zone_id: "{$.create_dns_zone.result.id}"
         on-success:
           - store_dns_zone_id
+          - chatops_successful_dns
+      chatops_successful_dns:
+        action: slack.post_message
+        input:
+          message: "Fantabulous! DNS ready to rock and roll for {$.name}.{$.domain}"
+          channel: '{$.channel}'
       store_dns_zone_id:
         action: st2.kv.set
         input:
@@ -75,6 +98,12 @@ workflows:
           data: '{$.loadbalancer_ipv4}'
         on-success:
           - store_min_nodes
+          - chatops_lb_ip
+      chatops_lb_ip:
+        action: slack.post_message
+        input:
+          message: "Loadbalancer now ready to be accessed at lb.{$.name}.{$.domain} [{$.loadbalancer_ipv4}]"
+          channel: '{$.channel}'
       store_min_nodes:
         action: st2.kv.set
         input:
@@ -84,6 +113,7 @@ workflows:
           nodes_to_provision: range(0,$.min_nodes).list()
         on-success:
           - store_max_nodes
+          - chatops_success_key
       store_max_nodes:
         action: st2.kv.set
         input:
@@ -91,6 +121,7 @@ workflows:
           value: "{$.max_nodes}"
         on-success:
           - store_domain
+          - chatops_success_key
       store_domain:
         action: st2.kv.set
         input:
@@ -98,6 +129,7 @@ workflows:
           value: "{$.domain}"
         on-success:
           - store_vm_size_id
+          - chatops_success_key
       store_vm_size_id:
         action: st2.kv.set
         input:
@@ -105,6 +137,7 @@ workflows:
           value: "{$.vm_size_id}"
         on-success:
           - store_vm_image_id
+          - chatops_success_key
       store_vm_image_id:
         action: st2.kv.set
         input:
@@ -112,6 +145,7 @@ workflows:
           value: "{$.vm_image_id}"
         on-success:
           - store_expand_by_nodes
+          - chatops_success_key
       store_expand_by_nodes:
         action: st2.kv.set
         input:
@@ -119,6 +153,7 @@ workflows:
           value: '{$.expand_by}'
         on-success:
           - store_expand_delay
+          - chatops_success_key
       store_expand_delay:
         action: st2.kv.set
         input:
@@ -126,6 +161,7 @@ workflows:
           value: '{$.expand_delay}'
         on-success:
           - store_last_expand_timestamp
+          - chatops_success_key
       store_last_expand_timestamp:
         action: st2.kv.set
         input:
@@ -133,6 +169,7 @@ workflows:
           value: '{$.current_epoch}'
         on-success:
           - store_deflate_by_nodes
+          - chatops_success_key
       store_deflate_by_nodes:
         action: st2.kv.set
         input:
@@ -140,6 +177,7 @@ workflows:
           value: '{$.deflate_by}'
         on-success:
           - store_deflate_delay
+          - chatops_success_key
       store_deflate_delay:
         action: st2.kv.set
         input:
@@ -147,15 +185,31 @@ workflows:
           value: '{$.deflate_delay}'
         on-success:
           - store_last_deflate_timestamp
+          - chatops_success_key
       store_last_deflate_timestamp:
         action: st2.kv.set
         input:
           key: 'asg.{$.name}.last_deflate_timestamp'
           value: '{$.current_epoch}'
-#        on-success:
-#          - create_servers
-#      create_servers:
-#        action: autoscale.asg.add_node
-#        with-items: i in $.nodes_to_provision
-#        input:
-#          asg: '{$.name}'
+        on-success:
+          - create_servers
+          - chatops_success_key
+      chatops_success_key:
+        action: slack.post_message
+        join: all
+        input:
+          message: "Holy Data Storage, Batman! Just committed to memory all the information about ASG ${.name}"
+          channel: '{$.channel}'
+      create_servers:
+        action: autoscale.asg.add_node
+        with-items: i in $.nodes_to_provision
+        input:
+          asg: '{$.name}'
+        on-success:
+          - chatops_success_all
+      chatops_success_all:
+        action: slack.post_message
+        join: all
+        input:
+          message: "WOOT! ASG {$.name} setup, and a whole mess of nodes have been provisioned. Go and be merry!"
+          channel: '{$.channel}'

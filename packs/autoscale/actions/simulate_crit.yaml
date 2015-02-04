@@ -1,7 +1,7 @@
 ---
 name: simulate_crit
-runner_type: mistral-v2
+runner_type: run-local
 description: Simulate New Relic Failure Critial Server Alarm
 enabled: true
-entry_point: 'workflows/simulate_crit.yaml'
+entry_point: 'shell/simulate_crit.sh'
 parameters: {}
