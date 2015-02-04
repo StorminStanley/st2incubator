@@ -13,6 +13,19 @@ workflows:
       on-error:
         - fail
     tasks:
+      get_chatops_channel:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.asg}.channel'
+        publish:
+          channel: $.get_chatops_channel.result
+        on-success:
+          - chatops_notify_help
+      chatops_notify_help:
+        action: slack.post_message
+        input:
+          message: 'ASG {$.asg} needs some help, eh? Let me get on that...'
+          channel: '{$.channel}'
       get_current_epoch:
         action: st2.epoch
         publish:

@@ -7,9 +7,8 @@
   criteria:
     trigger.text:
       type: startswith
-      pattern: '!asg delete'
+      pattern: '!asg delete name=rsdemo'
   action:
-    ref: autoscale.chatops.asg.delete
+    ref: autoscale.asg.delete
     parameters:
-      message: '{{trigger.text}}'
-      channel: '{{trigger.channel.room}}'
+      name: 'rsdemo'

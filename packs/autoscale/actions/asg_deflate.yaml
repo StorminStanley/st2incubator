@@ -1,0 +1,15 @@
+---
+name: asg.deflate
+runner_type: mistral-v2
+description: "Safety wheels for ASG logic. Used by sensors to deflate nodes in times of need."
+enabled: true
+entry_point: 'workflows/asg_deflate.yaml'
+parameters:
+  asg:
+    type: string
+    description: Autoscale group to trim nodes
+    required: true
+  force:
+    type: boolean
+    description: Force a deflate event, regardless of expansion limits
+    default: false

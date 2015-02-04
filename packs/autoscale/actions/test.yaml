@@ -1,10 +1,10 @@
 ---
-name: asg.test
+name: test
 runner_type: mistral-v2
-description: Create a new AutoScale Group within StackStorm
+description: testtest
 enabled: true
 entry_point: 'workflows/test.yaml'
 parameters:
-  number:
+  asg:
     type: integer
     required: true

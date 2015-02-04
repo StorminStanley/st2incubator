@@ -7,9 +7,8 @@
   criteria:
     trigger.text:
       type: startswith
-      pattern: '!asg node add'
+      pattern: '!asg node add asg=rsdemo'
   action:
-    ref: autoscale.chatops.asg.node_add
+    ref: autoscale.asg.add_node
     parameters:
-      message: '{{trigger.text}}'
-      channel: '{{trigger.channel.room}}'
+      asg: 'rsdemo'

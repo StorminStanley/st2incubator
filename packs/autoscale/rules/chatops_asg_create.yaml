@@ -6,10 +6,10 @@
     type: 'slack.message'
   criteria:
     trigger.text:
-      type: startswith
-      pattern: '!asg new'
+      type: eq
+      pattern: '!asg create name=rsdemo domain=stackstorm.net'
   action:
-    ref: autoscale.chatops.asg.create
+    ref: autoscale.asg.create
     parameters:
-      message: '{{trigger.text}}'
-      channel: '{{trigger.channel.room}}'
+      name: 'rsdemo'
+      domain: 'stackstorm.net'

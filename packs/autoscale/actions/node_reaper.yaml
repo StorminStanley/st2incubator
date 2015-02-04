@@ -8,7 +8,6 @@ parameters:
   nodes:
     type: object
     description: Entire return object from rackspace.list_vms
-    required: true
   count:
     type: integer
     description: Number of nodes needed for reaping. (0 for all)

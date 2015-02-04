@@ -1,0 +1,10 @@
+---
+class_name: "AutoscaleBalloonManagerSensor"
+entry_point: "balloon_manager_sensor.py"
+description: Autoscale Pulse manager to automatically deflate non-troubled ASGs
+trigger_types:
+  -
+    name: 'deflate'
+    description: 'Pulse trigger emitted when an ASG is eligible for deflation'
+    payload_info:
+      - asg
