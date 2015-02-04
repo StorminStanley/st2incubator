@@ -1,61 +1,61 @@
 {
-    "name": "get_vm",
+    "name": "get_vms",
     "runner_type": "run-python",
     "description": "Retrieves the virtual machines on a vCenter Server system. It computes the union of Virtual Machine sets based on each parameter.",
     "enabled": true,
-    "entry_point": "get_vm.py",
+    "entry_point": "get_vms.py",
     "parameters": {
-        "id": {
+        "ids": {
             "type": "string",
             "description": "Coma-separated ids of Virtual Machines to retrieve.",
             "required": false
         },
-        "name": {
+        "names": {
             "type": "string",
             "description": "Coma-separated names of Virtual Machines to retrieve.",
             "required": false
         },
-        "datastore": {
+        "datastores": {
             "type": "string",
             "description": "Coma-separated moId's of the Datastores accociated with searched VMs.",
             "required": false
         },
-        "datastore_cluster": {
+        "datastore_clusters": {
             "type": "string",
             "description": "Coma-separated moId's of the Datastore Clusters accociated with searched VMs.",
             "required": false
         },
-        "resource_pool": {
+        "resource_pools": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere ResourcePool objects, where VMs are going to be searched.",
             "required": false
         },
-        "vapp": {
+        "vapps": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere VApp objects, where VMs are going to be searched.",
             "required": false
         },
-        "host": {
+        "hosts": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere Host objects, where VMs are going to be searched.",
             "required": false
         },
-        "folder": {
+        "folders": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere folder objects, where VMs are going to be searched.",
             "required": false
         },
-        "cluster": {
+        "clusters": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere compute cluster objects, where VMs are going to be searched.",
             "required": false
         },
-        "datacenter": {
+        "datacenters": {
             "type": "string",
             "description": "Coma-separated moId's of the vSphere datacenter objects, where VMs are going to be searched.",
             "required": false
         },
-        "virtual_switch": {
+        "virtual_switchs": {
             "type": "string",
             "description": "Coma-separated moId's of the Virtual Switches, to which the searched VMs' network adapters are attached.",
             "required": false
