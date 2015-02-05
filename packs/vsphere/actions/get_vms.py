@@ -1,3 +1,5 @@
+from sets import Set
+
 from pyVmomi import vim
 
 from vmwarelib import inventory
@@ -16,11 +18,22 @@ class GetVMs(BaseAction):
         result = []
         moid_to_vm = {}
 
+        #getting vms by their ids
         vms_from_vmids = []
         if ids:
             vm_moids = [moid.strip() for moid in ids.split(',')]
             vms_from_vmids = [vim.VirtualMachine(moid, stub=si._stub) for moid in vm_moids]
-            GetVM.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_vmids)
+            GetVMs.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_vmids)
+
+        #getting vms by their names
+        vms_from_names = []
+        if names:
+            vm_names_set = Set([name.strip() for name in names.split(',')])
+            container = si_content.viewManager.CreateContainerView(si_content.rootFolder, [vim.VirtualMachine], True)
+            for vm in container.view:
+                if vm.name in vm_names_set:
+                    vms_from_names.append(vm)
+            GetVMs.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_names)
 
         #getting vms from datastore objects
         vms_from_datastores = []
@@ -29,7 +42,7 @@ class GetVMs(BaseAction):
             vim_datastores = [vim.Datastore(moid, stub=si._stub) for moid in datastore_moids]
             for ds in vim_datastores:
                 vms_from_datastores.extend(ds.vm)
-            GetVM.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_datastores)
+            GetVMs.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_datastores)
 
         #getting vms from datastore cluster objects
         vms_from_datastore_clusters = []
@@ -39,7 +52,7 @@ class GetVMs(BaseAction):
             for ds_cl in vim_datastore_clusters:
                 for ds in ds_cl.childEntity:
                   vms_from_datastore_clusters.extend(ds.vm)
-            GetVM.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_datastore_clusters)
+            GetVMs.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_datastore_clusters)
 
         #getting vms from virtual switch objects
         vms_from_virtual_switches = []
@@ -49,7 +62,7 @@ class GetVMs(BaseAction):
             for vswitch in vim_virtual_switches:
                 for pg in vswitch.portgroup:
                   vms_from_virtual_switches.extend(pg.vm)
-            GetVM.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_virtual_switches)
+            GetVMs.__add_vm_properties_to_map_from_vm_array(moid_to_vm, vms_from_virtual_switches)
 
         #getting vms from containers (location param)
         vms_from_containers = []
