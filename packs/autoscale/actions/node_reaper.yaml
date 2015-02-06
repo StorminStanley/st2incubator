@@ -1,0 +1,14 @@
+---
+name: node_reaper
+runner_type: run-python
+description: Decides which nodes are eligible for removal and returns array for use in workflows
+enabled: true
+entry_point: 'shell/node_reaper.py'
+parameters:
+  nodes:
+    type: object
+    description: Entire return object from rackspace.list_vms
+  count:
+    type: integer
+    description: Number of nodes needed for reaping. (0 for all)
+    default: 2

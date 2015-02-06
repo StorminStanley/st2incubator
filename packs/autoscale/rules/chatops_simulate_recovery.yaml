@@ -1,0 +1,14 @@
+---
+  name: 'autoscale.chatops.simulate_recovery'
+  description: 'Simulate New Relic event via ChatOps'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: eq
+      pattern: '!asg simulate recovery'
+  action:
+    ref: autoscale.chatops.simulate_recovery
+    parameters:
+      channel: '{{trigger.channel.room}}'

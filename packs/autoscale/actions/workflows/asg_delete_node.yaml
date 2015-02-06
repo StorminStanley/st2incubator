@@ -1,0 +1,113 @@
+---
+name: autoscale.asg.delete_node
+version: '2.0'
+
+workflows:
+  main:
+    description: Delete a node from an Autoscale group
+    input:
+      - asg
+      - name
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      chatops_report:
+        action: slack.post_message
+        input:
+          message: '{$.chatops_status}'
+          channel: '#bot-testing'
+      get_domain:
+        action: st2.kv.get
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.asg}.domain'
+        output:
+          chatops_status: '[ASG {$.asg}]: Deleting {$.name}.{$.asg}.{$.domain}...'
+        publish:
+          domain: $.get_domain.result
+        on-success:
+          - get_node_ip
+          - chatops_report
+      get_node_ip:
+        action: linux.dig
+        policies:
+          wait-before: 1
+        input:
+          nameserver: '8.8.8.8'
+          hostname: '{$.name}.{$.asg}.{$.domain}'
+        publish:
+          ipv4_address: '{$.get_node_ip.result[0]'
+        on-success:
+          - get_loadbalancer_id
+      get_loadbalancer_id:
+        action: st2.kv.get
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.asg}.loadbalancer_id'
+        publish:
+          loadbalancer_id: $.get_loadbalancer_id.result
+        on-success:
+          - get_dns_zone_id
+      get_dns_zone_id:
+        action: st2.kv.get
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.asg}.dns_zone_id'
+        publish:
+          dns_zone_id: $.get_dns_zone_id.result
+        on-success:
+          - get_dns_record_id
+      get_dns_record_id:
+        action: rackspace.find_dns_record_id
+        policies:
+          wait-before: 1
+        input:
+          name: '{$.name}.{$.asg}.{$.domain}'
+        publish:
+          dns_record_id: $.get_dns_record_id.result
+        on-success:
+          - get_vm_id
+      get_vm_id:
+        action: rackspace.find_vm_id
+        policies:
+          wait-before: 1
+        input:
+          name: '{$.name}'
+        publish:
+          vm_id: $.get_vm_id.result
+        on-success:
+          - remove_node_loadbalancer
+      remove_node_loadbalancer:
+        action: rackspace.delete_node_from_loadbalancer
+        policies:
+          wait-before: 1
+        input:
+          loadbalancer_id: $.loadbalancer_id
+          ip: $.ipv4_address
+        output:
+          chatops_status: '[ASG {$.asg}]: Removed {$.name} from loadbalancer...'
+        on-success:
+          - destroy_vm
+          - chatops_report
+      destroy_vm:
+        action: rackspace.delete_vm
+        policies:
+          wait-before: 1
+        input:
+          vm_id: '{$.vm_id}'
+        output:
+          chatops_status: '[ASG {$.asg}]: Destroyed {$.name}...'
+        on-success:
+          - remove_dns_record
+          - chatops_report
+      remove_dns_record:
+        action: rackspace.delete_dns_record
+        policies:
+          wait-before: 1
+        input:
+          record_id: $.dns_record_id
+          zone_id: $.dns_zone_id

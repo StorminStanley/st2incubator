@@ -1,0 +1,7 @@
+---
+name: simulate_recovery
+runner_type: run-local
+description: Simulate New Relic Failure Critial Server Alarm
+enabled: true
+entry_point: 'shell/simulate_recovery.sh'
+parameters: {}

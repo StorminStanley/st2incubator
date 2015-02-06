@@ -1,0 +1,23 @@
+---
+name: autoscale.chatops.simulate_recovery
+version: "2.0"
+
+workflows:
+  main:
+    description: 'Simulate a recovery event via New Relic API'
+    type: direct
+    input:
+      - channel
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      send_webhook:
+        action: autoscale.simulate_recovery
+        on-success:
+          - chatops_report
+      chatops_report:
+        action: slack.post_message
+        input:
+          message: "Sent NewRelic Recovery WebHook to StackStorm..."
+          channel: '{$.channel}'

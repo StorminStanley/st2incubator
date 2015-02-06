@@ -1,0 +1,15 @@
+---
+name: asg.delete_node
+runner_type: action-chain
+description: Remove a node to from an autoscale group
+enabled: true
+entry_point: 'workflows/asg_delete_node.yaml'
+parameters:
+  name:
+    type: string
+    description: Name of server to destroy
+    position: 1
+  asg:
+    type: string
+    description: Autoscale group remove node from
+    position: 2

@@ -1,0 +1,152 @@
+---
+name: autoscale.asg.delete
+version: "2.0"
+
+workflows:
+  delete:
+    description: "Main workflow to delete an Autoscale Group"
+    type: direct
+    input:
+      - name
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      get_loadbalancer_id:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.name}.loadbalancer_id'
+        publish:
+          loadbalancer_id: '{$.get_loadbalancer_id.result}'
+        on-success:
+          - delete_loadbalancer
+      delete_loadbalancer:
+        action: rackspace.delete_loadbalancer
+        input:
+          loadbalancer_id: $.loadbalancer_id
+        on-success:
+          - delete_loadbalancer_key
+      delete_loadbalancer_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.loadbalancer_id'
+        on-success:
+          - get_dns_zone_id
+      get_dns_zone_id:
+        action: st2.kv.get
+        input:
+          key: 'asg.{$.name}.dns_zone_id'
+        publish:
+          dns_zone_id: '{$.get_dns_zone_id.result}'
+        on-success:
+          - delete_dns_zone
+      delete_dns_zone:
+        action: rackspace.delete_dns_zone
+        input:
+          zone_id: "{$.dns_zone_id}"
+        on-success:
+          - delete_dns_zone_key
+      delete_dns_zone_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.dns_zone_id'
+        on-success:
+          - chatops_clear_memory
+      delete_min_nodes_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.min_nodes'
+        on-success:
+          - delete_max_nodes_key
+      delete_max_nodes_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.max_nodes'
+        on-success:
+          - chatops_clear_memory
+      delete_vm_size_id_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.vm_size_id'
+        on-success:
+          - delete_vm_image_id_key
+      delete_vm_image_id_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.vm_image_id'
+        on-success:
+          - delete_domain_key
+      delete_domain_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.domain'
+        on-success:
+          - delete_server_role
+      delete_expand_by_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.expand_by'
+        on-success:
+          - delete_expand_delay_key
+      delete_expand_delay_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.expand_delay'
+        on-success:
+          - delete_last_expand_timestamp
+      delete_last_expand_timestamp:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.last_expand_timestamp'
+        on-success:
+          - delete_last_deflate_timestamp
+      delete_deflate_by_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.deflate_by'
+        on-success:
+          - delete_deflate_delay_key
+      delete_deflate_delay_key:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.deflate_delay'
+        on-success:
+          - delete_last_deflate_timestamp
+      delete_last_deflate_timestamp:
+        action: st2.kv.delete
+        input:
+          key: 'asg.{$.name}.last_deflate_timestamp'
+        on-success:
+          - get_asg_nodes
+      get_asg_nodes:
+        action: rackspace.list_vms
+        input:
+          metadata:
+            asg: "{$.name}"
+        publish:
+          asg_nodes: $.get_asg_nodes.result
+        on-success:
+          - get_asg_nodes
+      get_asg_nodes:
+        action: rackspace.list_vms_by_id
+        input:
+          count: 0
+          metadata:
+            asg: "{$.asg}"
+        publish:
+          asg_nodes: $.get_asg_nodes.result
+        on-success:
+          - delete_eligible_nodes
+      delete_eligible_nodes:
+        action: rackspace.delete_vm
+        with-items: node in $.asg_nodes
+        input:
+          vm_id: $.node
+        on-success:
+          - chatops_all_vms_gone
+      chatops_all_vms_gone:
+        action: slack.post_message
+        join: all
+        input:
+          message: 'Successfully deleted all nodes in ASG {$.asg}'
+          channel: '{$.channel}'

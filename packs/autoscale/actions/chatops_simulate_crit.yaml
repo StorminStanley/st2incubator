@@ -1,0 +1,10 @@
+---
+name: chatops.simulate_crit
+runner_type: mistral-v2
+description: ChatOps entry point to simulate NR critiral
+enabled: true
+entry_point: 'workflows/chatops_simulate_crit.yaml'
+parameters:
+  channel:
+    type: string
+    description: Room to output ChatOps events to

@@ -1,0 +1,11 @@
+---
+name: asg.add_node
+runner_type: mistral-v2
+description: Add a node to an autoscale group (uses Mistral)
+enabled: true
+entry_point: 'workflows/asg_add_node.yaml'
+parameters:
+  asg:
+    type: string
+    description: Autoscale group to add node
+    required: true

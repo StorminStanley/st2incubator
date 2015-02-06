@@ -1,0 +1,14 @@
+---
+  name: 'autoscale.chatops.simulate_crit'
+  description: 'Simulate New Relic event via ChatOps'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: eq
+      pattern: '!asg simulate crit'
+  action:
+    ref: autoscale.chatops.simulate_crit
+    parameters:
+      channel: '{{trigger.channel.room}}'

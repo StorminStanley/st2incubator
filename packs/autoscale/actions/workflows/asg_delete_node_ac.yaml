@@ -1,0 +1,61 @@
+---
+  chain:
+    -
+      name: get_domain
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.domain"
+      on-success: get_node_ip
+    - # Outputs get_node_ip.result[0]
+      name: get_node_ip
+      ref: linux.dig
+      params:
+        nameserver: '8.8.8.8'
+        hostname: "{{name}}.{{asg}}.{{get_domain.result}}"
+      on-success: get_loadbalancer_id
+    -
+      name: get_loadbalancer_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.loadbalancer_id"
+      on-success: get_dns_zone_id
+    -
+      name: get_dns_zone_id
+      ref: st2.kv.get
+      params:
+        key: "asg.{{asg}}.dns_zone_id"
+      on-success: get_dns_record_id
+    -
+      name: get_dns_record_id
+      ref: rackspace.find_dns_record_id
+      params:
+        name: "{{name}}.{{asg}}.{{get_domain.result}}"
+        zone_id: "{{get_dns_zone_id.result}}"
+      on-success: get_vm_id
+    -
+      name: get_vm_id
+      ref: rackspace.find_vm_id
+      params:
+        name: "{{name}}"
+      on-success: remove_node_loadbalancer
+    -
+      name: remove_node_loadbalancer
+      ref: rackspace.delete_node_from_loadbalancer
+      params:
+        loadbalancer_id: "{{get_loadbalancer_id.result}}"
+        ip: "{{get_node_ip.result[0]}}"
+      on-success: destroy_vm
+    -
+      name: destroy_vm
+      ref: rackspace.delete_vm
+      params:
+        vm_id: "{{get_vm_id.result}}"
+      on-success: remove_dns_record
+    -
+      name: remove_dns_record
+      ref: rackspace.delete_dns_record
+      params:
+        record_id: "{{get_dns_record_id.result}}"
+        zone_id: "{{get_dns_zone_id.result}}"
+  default: get_domain
+

@@ -1,0 +1,229 @@
+---
+name: autoscale.asg.create
+version: "2.0"
+
+workflows:
+  main:
+    description: "Main workflow to provision a VM"
+    type: direct
+    input:
+      - name
+      - port
+      - protocol
+      - domain
+      - admin_contact
+      - min_nodes
+      - max_nodes
+      - vm_size_id
+      - vm_image_id
+      - expand_by
+      - expand_delay
+      - deflate_by
+      - deflate_delay
+      - channel
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      set_chatops_channel_key:
+        action: st2.kv.set
+        input:
+          key: 'asg.{$.name}.channel'
+          value: '{$.channel}'
+        on-success:
+          - chatops_notify_begin
+      chatops_notify_begin:
+        action: slack.post_message
+        input:
+          message: 'Starting to assemble new autoscale group: {$.name}... standby...'
+          channel: '{$.channel}'
+        on-success:
+          - get_current_epoch
+      get_current_epoch:
+        action: st2.epoch
+        publish:
+          current_epoch: $.get_current_epoch.result
+        on-success:
+          - create_loadbalancer
+      create_loadbalancer:
+        action: rackspace.create_loadbalancer
+        input:
+          name: 'asg_{$.name}_lb'
+          port: '{$.port}'
+          protocol: '{$.protocol}'
+        publish:
+          loadbalancer_id: "{$.create_loadbalancer.result.id}"
+          loadbalancer_ipv4: "{$.create_loadbalancer.result.ipv4_public}"
+          loadbalancer_ipv6: "{$.create_loadbalancer.result.ipv6_public}"
+        on-success:
+          - store_loadbalancer_id
+      store_loadbalancer_id:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.loadbalancer_id'
+          value: "{$.loadbalancer_id}"
+        on-success:
+          - create_dns_zone
+      create_dns_zone:
+        action: rackspace.create_dns_zone
+        policies:
+          wait-before: 1
+        input:
+          name: '{$.name}.{$.domain}'
+          email_address: $.admin_contact
+          comment: 'ASG: {$.name}. Automatically created by StackStorm'
+        publish:
+          dns_zone_id: "{$.create_dns_zone.result.id}"
+        on-success:
+          - chatops_successful_dns
+      chatops_successful_dns:
+        action: slack.post_message
+        input:
+          message: 'Fantabulous! DNS ready to rock and roll for {$.name}.{$.domain}'
+          channel: '{$.channel}'
+        on-success:
+          - store_dns_zone_id
+      store_dns_zone_id:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.dns_zone_id'
+          value: "{$.dns_zone_id}"
+        on-success:
+          - set_lb_ipv4_dns
+      set_lb_ipv4_dns:
+        action: rackspace.create_dns_record
+        policies:
+          wait-before: 1
+        input:
+          zone_id: '{$.dns_zone_id}'
+          type: 'A'
+          name: 'lb.{$.name}.{$.domain}'
+          data: '{$.loadbalancer_ipv4}'
+        on-success:
+          - chatops_lb_ip
+      chatops_lb_ip:
+        action: slack.post_message
+        input:
+          message: 'Loadbalancer now ready to be accessed at lb.{$.name}.{$.domain} [{$.loadbalancer_ipv4}]'
+          channel: '{$.channel}'
+        on-success:
+          - store_min_nodes
+      store_min_nodes:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.min_nodes'
+          value: "{$.min_nodes}"
+        publish:
+          nodes_to_provision: range(0,$.min_nodes).list()
+        on-success:
+          - store_max_nodes
+      store_max_nodes:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.max_nodes'
+          value: "{$.max_nodes}"
+        on-success:
+          - store_domain
+      store_domain:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.domain'
+          value: "{$.domain}"
+        on-success:
+          - store_vm_size_id
+      store_vm_size_id:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.vm_size_id'
+          value: "{$.vm_size_id}"
+        on-success:
+          - store_vm_image_id
+      store_vm_image_id:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.vm_image_id'
+          value: "{$.vm_image_id}"
+        on-success:
+          - store_expand_by_nodes
+      store_expand_by_nodes:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.expand_by'
+          value: '{$.expand_by}'
+        on-success:
+          - store_expand_delay
+      store_expand_delay:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.expand_delay'
+          value: '{$.expand_delay}'
+        on-success:
+          - store_last_expand_timestamp
+      store_last_expand_timestamp:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.last_expand_timestamp'
+          value: '{$.current_epoch}'
+        on-success:
+          - store_deflate_by_nodes
+      store_deflate_by_nodes:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.deflate_by'
+          value: '{$.deflate_by}'
+        on-success:
+          - store_deflate_delay
+      store_deflate_delay:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.deflate_delay'
+          value: '{$.deflate_delay}'
+        on-success:
+          - store_last_deflate_timestamp
+      store_last_deflate_timestamp:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.{$.name}.last_deflate_timestamp'
+          value: '{$.current_epoch}'
+        on-success:
+          - create_servers
+      create_servers:
+        action: autoscale.asg.add_node
+        policies:
+          wait-before: 1
+        with-items: i in $.nodes_to_provision
+        input:
+          asg: '{$.name}'
+        on-success:
+          - chatops_success_all
+      chatops_success_all:
+        action: slack.post_message
+        input:
+          message: "WOOT! ASG {$.name} setup, and a whole mess of nodes have been provisioned. Go and be merry!"
+          channel: '{$.channel}'

@@ -1,0 +1,10 @@
+---
+name: chatops.simulate_recovery
+runner_type: mistral-v2
+description: ChatOps entry point to simulate NR recovery
+enabled: true
+entry_point: 'workflows/chatops_simulate_recovery.yaml'
+parameters:
+  channel:
+    type: string
+    description: Room to output ChatOps events to
