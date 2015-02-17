@@ -10,7 +10,7 @@ class VMEditCPUMem(BaseAction):
 
     def run(self, vm_id, cpu, memory):
         # convert ids to stubs
-        vm = inventory.get_virtualmachine(self.service_instance, moid=vm_id)
+        vm = inventory.get_virtualmachine(self.si_content, moid=vm_id)
         spec = vim.vm.ConfigSpec()
         spec.numCPUs = cpu
         spec.memoryMB = memory

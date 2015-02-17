@@ -8,8 +8,8 @@ class VMUpdateNic(BaseAction):
 
     def run(self, vm_id, network_id, vnic_key, ip, subnet, gateway=None, domain=None):
         # convert ids to stubs
-        virtualmachine = inventory.get_virtualmachine(self.service_instance, vm_id)
-        network = inventory.get_network(self.service_instance, network_id)
+        virtualmachine = inventory.get_virtualmachine(self.si_content, vm_id)
+        network = inventory.get_network(self.si_content, network_id)
         vnic = self._get_vnic_device(virtualmachine, vnic_key)
 
         # add new vnic

@@ -10,8 +10,8 @@ class VMAddNic(BaseAction):
 
     def run(self, vm_id, network_id, ip, subnet, gateway=None, domain=None):
         # convert ids to stubs
-        virtualmachine = inventory.get_virtualmachine(self.service_instance, vm_id)
-        network = inventory.get_network(self.service_instance, network_id)
+        virtualmachine = inventory.get_virtualmachine(self.si_content, vm_id)
+        network = inventory.get_network(self.si_content, network_id)
 
         # add new vnic
         configspec = vim.vm.ConfigSpec()
@@ -62,7 +62,7 @@ class VMAddNic(BaseAction):
         cust_spec.globalIPSettings = vim.vm.customization.GlobalIPSettings()
 
         try:
-            self.service_instance.customizationSpecManager.CreateCustomizationSpec(cust_item)
+            self.si_content.customizationSpecManager.CreateCustomizationSpec(cust_item)
         except:
             self.logger.exception('Failed to create customization spec.')
             raise

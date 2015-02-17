@@ -7,7 +7,7 @@ from vmwarelib.actions import BaseAction
 class VMDiskAdd(BaseAction):
 
     def run(self, vm_id, disk_size, disk_type):
-        vm = inventory.get_virtualmachine(self.service_instance, vm_id)
+        vm = inventory.get_virtualmachine(self.si_content, vm_id)
         spec = vim.vm.ConfigSpec()
 
         # disk spec

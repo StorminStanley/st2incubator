@@ -10,7 +10,7 @@ class VMPowerOn(BaseAction):
 
     def run(self, vm_id):
         # convert ids to stubs
-        vm = inventory.get_virtualmachine(self.service_instance, moid=vm_id)
+        vm = inventory.get_virtualmachine(self.si_content, moid=vm_id)
         task = vm.PowerOnVM_Task(None)
         while task.info.state == vim.TaskInfo.State.running:
             eventlet.sleep(1)
