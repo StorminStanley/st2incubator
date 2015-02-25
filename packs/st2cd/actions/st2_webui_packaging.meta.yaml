@@ -23,3 +23,8 @@
       type: "string"
       description: "Server where the build artifacts are published."
       required: true
+    artifacts_destination:
+      type: "string"
+      description: "Path on the dl_server where the artifacts are moved"
+      default: "/var/www/sites/releases/html/releases/st2/webui"
+      required: true

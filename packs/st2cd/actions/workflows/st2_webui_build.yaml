@@ -87,7 +87,7 @@
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/debbuild/*.deb"
         dest_server: "{{dl_server}}"
-        destination: "/home/stanley/packages/webui/"
+        destination: "{{artifacts_destination}}"
       ref: "core.remote"
 
   default: "get_build_server"
