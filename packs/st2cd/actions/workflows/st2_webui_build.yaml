@@ -1,0 +1,93 @@
+---
+  chain:
+    -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "get_build_server"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2packaging.service.consul"
+        rand: true
+        count: 1
+      on-success: "retrieve_version"
+    -
+      name: "retrieve_version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+      on-success: "clone_repo"
+    -
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+      on-success: "install_build_dependencies"
+    -
+      name: "install_build_dependencies"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "npm install bower ; npm install gulp"
+      on-success: "install_npm_library_dependencies"
+    -
+      name: "install_npm_library_dependencies"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "npm install"
+      on-success: "install_bower_library_dependencies"
+    -
+      name: "install_bower_library_dependencies"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "bower install"
+      on-success: "build_webui"
+    -
+      name: "build_webui"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "gulp production"
+      on-success: "create_build_artifact"
+    -
+      name: "create_build_artifact"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "tar cvzpf webui.tar.gz build/"
+      on-success: "rename_build_artifact"
+    -
+      name: "rename_build_artifact"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cwd: "{{repo_target}}"
+        cmd: "mv webui.tar.gz webui-{{branch}}-{{get_current_build.result}}.tar.gz"
+      on-success: "mv_previous_timestamp"
+    -
+      name: "publish_build_artifacts"
+      ref: "linux.rsync"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/home/stanley/debbuild/*.deb"
+        dest_server: "{{dl_server}}"
+        destination: "/home/stanley/packages/webui/"
+      ref: "core.remote"
+
+  default: "get_build_server"
