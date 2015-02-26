@@ -6,6 +6,12 @@
       params:
         key: "st2_{{branch}}_build_number"
         action: "get"
+      on-success: "process_build_number"
+    -
+      name: "process_build_number"
+      ref: "core.local"
+      params:
+        cmd: "echo \"{{get_current_build.result}}\" | tr -d ' '"
       on-success: "get_build_server"
     -
       name: "get_build_server"
@@ -26,68 +32,68 @@
       on-success: "retrieve_version"
     -
       name: "retrieve_version"
-      ref: "st2cd.st2_version"
+      ref: "st2cd.webui_version"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        repo_path: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "install_build_dependencies"
     -
       name: "install_build_dependencies"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "npm install bower ; npm install gulp"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install bower ; npm install gulp"
       on-success: "install_npm_library_dependencies"
     -
       name: "install_npm_library_dependencies"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "npm install"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install"
       on-success: "install_bower_library_dependencies"
     -
       name: "install_bower_library_dependencies"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "bower install"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/bower install"
       on-success: "build_webui"
     -
       name: "build_webui"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "gulp production"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/gulp production"
       on-success: "create_build_artifact"
     -
       name: "create_build_artifact"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "tar cvzpf webui.tar.gz build/"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && tar cvzpf webui.tar.gz build/"
       on-success: "rename_build_artifact"
     -
       name: "rename_build_artifact"
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cwd: "{{repo_target}}"
-        cmd: "mv webui.tar.gz webui-{{branch}}-{{get_current_build.result}}.tar.gz"
-      on-success: "mv_previous_timestamp"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && mv webui.tar.gz \"webui-{{retrieve_version[get_build_server.result[0]].stdout}}-{{process_build_number.localhost.stdout}}.tar.gz\""
+      on-success: "publish_build_artifact"
     -
-      name: "publish_build_artifacts"
+      name: "publish_build_artifact"
       ref: "linux.rsync"
       params:
         hosts: "{{get_build_server.result[0]}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "/home/stanley/debbuild/*.deb"
+        source: "{{clone_repo[get_build_server.result[0]].stdout}}/webui*.tar.gz"
         dest_server: "{{dl_server}}"
-        destination: "{{artifacts_destination}}"
-      ref: "core.remote"
+        destination: "/tmp"
+      on-success: "move_build_artifact"
+    -
+      name: "move_build_artifact"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/ ; cp \"/tmp/webui-{{retrieve_version[get_build_server.result[0]].stdout}}-{{process_build_number.localhost.stdout}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/"
 
-  default: "get_build_server"
+  default: "get_current_build"

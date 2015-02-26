@@ -15,4 +15,4 @@
       required: true
     cmd:
       immutable: true
-      default: "cd {{repo_path}} && grep 'version' package.json | awk '{print $2}' | tr -d '\"' | tr -d ','"
+      default: "cd {{repo_path}} && grep 'st2_version' package.json | awk '{print $2}' | tr -d '\"' | tr -d ','"
