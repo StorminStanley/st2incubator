@@ -6,19 +6,20 @@
       params:
         key: "st2_{{branch}}_build_number"
         action: "get"
-      on-success: "clean_build_env"
+      on-success: "get_build_server"
     -
-      name: "clean_build_env"
-      ref: "core.remote"
+      name: "get_build_server"
+      ref: "linux.dig"
       params:
-        hosts: "{{build_server}}"
-        cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
+        hostname: "st2packaging.service.consul"
+        rand: true
+        count: 1
       on-success: "clone_repo"
     - 
       name: "clone_repo"
       ref: "st2cd.git_clone"
       params: 
-        hosts: "{{build_server}}"
+        hosts: "{{get_build_server.result[0]}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
@@ -27,40 +28,40 @@
       name: "version"
       ref: "st2cd.st2_version"
       params:
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
       ref: "st2cd.version_hack"
       params: 
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
         build: "{{get_current_build.result}}"
-      on-success: "make_rhel_rpms"
+      on-success: "make_debs"
     - 
-      name: "make_rhel_rpms"
-      ref: "st2cd.make_rhel_rpms"
+      name: "make_debs"
+      ref: "st2cd.make_debs"
       params: 
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "mkdir_build_number"
     -
       name: "mkdir_build_number"
       ref: "core.remote_sudo"
       params:
         hosts: "ops001.stackstorm.net"
-        cmd: "mkdir -p {{destination_base}}/{{version[build_server].stdout}}/{{get_current_build.result|trim}}"
-      on-success: "scp_rpms"
+        cmd: "mkdir -p {{destination_base}}{{get_current_build.result|trim}}"
+      on-success: "scp_debs"
     - 
-      name: "scp_rpms"
+      name: "scp_debs"
       ref: "linux.scp"
       params: 
-        hosts: "{{build_server}}"
-        source: "/home/stanley/rpmbuild/RPMS/noarch/*.rpm"
+        hosts: "{{get_build_server.result[0]}}"
+        source: "/home/stanley/debbuild/*.deb"
         keyfile: "/home/stanley/.ssh/dl_rsync"
         dest_server: "{{releases_server}}"
-        destination: "{{destination_base}}/{{version[build_server].stdout}}/{{get_current_build.result|trim}}"
+        destination: "{{destination_base}}{{get_current_build.result|trim}}/"
       on-success: "refresh_web"
     -
       name: "refresh_web"
@@ -74,7 +75,7 @@
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params:
-        hosts: "{{build_server}}"
-        repo: "{{clone_repo[build_server].stdout}}"
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
 
   default: "get_current_build"

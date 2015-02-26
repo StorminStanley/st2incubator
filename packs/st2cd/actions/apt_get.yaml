@@ -13,7 +13,7 @@
       default: true
     cmd:
       immutable: true
-      default: "apt-get {{act}} {{packages}} > /dev/null"
+      default: "apt-get {{act}} {{packages}} &> /dev/null"
     kwarg_op:
       immutable: true
       default: "--"
