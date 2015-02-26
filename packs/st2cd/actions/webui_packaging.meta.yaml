@@ -24,3 +24,6 @@
       description: "Server where the build artifacts are published."
       default: "ops001.stackstorm.net"
       required: false
+    environment:
+      type: "string"
+      description: "Environment where to run the packaging action"
