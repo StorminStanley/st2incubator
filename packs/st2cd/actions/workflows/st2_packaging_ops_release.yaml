@@ -48,7 +48,7 @@
       on-success: "mkdir_build_number"
     -
       name: "mkdir_build_number"
-      ref: "core.remote_sudo"
+      ref: "core.remote"
       params:
         hosts: "ops001.stackstorm.net"
         cmd: "mkdir -p {{destination_base}}{{get_current_build.result|trim}}"
