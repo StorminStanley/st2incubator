@@ -1,0 +1,18 @@
+---
+  name: "webui_version"
+  runner_type: "run-remote"
+  description: "Retrieve the WebUI version"
+  enabled: true
+  entry_point: ""
+  parameters:
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    repo_path:
+      type: "string"
+      default: "webui_master"
+      description: "Path to the directory with the repository"
+      required: true
+    cmd:
+      immutable: true
+      default: "cd {{repo_path}} && grep 'version' package.json | awk '{print $2}' | tr -d '\"' | tr -d ','"
