@@ -70,7 +70,7 @@
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && tar cvzpf webui.tar.gz build/"
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && tar --transform='s/build/webui/' -cvzpf webui.tar.gz build/"
       on-success: "rename_build_artifact"
     -
       name: "rename_build_artifact"
