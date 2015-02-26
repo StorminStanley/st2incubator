@@ -13,12 +13,13 @@ def create_rule(url, rule):
     headers = {'created-from': 'Action: ' + __name__}
     # TODO: Figure out AUTH
     if existing_rule_id:
-        sys.stdout.write('Updating existing rule %s\n' % existing_rule_id)
+        sys.stderr.write('Updating existing rule %s\n' % existing_rule_id)
         put_url = '%s/%s' % (url, existing_rule_id)
         rule['id'] = existing_rule_id
         resp = requests.put(put_url, data=json.dumps(rule), headers=headers)
     else:
-        sys.stdout.write('Creating new rule %s\n' % rule['name'])
+        sys.stderr.write('Creating new rule %s\n' % rule['name'])
+        sys.stderr.write('url=%s, data=%s' % (url, json.dumps(rule)))
         resp = requests.post(url, data=json.dumps(rule), headers=headers)
 
     if resp.status_code not in [200, 201]:
@@ -27,9 +28,11 @@ def create_rule(url, rule):
 
 def _get_rule_id(base_url, rule):
     get_url = '%s/?name=%s' % (base_url, rule['name'])
-    resp = requests.get(get_url, headers={'Content-Type': 'application/json'})
+    sys.stderr.write(get_url)
+    resp = requests.get(get_url)
     if resp.status_code in [200]:
-        return resp.json()[0]['id']
+        if len(resp.json()) > 0:
+	    return resp.json()[0]['id']
     return None
 
 
@@ -70,7 +73,7 @@ def main(args):
                 'type': 'equals'
             },
             'trigger.body.repository.full_name': {
-                'pattern': 'DoriftoShoes/st2',
+                'pattern': 'StackStorm/st2',
                 'type': 'equals'
             }
         },

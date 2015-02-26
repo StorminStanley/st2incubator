@@ -29,7 +29,8 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "st2ctl reload && nohup bg st2ctl restart >& /dev/null < /dev/null; sleep 20"
+        cmd: "st2ctl reload &> /dev/null && nohup bg st2ctl restart &> /dev/null; sleep 20"
+        # cmd: "st2ctl reload && nohup bg st2ctl restart; sleep 20" 
         sudo: true
       on-success: "action_run"
     -

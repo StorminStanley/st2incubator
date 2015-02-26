@@ -6,13 +6,6 @@
       params:
         key: "{{environment}}_subnet"
         action: "get"
-      on-success: "get_apt_repo"
-    -
-      name: "get_apt_repo"
-      ref: "st2cd.kvstore"
-      params:
-        key: "apt_repo_{{environment}}"
-        action: "get"
       on-success: "run_instance"
     -
       name: "run_instance"
@@ -54,28 +47,12 @@
         name: "{{hostname}}.{{dns_zone}}"
         value: "{{run_instance.result[0][0].private_dns_name}}"
         zone: "{{dns_zone}}"
-      on-success: "add_apt_repo"
-    -
-      name: "add_apt_repo"
-      ref: "st2cd.add_apt_repo"
-      params:
-        hosts: "{{run_instance.result[0][0].private_ip_address}}"
-        name: "stackstorm"
-        repo: "http://{{get_apt_repo.result}}/deb/"
-      on-success: "get_apt_key"
-    -
-      name: "get_apt_key"
-      ref: "st2cd.get_apt_key"
-      params:
-        hosts: "{{run_instance.result[0][0].private_ip_address}}"
-        name: "stackstorm"
-        url: "http://{{get_apt_repo.result}}/deb/keyring.gpg"
       on-success: "set_hostname"
     -
       name: "set_hostname"
       ref: "st2cd.set_hostname_cloud"
       params:
-        distro: "UBUNTU14"
+        distro: "RHEL6"
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         hostname: "{{hostname}}.{{dns_zone}}"
       on-success: "reboot"

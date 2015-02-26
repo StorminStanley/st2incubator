@@ -1,0 +1,38 @@
+---
+  name: "s3_docs"
+  runner_type: "run-remote"
+  description: "s3 docs"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    repo:
+      type: "string"
+      required: true
+      default: "st2_master"
+    bucket:
+      type: "string"
+      required: true
+      default: "st2-doc-test"
+      description: "The base path to the bucket"
+    latest:
+      type: "boolean"
+      description: "Boolean flag for latest docs"
+      required: true
+      default: false
+    bucket_url:
+      type: "string"
+      immutable: true
+      default: "s3://{{bucket}}/{% if latest == true -%}latest/{% endif -%}"
+    cmd: 
+      immutable: false
+      default: "cd {{repo}}/docs/build/html && s3cmd --recursive put * {{bucket_url}}"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+

@@ -15,6 +15,6 @@
         ref: "st2cd.packaging"
         parameters:
             repo: "{{trigger.parameters.repo}}"
-            branch: "master"
+            branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_origin_staging}}"
             environment: "staging"

@@ -1,0 +1,24 @@
+---
+    name: "st2_packaging_master_rhel6_ops"
+    description: "Build packages after tests succeed and push them to staging"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.packaging$"
+            type: "matchregex"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "production"
+            type: "equals"
+    action:
+        ref: "st2cd.packaging_rhel6_ops"
+        parameters:
+            build_server: "{{system.build_server_rhel6}}"
+            repo: "{{trigger.parameters.repo}}"
+            branch: "{{trigger.parameters.branch}}"
+            releases_server: "{{system.releases_server}}"
+            environment: "production"
