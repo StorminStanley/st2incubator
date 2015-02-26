@@ -1,6 +1,6 @@
 ---
-    name: "st2_packaging_master_prod"
-    description: "Build st2 packages after tests succeed and push them to staging"
+    name: "webui_packaging_master_prod"
+    description: "Build WebUI packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
@@ -15,9 +15,9 @@
             pattern: "staging"
             type: "equals"
     action:
-        ref: "st2cd.st2_packaging"
+        ref: "st2cd.webui_packaging"
         parameters:
-            repo: "{{trigger.parameters.repo}}"
+            repo: "https://github.com/StackStorm/st2web.git"
             branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_repo_prod}}"
             environment: "production"

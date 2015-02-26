@@ -1,14 +1,14 @@
 ---
-  name: "packaging_rhel6_ops"
+  name: "st2_packaging_rhel6_ops"
   runner_type: "action-chain"
   description: "Clones a repo to a remote host and builds packages for releases server"
   enabled: true
   entry_point: "workflows/st2_packaging_rhel6_ops.yaml"
-  parameters: 
+  parameters:
     build_server:
       type: "string"
       required: true
-    repo: 
+    repo:
       type: "string"
       description: "Url of the repo to clone"
       required: true

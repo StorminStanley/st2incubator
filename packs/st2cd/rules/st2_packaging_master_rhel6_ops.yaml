@@ -1,6 +1,6 @@
 ---
     name: "st2_packaging_master_rhel6_ops"
-    description: "Build packages after tests succeed and push them to staging"
+    description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
@@ -15,7 +15,7 @@
             pattern: "production"
             type: "equals"
     action:
-        ref: "st2cd.packaging_rhel6_ops"
+        ref: "st2cd.st2_packaging_rhel6_ops"
         parameters:
             build_server: "{{system.build_server_rhel6}}"
             repo: "{{trigger.parameters.repo}}"
