@@ -22,4 +22,5 @@
     dl_server:
       type: "string"
       description: "Server where the build artifacts are published."
+      default: "ops001.stackstorm.net"
       required: false
