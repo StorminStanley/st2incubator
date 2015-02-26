@@ -3,7 +3,7 @@
   runner_type: "action-chain"
   description: "Builds WebUI artifacts"
   enabled: true
-  entry_point: "workflows/st2_webui_build.yaml"
+  entry_point: "workflows/webui_build.yaml"
   parameters:
     repo:
       type: "string"

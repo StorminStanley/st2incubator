@@ -14,13 +14,6 @@
         hostname: "st2packaging.service.consul"
         rand: true
         count: 1
-      on-success: "retrieve_version"
-    -
-      name: "retrieve_version"
-      ref: "st2cd.st2_version"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "clone_repo"
     -
       name: "clone_repo"
@@ -30,6 +23,13 @@
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+      on-success: "retrieve_version"
+    -
+      name: "retrieve_version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "install_build_dependencies"
     -
       name: "install_build_dependencies"
