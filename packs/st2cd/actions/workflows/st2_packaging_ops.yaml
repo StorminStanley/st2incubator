@@ -22,10 +22,10 @@
         hosts: "{{get_build_server.result[0]}}"
         cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
       on-success: "clone_repo"
-    - 
+    -
       name: "clone_repo"
       ref: "st2cd.git_clone"
-      params: 
+      params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
@@ -38,18 +38,18 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "version_hack"
-    - 
+    -
       name: "version_hack"
       ref: "st2cd.version_hack"
-      params: 
+      params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
         build: "{{get_current_build.result}}"
       on-success: "make_debs"
-    - 
+    -
       name: "make_debs"
       ref: "st2cd.make_debs"
-      params: 
+      params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
       on-success: "mkdir_build_number"
@@ -60,10 +60,10 @@
         hosts: "ops001.stackstorm.net"
         cmd: "mkdir -p {{destination_base}}/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}"
       on-success: "scp_debs"
-    - 
+    -
       name: "scp_debs"
       ref: "linux.scp"
-      params: 
+      params:
         hosts: "{{get_build_server.result[0]}}"
         source: "/home/stanley/debbuild/*.deb"
         keyfile: "/home/stanley/.ssh/dl_rsync"
@@ -74,11 +74,10 @@
       name: "refresh_web"
       ref: "core.remote_sudo"
       params:
-        sudo: true
         hosts: "{{releases_server}}"
         cmd: "bash /scripts/rsync_releases.sh"
       on-success: "clean_repo"
-    - 
+    -
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params:

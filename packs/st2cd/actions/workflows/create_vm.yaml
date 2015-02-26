@@ -84,7 +84,6 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
-        sudo: true
         cmd: "reboot"
       on-success: "wait_for_ssh_post_reboot"
     -
