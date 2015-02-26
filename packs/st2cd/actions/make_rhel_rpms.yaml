@@ -1,7 +1,7 @@
 {
-    "name": "make_debs",
+    "name": "make_rhel_rpms",
     "runner_type": "run-remote",
-    "description": "Use make targets to build debian packages",
+    "description": "Use make targets to build RHEL6 rpm packages",
     "enabled": true,
     "entry_point": "",
     "parameters": {
@@ -19,7 +19,7 @@
         },
         "cmd": {
             "immutable": false,
-            "default": "cd {{repo}} && make debs"
+            "default": "cd {{repo}} && make rhel-rpms"
         },
         "kwarg_op": {
             "immutable": true,

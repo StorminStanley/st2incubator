@@ -1,9 +1,9 @@
 ---
-  name: "pytests"
+  name: "docs"
   runner_type: "action-chain"
-  description: "Clones a repo to a remote host, and runs python tests"
+  description: "Build st2docs"
   enabled: true
-  entry_point: "workflows/st2_pytests.yaml"
+  entry_point: "workflows/st2_docs.yaml"
   parameters: 
     repo: 
       type: "string"
@@ -19,6 +19,9 @@
       type: "string"
       default: "st2_{{branch}}"
       description: "Possible options are all, actions, rules."
+    latest:
+      type: "boolean"
+      default: false
     revision: 
       type: "string"
       description: ""

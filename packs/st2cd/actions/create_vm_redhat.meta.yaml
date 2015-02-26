@@ -1,25 +1,21 @@
 ---
-  name: "deploy_script"
+  name: "create_vm_redhat"
   runner_type: "action-chain"
-  description: "Tests st2 deployment script that is used in st2express"
+  description: "Create a VM, add DNS, bootstrap puppet"
   enabled: true
-  entry_point: "workflows/st2_deploy_script.yaml"
+  entry_point: "workflows/create_vm_redhat.yaml"
   parameters:
-    version: 
-      type: "string"
-      description: "Version of StackStorm to deploy"
-      default: "0.6.0"
     image_id:
       type: "string"
       description: "AWS image id to create instance from"
-      default: "ami-3d50120d"
+      default: "ami-7df0bd4d"
     instance_type:
       type: "string"
       description: "Flavor of to use for instance creation"
       default: "m3.medium"
     environment:
       type: "string"
-      description: "Environment to deploy host to"
+      description: "Environment to deploy to"
       default: "staging"
     key_name:
       type: "string"
@@ -28,11 +24,16 @@
     base_user:
       type: "string"
       description: "Username for initial ssh test"
-      default: "ubuntu"
+      default: "ec2-user"
     keyfile:
       type: "string"
       description: "Path to local private key that corresponds to {{key_name}}"
       default: "/home/stanley/.ssh/stanley_rsa"
+    dns_zone:
+      type: "string"
+      description: "Route53 DNS Zone to add host to"
+      default: "uswest2.stackstorm.net"
     hostname:
       type: "string"
+      description: "Short hostname"
       required: true

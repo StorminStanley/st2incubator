@@ -52,30 +52,31 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-      on-success: "rsync_debs"
+      on-success: "mkdir_build_number"
+    -
+      name: "mkdir_build_number"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "ops001.stackstorm.net"
+        cmd: "mkdir -p {{destination_base}}/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}"
+      on-success: "scp_debs"
     - 
-      name: "rsync_debs"
-      ref: "linux.rsync"
+      name: "scp_debs"
+      ref: "linux.scp"
       params: 
         hosts: "{{get_build_server.result[0]}}"
-        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/debbuild/*.deb"
-        dest_server: "{{dl_server}}"
-        destination: "/home/stanley/packages/deb/"
-      on-success: "add_packages"
-    - 
-      name: "add_packages"
-      ref: "freight.add_package"
-      params: 
-        hosts: "{{dl_server}}"
-        file: "/home/stanley/packages/deb/*.deb"
-        distribution: "trusty"
-      on-success: "update_cache"
-    - 
-      name: "update_cache"
-      ref: "freight.update_cache"
-      params: 
-        hosts: "{{dl_server}}"
+        keyfile: "/home/stanley/.ssh/dl_rsync"
+        dest_server: "{{releases_server}}"
+        destination: "{{destination_base}}/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}"
+      on-success: "refresh_web"
+    -
+      name: "refresh_web"
+      ref: "core.remote_sudo"
+      params:
+        sudo: true
+        hosts: "{{releases_server}}"
+        cmd: "bash /scripts/rsync_releases.sh"
       on-success: "clean_repo"
     - 
       name: "clean_repo"

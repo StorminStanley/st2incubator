@@ -1,20 +1,23 @@
 ---
-    name: "st2_packaging_master_staging"
+    name: "st2_packaging_master_ops"
     description: "Build packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.pytests"
-            type: "equals"
+            pattern: "st2cd\\.packaging$"
+            type: "matchregex"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.environment:
+            pattern: "production"
+            type: "equals"
     action:
-        ref: "st2cd.packaging"
+        ref: "st2cd.packaging_ops"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_origin_staging}}"
-            environment: "staging"
+            releases_server: "{{system.releases_server}}"
+            environment: "production"

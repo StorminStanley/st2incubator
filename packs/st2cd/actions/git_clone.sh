@@ -2,7 +2,8 @@
 
 GIT=`which git`
 REPO=$1
-TARGET="${2}"
+DATE=`date +%s`
+TARGET="${2}_${DATE}_$BASHPID"
 BRANCH=$3
 
 if [[ -d $TARGET ]]

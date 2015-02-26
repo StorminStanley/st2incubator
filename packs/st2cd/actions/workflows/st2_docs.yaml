@@ -45,37 +45,22 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
         build: "{{get_current_build.result}}"
-      on-success: "make_debs"
+      on-success: "make_docs"
     - 
-      name: "make_debs"
-      ref: "st2cd.make_debs"
+      name: "make_docs"
+      ref: "st2cd.make_docs"
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-      on-success: "rsync_debs"
+      on-success: "s3cmd_docs"
     - 
-      name: "rsync_debs"
-      ref: "linux.rsync"
+      name: "s3cmd_docs"
+      ref: "st2cd.s3_docs"
       params: 
         hosts: "{{get_build_server.result[0]}}"
-        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "/home/stanley/debbuild/*.deb"
-        dest_server: "{{dl_server}}"
-        destination: "/home/stanley/packages/deb/"
-      on-success: "add_packages"
-    - 
-      name: "add_packages"
-      ref: "freight.add_package"
-      params: 
-        hosts: "{{dl_server}}"
-        file: "/home/stanley/packages/deb/*.deb"
-        distribution: "trusty"
-      on-success: "update_cache"
-    - 
-      name: "update_cache"
-      ref: "freight.update_cache"
-      params: 
-        hosts: "{{dl_server}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        bucket: "st2-doc-test"
+        latest: "{{latest}}"
       on-success: "clean_repo"
     - 
       name: "clean_repo"
