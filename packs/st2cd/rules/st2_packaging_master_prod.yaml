@@ -19,5 +19,5 @@
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_repo_prod}}"
+            dl_server: "{{system.apt_origin_prod}}"
             environment: "production"
