@@ -14,10 +14,10 @@
         hosts: "{{build_server}}"
         cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
       on-success: "clone_repo"
-    - 
+    -
       name: "clone_repo"
       ref: "st2cd.git_clone"
-      params: 
+      params:
         hosts: "{{build_server}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
@@ -30,18 +30,18 @@
         hosts: "{{build_server}}"
         repo: "{{clone_repo[build_server].stdout}}"
       on-success: "version_hack"
-    - 
+    -
       name: "version_hack"
       ref: "st2cd.version_hack"
-      params: 
+      params:
         hosts: "{{build_server}}"
         repo: "{{clone_repo[build_server].stdout}}"
         build: "{{get_current_build.result}}"
       on-success: "make_rhel_rpms"
-    - 
+    -
       name: "make_rhel_rpms"
       ref: "st2cd.make_rhel_rpms"
-      params: 
+      params:
         hosts: "{{build_server}}"
         repo: "{{clone_repo[build_server].stdout}}"
       on-success: "mkdir_build_number"
@@ -52,10 +52,10 @@
         hosts: "ops001.stackstorm.net"
         cmd: "mkdir -p {{destination_base}}/{{version[build_server].stdout}}/{{get_current_build.result|trim}}"
       on-success: "scp_rpms"
-    - 
+    -
       name: "scp_rpms"
       ref: "linux.scp"
-      params: 
+      params:
         hosts: "{{build_server}}"
         source: "/home/stanley/rpmbuild/RPMS/noarch/*.rpm"
         keyfile: "/home/stanley/.ssh/dl_rsync"
@@ -66,11 +66,10 @@
       name: "refresh_web"
       ref: "core.remote_sudo"
       params:
-        sudo: true
         hosts: "{{releases_server}}"
         cmd: "bash /scripts/rsync_releases.sh"
       on-success: "clean_repo"
-    - 
+    -
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params:

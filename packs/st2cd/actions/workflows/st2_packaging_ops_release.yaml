@@ -67,7 +67,6 @@
       name: "refresh_web"
       ref: "core.remote_sudo"
       params:
-        sudo: true
         hosts: "{{releases_server}}"
         cmd: "bash /scripts/rsync_releases.sh"
       on-success: "clean_repo"
