@@ -1,0 +1,25 @@
+{
+    "name": "stress",
+    "pack": "mistral-dev",
+    "runner_type": "run-python",
+    "description": "Action to stress test  mistral.",
+    "enabled": true,
+    "entry_point": "stress.py",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "description": "The prefix used for the VM name.",
+            "default": "st2-mock-"
+        },
+        "total": {
+            "type": "integer",
+            "description": "The total number of VMs to create.",
+            "default": 25
+        },
+        "batch_size": {
+            "type": "integer",
+            "description": "Batch size.",
+            "default": 5
+        }
+    }
+}
