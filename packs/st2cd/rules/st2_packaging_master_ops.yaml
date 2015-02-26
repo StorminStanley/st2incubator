@@ -15,7 +15,7 @@
             pattern: "production"
             type: "equals"
     action:
-        ref: "st2cd.packaging_ops"
+        ref: "st2cd.st2_packaging_ops"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"

@@ -1,11 +1,11 @@
 ---
-  name: "packaging_ops"
+  name: "st2_packaging_ops"
   runner_type: "action-chain"
   description: "Clones a repo to a remote host and builds packages for releases server"
   enabled: true
   entry_point: "workflows/st2_packaging_ops.yaml"
-  parameters: 
-    repo: 
+  parameters:
+    repo:
       type: "string"
       description: "Url of the repo to clone"
       required: true

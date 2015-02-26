@@ -15,7 +15,7 @@
             pattern: "production"
             type: "equals"
     action:
-        ref: "st2cd.packaging_rhel6_ops"
+        ref: "st2cd.st2_packaging_rhel6_ops"
         parameters:
             build_server: "{{system.build_server_rhel6}}"
             repo: "{{trigger.parameters.repo}}"

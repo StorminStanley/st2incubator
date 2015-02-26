@@ -12,7 +12,7 @@
             pattern: "succeeded"
             type: "equals"
     action:
-        ref: "st2cd.packaging"
+        ref: "st2cd.st2_packaging"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
