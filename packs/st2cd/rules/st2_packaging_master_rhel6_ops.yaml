@@ -1,6 +1,6 @@
 ---
     name: "st2_packaging_master_rhel6_ops"
-    description: "Build packages after tests succeed and push them to staging"
+    description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
