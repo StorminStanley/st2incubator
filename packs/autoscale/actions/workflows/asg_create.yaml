@@ -30,15 +30,11 @@ workflows:
         input:
           key: 'asg.<% $.name %>.channel'
           value: '<% $.channel %>'
-        on-success:
-          - chatops_notify_begin
-      chatops_notify_begin:
-        action: slack.post_message
-        input:
-          message: 'Starting to assemble new autoscale group: <% $.name %>... standby...'
-          channel: '<% $.channel %>'
+        publish:
+          notify_message: 'Starting to assemble new autoscale group: <% $.name %>... standby...'
         on-success:
           - get_current_epoch
+          - notify
       get_current_epoch:
         action: st2.epoch
         publish:
@@ -55,17 +51,13 @@ workflows:
           loadbalancer_id: "<% $.create_loadbalancer.result.id %>"
           loadbalancer_ipv4: "<% $.create_loadbalancer.result.ipv4_public %>"
           loadbalancer_ipv6: "<% $.create_loadbalancer.result.ipv6_public %>"
-        on-success:
-          - store_loadbalancer_id
-      store_loadbalancer_id:
-        action: st2.kv.set
-        policies:
-          wait-before: 1
-        input:
-          key: 'asg.<% $.name %>.loadbalancer_id'
-          value: "<% $.loadbalancer_id %>"
+          notify_message: "Loadbalancer created"
+          kv_key: 'asg.<% $.name %>.loadbalancer_id'
+          kv_value: "<% $.loadbalancer_id %>"
         on-success:
           - create_dns_zone
+          - kv_store
+          - notify
       create_dns_zone:
         action: rackspace.create_dns_zone
         policies:
@@ -76,24 +68,13 @@ workflows:
           comment: 'ASG: <% $.name %>. Automatically created by StackStorm'
         publish:
           dns_zone_id: "<% $.create_dns_zone.result.id %>"
-        on-success:
-          - chatops_successful_dns
-      chatops_successful_dns:
-        action: slack.post_message
-        input:
-          message: 'Fantabulous! DNS ready to rock and roll for <% $.name %>.<% $.domain %>'
-          channel: '<% $.channel %>'
+          notify_message: "DNS Setup for <% $.name %>.<% $.domain %>"
+          kv_key: 'asg.<% $.name %>.dns_zone_id'
+          kv_value: "<% $.dns_zone_id %>"
         on-success:
           - store_dns_zone_id
-      store_dns_zone_id:
-        action: st2.kv.set
-        policies:
-          wait-before: 1
-        input:
-          key: 'asg.<% $.name %>.dns_zone_id'
-          value: "<% $.dns_zone_id %>"
-        on-success:
-          - set_lb_ipv4_dns
+          - kv_store
+          - notify
       set_lb_ipv4_dns:
         action: rackspace.create_dns_record
         policies:
@@ -103,15 +84,11 @@ workflows:
           type: 'A'
           name: 'lb.<% $.name %>.<% $.domain %>'
           data: '<% $.loadbalancer_ipv4 %>'
-        on-success:
-          - chatops_lb_ip
-      chatops_lb_ip:
-        action: slack.post_message
-        input:
-          message: 'Loadbalancer now ready to be accessed at lb.<% $.name %>.<% $.domain %> [<% $.loadbalancer_ipv4 %>]'
-          channel: '<% $.channel %>'
+        publish:
+          notify_message: 'Loadbalancer DNS Setup, ready to be accessed at lb.<% $.name %>.<% $.domain %> [<% $.loadbalancer_ipv4 %>]'
         on-success:
           - store_min_nodes
+          - notify
       store_min_nodes:
         action: st2.kv.set
         policies:
@@ -120,7 +97,7 @@ workflows:
           key: 'asg.<% $.name %>.min_nodes'
           value: "<% $.min_nodes %>"
         publish:
-          nodes_to_provision: <% range(0,<% $.min_nodes %>).list() %>
+          nodes_to_provision: <% range(0,$.min_nodes).list() %>
         on-success:
           - store_max_nodes
       store_max_nodes:
@@ -220,10 +197,17 @@ workflows:
         with-items: i in <% $.nodes_to_provision %>
         input:
           asg: '<% $.name %>'
+        publish:
+          notify_message: "WOOT! ASG <% $.name %> setup, and a whole mess of nodes have been provisioned. Go and be merry!"
         on-success:
-          - chatops_success_all
-      chatops_success_all:
+          - notify
+      notify:
         action: slack.post_message
         input:
-          message: "WOOT! ASG <% $.name %> setup, and a whole mess of nodes have been provisioned. Go and be merry!"
+          message: "ASG[<% $.name %>] <% $.notify_message %>"
           channel: '<% $.channel %>'
+      kv_store:
+        action: st2.kv.set
+        input:
+          key: <% $.kv_key %>
+          value: <% $.kv_value %>

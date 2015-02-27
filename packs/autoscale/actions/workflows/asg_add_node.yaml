@@ -24,15 +24,10 @@ workflows:
         action: autoscale.generate_random_name count=2
         publish:
           hostname: '<% $.generate_new_hostname.stdout %>'
-        on-success:
-          - chatops_notify_create_node
-      chatops_notify_create_node:
-        action: slack.post_message
-        input:
-          message: 'OK! Spinning up additional node <% $.hostname %> for ASG <% $.asg %>'
-          channel: '<% $.channel %>'
+          notify_message: 'OK! Spinning up additional node <% $.hostname %> for ASG <% $.asg %>'
         on-success:
           - get_ssh_key
+          - notify
       get_ssh_key:
         action: st2.kv.get
         policies:
@@ -107,15 +102,10 @@ workflows:
         publish:
           ipv4_address: '<% $.create_new_node.result.public_ips[1] %>'
           ipv6_address: '<% $.create_new_node.result.public_ips[0] %>'
-        on-success:
-          - chatops_success_node
-      chatops_success_node:
-        action: slack.post_message
-        input:
-          message: 'Mission accomplished! Created new node <% $.hostname %> [<% $.ipv4_address %>]!'
-          channel: '<% $.channel %>'
+          notify_message: 'Mission accomplished! Created new node <% $.hostname %> [<% $.ipv4_address %>]!'
         on-success:
           - setup_ipv4_dns
+          - notify
       setup_ipv4_dns:
         action: rackspace.create_dns_record
         policies:
@@ -125,15 +115,11 @@ workflows:
           zone_id: <% $.dns_zone_id %>
           type: 'A'
           data: <% $.ipv4_address %>
-        on-success:
-          - chatops_success_dns
-      chatops_success_dns:
-        action: slack.post_message
-        input:
+        notify:
           message: 'DNS now setup for <% $.hostname %>.<% $.asg %>.<% $.domain %>'
-          channel: '<% $.channel %>'
         on-success:
           - refresh_apt_cache
+          - notify
       refresh_apt_cache:
         action: debian.apt_get_update
         input:
@@ -149,15 +135,10 @@ workflows:
         policies:
           wait-before: 1
         publish:
-        on-success:
-          - chatops_provision_node
-      chatops_provision_node:
-        action: slack.post_message
-        input:
-          message: 'Starting Chef Provisioner for <% $.hostname %>...'
-          channel: '<% $.channel %>'
+          notify_message: 'Starting Chef Provisioner for <% $.hostname %>...'
         on-success:
           - provision_node
+          - notify
       provision_node:
         action: chef.solo
         policies:
@@ -167,15 +148,11 @@ workflows:
           attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
           recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
           timeout: 600
-        on-success:
-          - chatops_success_chef
-      chatops_success_chef:
-        action: slack.post_message
-        input:
-          message: 'Node <% $.hostname %> successfully provisioned! Things are going so well!'
-          channel: '<% $.channel %>'
+        publish:
+          notify_message: 'Node <% $.hostname %> successfully provisioned! Things are going so well!'
         on-success:
           - add_ipv4_loadbalancer
+          - notify
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
         policies:
@@ -184,10 +161,11 @@ workflows:
           loadbalancer_id: '<% $.loadbalancer_id %>'
           ip: <% $.ipv4_address %>
           port: '8080'
+        publish:
+          notify_message: 'Added <% $.hostname %> to lb.<% $.asg %>.<% $.domain %>.'
         on-success:
-          - chatops_lb_add
-      chatops_lb_add:
+          - notify
+      notify:
         action: slack.post_message
-        input:
-          message: 'Added <% $.hostname %> to lb.<% $.asg %>.<% $.domain %>.'
-          channel: '<% $.channel %>'
+          message: "ASG[<% $.asg %>] <% $.notify_message %>"
+          channel: <% $.channel %>

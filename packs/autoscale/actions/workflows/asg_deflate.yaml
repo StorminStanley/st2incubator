@@ -32,7 +32,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.last_deflate_timestamp'
         publish:
-          last_deflate_timestamp: <% int(<% $.get_last_deflate_timestamp.result %>) %>
+          last_deflate_timestamp: <% int($.get_last_deflate_timestamp.result) %>
         on-success:
           - get_deflate_delay
       get_deflate_delay:
@@ -40,7 +40,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.deflate_delay'
         publish:
-          deflate_delay: <% int(<% $.get_deflate_delay.result %>) %>
+          deflate_delay: <% int($.get_deflate_delay.result) %>
         on-success:
           - get_deflate_by
       get_deflate_by:
@@ -48,7 +48,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.deflate_by'
         publish:
-          deflate_by: <% int(<% $.get_deflate_by.result %>) %>
+          deflate_by: <% int($.get_deflate_by.result) %>
         on-success:
           - chatops_delete_nodes: <% $.force %> or
               ((<% $.last_deflate_timestamp %> + (<% $.deflate_delay %> * 60)) < <% $.current_epoch %>)
@@ -57,7 +57,7 @@ workflows:
       chatops_delete_nodes:
         action: slack.post_message
         input:
-          message: "ASG <% $.asg %> is a little bloated, it seems. Going to trim by <% $.deflate_by %> nodes..."
+          message: "ASG is a little bloated, it seems. Going to trim by <% $.deflate_by %> nodes..."
           channel: '<% $.channel %>'
         on-success:
           - get_asg_nodes
@@ -76,21 +76,20 @@ workflows:
         with-items: node in <% $.asg_nodes %>
         input:
           vm_id: <% $.node %>
-        on-success:
-          - chatops_cleaned
-      chatops_cleaned:
-        action: slack.post_message
-        join: all
-        input:
-          message: "ASG <% $.asg %> is slimmer now. Looking good!"
-          channel: '<% $.channel %>'
+        publish:
+          notify_message: "ASG is slimmer now. Looking good!"
         on-success:
           - record_updated_timestamp
+          - notify
       record_updated_timestamp:
         action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.last_deflate_timestamp'
           value: '<% $.current_epoch %>'
+      notify:
+        action: slack.post_message
+          message: 'ASG[<% $.asg %>] <% $.notify_message %>'
+          channel: '<% $.channel %>'
       chatops_too_soon:
         action: slack.post_message
         input:

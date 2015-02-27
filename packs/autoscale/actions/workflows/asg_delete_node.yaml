@@ -12,11 +12,6 @@ workflows:
       on-error:
         - fail
     tasks:
-      chatops_report:
-        action: slack.post_message
-        input:
-          message: '<% $.chatops_status %>'
-          channel: '#bot-testing'
       get_domain:
         action: st2.kv.get
         policies:
@@ -24,12 +19,12 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.domain'
         output:
-          chatops_status: '[ASG <% $.asg %>]: Deleting <% $.name %>.<% $.asg %>.<% $.domain %>...'
+          notify_message: 'Deleting <% $.name %>.<% $.asg %>.<% $.domain %>...'
         publish:
           domain: <% $.get_domain.result %>
         on-success:
           - get_node_ip
-          - chatops_report
+          - notify
       get_node_ip:
         action: linux.dig
         policies:
@@ -38,7 +33,7 @@ workflows:
           nameserver: '8.8.8.8'
           hostname: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
-          ipv4_address: '{<% $.get_node_ip.result[0] %>'
+          ipv4_address: '<% $.get_node_ip.result[0] %>'
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -89,10 +84,10 @@ workflows:
           loadbalancer_id: <% $.loadbalancer_id %>
           ip: <% $.ipv4_address %>
         output:
-          chatops_status: '[ASG <% $.asg %>]: Removed <% $.name %> from loadbalancer...'
+          notify_message: 'Removed <% $.name %> from loadbalancer...'
         on-success:
           - destroy_vm
-          - chatops_report
+          - notify
       destroy_vm:
         action: rackspace.delete_vm
         policies:
@@ -100,10 +95,10 @@ workflows:
         input:
           vm_id: '<% $.vm_id %>'
         output:
-          chatops_status: '[ASG <% $.asg %>]: Destroyed <% $.name %>...'
+          notify_message: 'Destroyed <% $.name %>...'
         on-success:
           - remove_dns_record
-          - chatops_report
+          - notify
       remove_dns_record:
         action: rackspace.delete_dns_record
         policies:
@@ -111,3 +106,7 @@ workflows:
         input:
           record_id: <% $.dns_record_id %>
           zone_id: <% $.dns_zone_id %>
+      notify:
+        action: slack.post_message
+          message: "ASG[<% $.asg %>] <% $.notify_message %>"
+          channel: '<% $.channel %>'

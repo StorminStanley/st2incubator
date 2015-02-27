@@ -19,13 +19,10 @@ workflows:
           key: 'asg.<% $.asg %>.channel'
         publish:
           channel: <% $.get_chatops_channel.result %>
+          notify_message: 'ASG <% $.asg %> needs some help, eh? Let me get on that...'
         on-success:
-          - chatops_notify_help
-      chatops_notify_help:
-        action: slack.post_message
-        input:
-          message: 'ASG <% $.asg %> needs some help, eh? Let me get on that...'
-          channel: '<% $.channel %>'
+          - get_last_expand_timestamp
+          - notify
       get_current_epoch:
         action: st2.epoch
         publish:
@@ -37,7 +34,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.last_expand_timestamp'
         publish:
-          last_expand_timestamp: <% int(<% $.get_last_expand_timestamp.result %>) %>
+          last_expand_timestamp: <% int($.get_last_expand_timestamp.result) %>
         on-success:
           - get_expand_delay
       get_expand_delay:
@@ -45,7 +42,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.expand_delay'
         publish:
-          expand_delay: <% int(<% $.get_expand_delay.result %>) %>
+          expand_delay: <% int($.get_expand_delay.result) %>
         on-success:
           - get_expand_by
       get_expand_by:
@@ -53,7 +50,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.expand_by'
         publish:
-          expand_by: <% int(<% $.get_expand_by.result %>) %>
+          expand_by: <% int($.get_expand_by.result) %>
         on-success:
           - eval_provision
       eval_provision:
@@ -62,7 +59,7 @@ workflows:
           cmd: 'echo faking out noop'
         publish:
           should_provision: (<% $.last_expand_timestamp %> + (<% $.expand_delay %> * 60)) < <% $.current_epoch %>
-          nodes_to_provision: <% range(0, <% $.expand_by %>).list() %>
+          nodes_to_provision: <% range(0,$.expand_by).list() %>
         on-success:
           - provision_new_nodes: <% $.should_provision %> # cannot 'or' here... failure
       provision_new_nodes:
