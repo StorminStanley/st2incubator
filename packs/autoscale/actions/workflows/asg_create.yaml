@@ -21,6 +21,7 @@ workflows:
       - deflate_by
       - deflate_delay
       - channel
+      - application_name
     task-defaults:
       on-error:
         - fail
@@ -188,6 +189,33 @@ workflows:
         input:
           key: 'asg.<% $.name %>.last_deflate_timestamp'
           value: '<% $.current_epoch %>'
+        on-success:
+          - store_application_name
+      store_application_name:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.<% $.name %>.application_name'
+          value: '<% $.application_name %>'
+        on-success:
+          - store_incident_state
+      store_incident_state:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.<% $.name %>.active_incident'
+          value: false
+        on-success:
+          - store_total_nodes
+      store_total_nodes:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.<% $.name %>.total_nodes'
+          value: 0
         on-success:
           - create_servers
       create_servers:
