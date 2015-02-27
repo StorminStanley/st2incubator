@@ -16,83 +16,83 @@ workflows:
       get_chatops_room:
         action: st2.kv.get
         input:
-          key: 'asg.{$.asg}.channel'
+          key: 'asg.<% $.asg %>.channel'
         publish:
-          channel: '{$.get_chatops_room.result}'
+          channel: '<% $.get_chatops_room.result %>'
         on-success:
           - get_current_epoch
       get_current_epoch:
         action: st2.epoch
         publish:
-          current_epoch: $.get_current_epoch.result
+          current_epoch: <% $.get_current_epoch.result %>
         on-success:
           - get_last_deflate_timestamp
       get_last_deflate_timestamp:
         action: st2.kv.get
         input:
-          key: 'asg.{$.asg}.last_deflate_timestamp'
+          key: 'asg.<% $.asg %>.last_deflate_timestamp'
         publish:
-          last_deflate_timestamp: int($.get_last_deflate_timestamp.result)
+          last_deflate_timestamp: <% int(<% $.get_last_deflate_timestamp.result %>) %>
         on-success:
           - get_deflate_delay
       get_deflate_delay:
         action: st2.kv.get
         input:
-          key: 'asg.{$.asg}.deflate_delay'
+          key: 'asg.<% $.asg %>.deflate_delay'
         publish:
-          deflate_delay: int($.get_deflate_delay.result)
+          deflate_delay: <% int(<% $.get_deflate_delay.result %>) %>
         on-success:
           - get_deflate_by
       get_deflate_by:
         action: st2.kv.get
         input:
-          key: 'asg.{$.asg}.deflate_by'
+          key: 'asg.<% $.asg %>.deflate_by'
         publish:
-          deflate_by: int($.get_deflate_by.result)
+          deflate_by: <% int(<% $.get_deflate_by.result %>) %>
         on-success:
-          - chatops_delete_nodes: $.force or
-              (($.last_deflate_timestamp + ($.deflate_delay * 60)) < $.current_epoch)
+          - chatops_delete_nodes: <% $.force %> or
+              ((<% $.last_deflate_timestamp %> + (<% $.deflate_delay %> * 60)) < <% $.current_epoch %>)
         on-error:
           - chatops_too_soon
       chatops_delete_nodes:
         action: slack.post_message
         input:
-          message: "ASG {$.asg} is a little bloated, it seems. Going to trim by {$.deflate_by} nodes..."
-          channel: '{$.channel}'
+          message: "ASG <% $.asg %> is a little bloated, it seems. Going to trim by <% $.deflate_by %> nodes..."
+          channel: '<% $.channel %>'
         on-success:
           - get_asg_nodes
       get_asg_nodes:
         action: rackspace.list_vms_by_id
         input:
-          count: $.deflate_by
+          count: <% $.deflate_by %>
           metadata:
-            asg: "{$.asg}"
+            asg: "<% $.asg %>"
         publish:
-          asg_nodes: $.get_asg_nodes.result
+          asg_nodes: <% $.get_asg_nodes.result %>
         on-success:
           - delete_eligible_nodes
       delete_eligible_nodes:
         action: rackspace.delete_vm
-        with-items: node in $.asg_nodes
+        with-items: node in <% $.asg_nodes %>
         input:
-          vm_id: $.node
+          vm_id: <% $.node %>
         on-success:
           - chatops_cleaned
       chatops_cleaned:
         action: slack.post_message
         join: all
         input:
-          message: "ASG {$.asg} is slimmer now. Looking good!"
-          channel: '{$.channel}'
+          message: "ASG <% $.asg %> is slimmer now. Looking good!"
+          channel: '<% $.channel %>'
         on-success:
           - record_updated_timestamp
       record_updated_timestamp:
         action: st2.kv.set
         input:
-          key: 'asg.{$.asg}.last_deflate_timestamp'
-          value: '{$.current_epoch}'
+          key: 'asg.<% $.asg %>.last_deflate_timestamp'
+          value: '<% $.current_epoch %>'
       chatops_too_soon:
         action: slack.post_message
         input:
           message: 'Slow down there, hoss... a deflate event just happened! Try `force=true`'
-          channel: '{$.channel}'
+          channel: '<% $.channel %>'

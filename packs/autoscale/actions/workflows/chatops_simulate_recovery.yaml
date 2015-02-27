@@ -20,4 +20,4 @@ workflows:
         action: slack.post_message
         input:
           message: "Sent NewRelic Recovery WebHook to StackStorm..."
-          channel: '{$.channel}'
+          channel: '<% $.channel %>'

@@ -15,18 +15,18 @@ workflows:
       chatops_report:
         action: slack.post_message
         input:
-          message: '{$.chatops_status}'
+          message: '<% $.chatops_status %>'
           channel: '#bot-testing'
       get_domain:
         action: st2.kv.get
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.domain'
+          key: 'asg.<% $.asg %>.domain'
         output:
-          chatops_status: '[ASG {$.asg}]: Deleting {$.name}.{$.asg}.{$.domain}...'
+          chatops_status: '[ASG <% $.asg %>]: Deleting <% $.name %>.<% $.asg %>.<% $.domain %>...'
         publish:
-          domain: $.get_domain.result
+          domain: <% $.get_domain.result %>
         on-success:
           - get_node_ip
           - chatops_report
@@ -36,9 +36,9 @@ workflows:
           wait-before: 1
         input:
           nameserver: '8.8.8.8'
-          hostname: '{$.name}.{$.asg}.{$.domain}'
+          hostname: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
-          ipv4_address: '{$.get_node_ip.result[0]'
+          ipv4_address: '{<% $.get_node_ip.result[0] %>'
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -46,9 +46,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.loadbalancer_id'
+          key: 'asg.<% $.asg %>.loadbalancer_id'
         publish:
-          loadbalancer_id: $.get_loadbalancer_id.result
+          loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - get_dns_zone_id
       get_dns_zone_id:
@@ -56,9 +56,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.dns_zone_id'
+          key: 'asg.<% $.asg %>.dns_zone_id'
         publish:
-          dns_zone_id: $.get_dns_zone_id.result
+          dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - get_dns_record_id
       get_dns_record_id:
@@ -66,9 +66,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          name: '{$.name}.{$.asg}.{$.domain}'
+          name: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
-          dns_record_id: $.get_dns_record_id.result
+          dns_record_id: <% $.get_dns_record_id.result %>
         on-success:
           - get_vm_id
       get_vm_id:
@@ -76,9 +76,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          name: '{$.name}'
+          name: '<% $.name %>'
         publish:
-          vm_id: $.get_vm_id.result
+          vm_id: <% $.get_vm_id.result %>
         on-success:
           - remove_node_loadbalancer
       remove_node_loadbalancer:
@@ -86,10 +86,10 @@ workflows:
         policies:
           wait-before: 1
         input:
-          loadbalancer_id: $.loadbalancer_id
-          ip: $.ipv4_address
+          loadbalancer_id: <% $.loadbalancer_id %>
+          ip: <% $.ipv4_address %>
         output:
-          chatops_status: '[ASG {$.asg}]: Removed {$.name} from loadbalancer...'
+          chatops_status: '[ASG <% $.asg %>]: Removed <% $.name %> from loadbalancer...'
         on-success:
           - destroy_vm
           - chatops_report
@@ -98,9 +98,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          vm_id: '{$.vm_id}'
+          vm_id: '<% $.vm_id %>'
         output:
-          chatops_status: '[ASG {$.asg}]: Destroyed {$.name}...'
+          chatops_status: '[ASG <% $.asg %>]: Destroyed <% $.name %>...'
         on-success:
           - remove_dns_record
           - chatops_report
@@ -109,5 +109,5 @@ workflows:
         policies:
           wait-before: 1
         input:
-          record_id: $.dns_record_id
-          zone_id: $.dns_zone_id
+          record_id: <% $.dns_record_id %>
+          zone_id: <% $.dns_zone_id %>

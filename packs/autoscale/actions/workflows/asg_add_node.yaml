@@ -15,22 +15,22 @@ workflows:
       get_chatops_channel:
         action: st2.kv.get
         input:
-          key: 'asg.{$.asg}.channel'
+          key: 'asg.<% $.asg %>.channel'
         publish:
-          channel: '{$.get_chatops_channel.result}'
+          channel: '<% $.get_chatops_channel.result %>'
         on-success:
           - generate_new_hostname
       generate_new_hostname:
         action: autoscale.generate_random_name count=2
         publish:
-          hostname: '{$.generate_new_hostname.stdout}'
+          hostname: '<% $.generate_new_hostname.stdout %>'
         on-success:
           - chatops_notify_create_node
       chatops_notify_create_node:
         action: slack.post_message
         input:
-          message: 'OK! Spinning up additional node {$.hostname} for ASG {$.asg}'
-          channel: '{$.channel}'
+          message: 'OK! Spinning up additional node <% $.hostname %> for ASG <% $.asg %>'
+          channel: '<% $.channel %>'
         on-success:
           - get_ssh_key
       get_ssh_key:
@@ -40,7 +40,7 @@ workflows:
         input:
           key: 'ssh_pub_key'
         publish:
-          ssh_pub_key: '{$.get_ssh_key.result}'
+          ssh_pub_key: '<% $.get_ssh_key.result %>'
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -48,9 +48,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.loadbalancer_id'
+          key: 'asg.<% $.asg %>.loadbalancer_id'
         publish:
-          loadbalancer_id: '{$.get_loadbalancer_id.result}'
+          loadbalancer_id: '<% $.get_loadbalancer_id.result %>'
         on-success:
           - get_vm_size_id
       get_vm_size_id:
@@ -58,9 +58,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.vm_size_id'
+          key: 'asg.<% $.asg %>.vm_size_id'
         publish:
-          vm_size_id: '{$.get_vm_size_id.result}'
+          vm_size_id: '<% $.get_vm_size_id.result %>'
         on-success:
           - get_vm_image_id
       get_vm_image_id:
@@ -68,9 +68,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.vm_image_id'
+          key: 'asg.<% $.asg %>.vm_image_id'
         publish:
-          vm_image_id: '{$.get_vm_image_id.result}'
+          vm_image_id: '<% $.get_vm_image_id.result %>'
         on-success:
           - get_dns_zone_id
       get_dns_zone_id:
@@ -78,9 +78,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.dns_zone_id'
+          key: 'asg.<% $.asg %>.dns_zone_id'
         publish:
-          dns_zone_id: '{$.get_dns_zone_id.result}'
+          dns_zone_id: '<% $.get_dns_zone_id.result %>'
         on-success:
           - get_domain
       get_domain:
@@ -88,9 +88,9 @@ workflows:
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.domain'
+          key: 'asg.<% $.asg %>.domain'
         publish:
-          domain: '{$.get_domain.result}'
+          domain: '<% $.get_domain.result %>'
         on-success:
           - create_new_node
       create_new_node:
@@ -98,22 +98,22 @@ workflows:
         policies:
           wait-before: 1
         input:
-          name: $.hostname
-          flavor_id: $.vm_size_id
-          image_id: $.vm_image_id
-          key_material: $.ssh_pub_key
+          name: <% $.hostname %>
+          flavor_id: <% $.vm_size_id %>
+          image_id: <% $.vm_image_id %>
+          key_material: <% $.ssh_pub_key %>
           metadata:
-            asg: $.asg
+            asg: <% $.asg %>
         publish:
-          ipv4_address: '{$.create_new_node.result.public_ips[1]}'
-          ipv6_address: '{$.create_new_node.result.public_ips[0]}'
+          ipv4_address: '<% $.create_new_node.result.public_ips[1] %>'
+          ipv6_address: '<% $.create_new_node.result.public_ips[0] %>'
         on-success:
           - chatops_success_node
       chatops_success_node:
         action: slack.post_message
         input:
-          message: 'Mission accomplished! Created new node {$.hostname} [{$.ipv4_address}]!'
-          channel: '{$.channel}'
+          message: 'Mission accomplished! Created new node <% $.hostname %> [<% $.ipv4_address %>]!'
+          channel: '<% $.channel %>'
         on-success:
           - setup_ipv4_dns
       setup_ipv4_dns:
@@ -121,23 +121,23 @@ workflows:
         policies:
           wait-before: 1
         input:
-          name: '{$.hostname}.{$.asg}.{$.domain}'
-          zone_id: $.dns_zone_id
+          name: '<% $.hostname %>.<% $.asg %>.<% $.domain %>'
+          zone_id: <% $.dns_zone_id %>
           type: 'A'
-          data: $.ipv4_address
+          data: <% $.ipv4_address %>
         on-success:
           - chatops_success_dns
       chatops_success_dns:
         action: slack.post_message
         input:
-          message: 'DNS now setup for {$.hostname}.{$.asg}.{$.domain}'
-          channel: '{$.channel}'
+          message: 'DNS now setup for <% $.hostname %>.<% $.asg %>.<% $.domain %>'
+          channel: '<% $.channel %>'
         on-success:
           - refresh_apt_cache
       refresh_apt_cache:
         action: debian.apt_get_update
         input:
-          hosts: $.ipv4_address
+          hosts: <% $.ipv4_address %>
         policies:
           wait-before: 5
         on-success:
@@ -145,7 +145,7 @@ workflows:
       install_chef:
         action: chef.install
         input:
-          hosts: $.ipv4_address
+          hosts: <% $.ipv4_address %>
         policies:
           wait-before: 1
         publish:
@@ -154,8 +154,8 @@ workflows:
       chatops_provision_node:
         action: slack.post_message
         input:
-          message: 'Starting Chef Provisioner for {$.hostname}...'
-          channel: '{$.channel}'
+          message: 'Starting Chef Provisioner for <% $.hostname %>...'
+          channel: '<% $.channel %>'
         on-success:
           - provision_node
       provision_node:
@@ -163,7 +163,7 @@ workflows:
         policies:
           wait-before: 1
         input:
-          hosts: $.ipv4_address
+          hosts: <% $.ipv4_address %>
           attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
           recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
           timeout: 600
@@ -172,8 +172,8 @@ workflows:
       chatops_success_chef:
         action: slack.post_message
         input:
-          message: 'Node {$.hostname} successfully provisioned! Things are going so well!'
-          channel: '{$.channel}'
+          message: 'Node <% $.hostname %> successfully provisioned! Things are going so well!'
+          channel: '<% $.channel %>'
         on-success:
           - add_ipv4_loadbalancer
       add_ipv4_loadbalancer:
@@ -181,13 +181,13 @@ workflows:
         policies:
           wait-before: 4
         input:
-          loadbalancer_id: '{$.loadbalancer_id}'
-          ip: $.ipv4_address
+          loadbalancer_id: '<% $.loadbalancer_id %>'
+          ip: <% $.ipv4_address %>
           port: '8080'
         on-success:
           - chatops_lb_add
       chatops_lb_add:
         action: slack.post_message
         input:
-          message: 'Added {$.hostname} to lb.{$.asg}.{$.domain}.'
-          channel: '{$.channel}'
+          message: 'Added <% $.hostname %> to lb.<% $.asg %>.<% $.domain %>.'
+          channel: '<% $.channel %>'
