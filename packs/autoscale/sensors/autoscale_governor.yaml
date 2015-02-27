@@ -1,0 +1,15 @@
+---
+class_name: "AutoscaleGovernorSensor"
+entry_point: "autoscale_governor_sensor.py"
+description: Autoscale Pulse manager to automatically deflate non-troubled ASGs
+trigger_types:
+  -
+    name: 'ScaleDownPulse'
+    description: 'Pulse trigger emitted when an ASG is eligible for deflation'
+    payload_info:
+      - asg
+  -
+    name: 'ScaleUpPulse'
+    description: 'Pulse trigger emitted when an ASG is eligible for expansion'
+    payload_info:
+      - asg
