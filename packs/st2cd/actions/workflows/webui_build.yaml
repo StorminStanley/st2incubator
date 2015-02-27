@@ -77,7 +77,7 @@
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && mv webui.tar.gz \"webui-{{retrieve_version[get_build_server.result[0]].stdout}}-{{process_build_number.localhost.stdout}}.tar.gz\""
+        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && mv webui.tar.gz \"webui-{{retrieve_version[get_build_server.result[0]].stdout}}.tar.gz\""
       on-success: "publish_build_artifact"
     -
       name: "publish_build_artifact"
@@ -94,6 +94,6 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/ ; cp \"/tmp/webui-{{retrieve_version[get_build_server.result[0]].stdout}}-{{process_build_number.localhost.stdout}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/ ; cp \"/tmp/webui-{{retrieve_version[get_build_server.result[0]].stdout}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/"
 
   default: "get_current_build"
