@@ -13,7 +13,7 @@
       ref: "st2cd.apt_get"
       params:
         hosts: "{{hostname}}"
-        act: "install -y"
+        act: "install -y -o Dpkg::Options::=\"--force-confnew\""
         packages: "st2common st2reactor st2actions st2api st2auth"
       on-success: "upgrade_st2client"
     -
