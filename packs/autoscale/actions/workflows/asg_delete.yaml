@@ -117,6 +117,24 @@ workflows:
         input:
           key: 'asg.<% $.name %>.last_deflate_timestamp'
         on-success:
+          - delete_application_name
+      delete_application_name:
+        action: st2.kv.delete
+        input:
+          key: 'asg.<% $.name %>.application_name'
+        on-success:
+          - delete_incident_state
+      delete_incident_state:
+        action: st2.kv.delete
+        input:
+          key: 'asg.<% $.name %>.active_incident'
+        on-success:
+          - delete_total_nodes
+      delete_total_nodes:
+        action: st2.kv.delete
+        input:
+          key: 'asg.<% $.name %>.total_nodes'
+        on-success:
           - get_asg_nodes
       get_asg_nodes:
         action: rackspace.list_vms

@@ -61,3 +61,7 @@ parameters:
     type: string
     description: Slack channel to send ChatOps events
     default: '#bot-testing'
+  application_name:
+    type: string
+    description: Upstream New Relic application name
+    required: true
