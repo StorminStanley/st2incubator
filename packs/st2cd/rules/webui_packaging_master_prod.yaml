@@ -19,5 +19,5 @@
         parameters:
             repo: "https://github.com/StackStorm/st2web.git"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_origin_prod}}"
+            dl_server: "{{system.releases_server}}"
             environment: "production"
