@@ -37,7 +37,7 @@
         hostname: "{{run_instance.result[0][0].private_ip_address}}"
         username: "stanley"
         keyfile: "{{keyfile}}"
-        timeout: 20
+        ssh_timeout: 20
         retries: 30
       on-success: "add_name_tag"
     -
@@ -93,7 +93,7 @@
         hostname: "{{run_instance.result[0][0].private_ip_address}}"
         username: "stanley"
         keyfile: "{{keyfile}}"
-        timeout: 30
+        ssh_timeout: 30
         retries: 10
       on-success: "puppet_bootstrap"
     -
