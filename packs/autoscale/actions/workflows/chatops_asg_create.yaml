@@ -1,0 +1,63 @@
+---
+name: autoscale.chatops.asg.create
+version: '2.0'
+
+workflows:
+  add_node:
+    description: ChatOps the creation of new ASGs
+    type: direct
+    input:
+      - message
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      parse_chatops_message:
+        action: autoscale.parse_chatops
+        input:
+          message: <% $.message %>
+        publish:
+          chatops_command: <% $.parse_chatops_message.result.command %>
+          chatops_parameters: <% $.parse_chatops_message.result.parameters %>
+        on-success:
+          - merge_defaults
+      merge_defaults:
+        action: autoscale.merge
+        input:
+          defaults:
+            application_name: 'Default Application'
+            port: 80
+            protocol: 'HTTP'
+            admin_contact: 'support@stackstorm.net'
+            min_nodes: 3
+            max_nodes: 20
+            expand_by: 5
+            expand_delay: 10
+            deflate_by: 2
+            deflate_delay: 30
+            vm_size_id: '2'
+            vm_image_id: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
+            channel: '#bot-testing'
+          overrides: <% $.chatops_parameters %>
+        publish:
+          asg_params: <% $.merge_defaults.result %>
+        on-success:
+          - execute_asg_create
+      execute_asg_create:
+        action: autoscale.asg.create
+        input:
+          name: <% $.asg_params.name %>
+          domain: <% $.asg_params.domain %>
+          application_name: <% $.asg_params.application_name %>
+          port: <% $.asg_params.port %>
+          protocol: <% $.asg_params.protocol %>
+          admin_contact: <% $.asg_params.admin_contact %>
+          min_nodes: <% $.asg_params.min_nodes %>
+          max_nodes: <% $.asg_params.max_nodes %>
+          expand_by: <% $.asg_params.expand_by %>
+          expand_delay: <% $.asg_params.expand_delay %>
+          deflate_by: <% $.asg_params.deflate_by %>
+          deflate_delay: <% $.asg_params.deflate_delay %>
+          vm_size_id: <% $.asg_params.name %>
+          vm_image_id: <% $.asg_params.name %>
+          channel: <% $.asg_params.name %>

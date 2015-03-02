@@ -46,7 +46,7 @@ workflows:
         action: rackspace.create_loadbalancer
         input:
           name: 'asg_<% $.name %>_lb'
-          port: <% $.port %>
+          port: "'<% $.port %>'"
           protocol: <% $.protocol %>
         publish:
           loadbalancer_id: "<% $.create_loadbalancer.result.id %>"

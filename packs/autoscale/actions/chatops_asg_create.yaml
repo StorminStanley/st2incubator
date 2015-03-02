@@ -5,59 +5,7 @@ description: Create a new AutoScale Group within StackStorm
 enabled: true
 entry_point: 'workflows/chatops_asg_create.yaml'
 parameters:
-  name:
+  message:
     type: string
-    description: Name of new AutoScale Group
+    description: Incoming message from ChatOps
     required: true
-  port:
-    type: integer
-    description: Port for front-end loadbalancer to listen on
-    default: 80
-  protocol:
-    type: string
-    description: Protocol to proxy via loadbalancer
-    default: 'HTTP'
-  domain:
-    type: string
-    description: Subdomain used to manage ASG resources
-    required: true
-  admin_contact:
-    type: string
-    description: e-mail address of admisistrative contact.
-    default: 'support@democompay.net'
-  min_nodes:
-    type: integer
-    description: Minimum number of nodes to keep provisioned.
-    default: 3
-  max_nodes:
-    type: integer
-    description: Maximum number of nodes allowed to be allocated
-    default: 20
-  expand_by:
-    type: integer
-    description: Number of nodes to expand-by at a time during auto-scaling
-    default: 5
-  expand_delay:
-    type: integer
-    description: Length of time (in minutes) between autoscale expansion events
-    default: 10
-  deflate_by:
-    type: integer
-    description: Number of nodes to deflate-by at a time during auto-scaling
-    default: 2
-  deflate_delay:
-    type: integer
-    description: Length of time (in minutes) between autoscale deflation events
-    default: 30
-  vm_size_id:
-    type: string
-    description: VM Size ID (use rackspace.list_vm_sizes to discover)
-    default: '2'
-  vm_image_id:
-    type: string
-    description: VM Size ID (use rackspace.list_vm_sizes to discover)
-    default: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
-  channel:
-    type: string
-    description: Slack channel to send ChatOps events
-    default: '#bot-testing'

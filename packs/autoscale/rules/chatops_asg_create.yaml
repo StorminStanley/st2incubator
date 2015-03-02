@@ -1,15 +1,14 @@
 ---
-  name: 'chatops-autoscale.asg.create'
+  name: 'autoscale.chatops.asg.create'
   description: 'Create a new ASG via ChatOps'
   enabled: true
   trigger:
     type: 'slack.message'
   criteria:
     trigger.text:
-      type: eq
+      type: startswith
       pattern: '!asg create'
   action:
-    ref: autoscale.asg.create
+    ref: autoscale.chatops.asg.create
     parameters:
-      name: 'rsdemo'
-      domain: 'stackstorm.net'
+      message: "{{trigger.text}}"
