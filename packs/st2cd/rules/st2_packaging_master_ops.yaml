@@ -6,18 +6,15 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_packaging"
+            pattern: "st2cd.webui_packaging"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
-        trigger.parameters.environment:
-            pattern: "production"
-            type: "equals"
     action:
         ref: "st2cd.st2_packaging_ops"
         parameters:
-            repo: "{{trigger.parameters.repo}}"
-            branch: "{{trigger.parameters.branch}}"
+            repo: "https://github.com/StackStorm/st2.git"
+            branch: "master"
             releases_server: "{{system.releases_server}}"
             environment: "production"
