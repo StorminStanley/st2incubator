@@ -12,6 +12,6 @@
       type: eq
       pattern: 'Default server alert policy'
   action:
-    ref: autoscale.asg.expand
+    ref: autoscale.asg.expand_app
     parameters:
-      asg: 'rsdemo'
+      application_name: "{{trigger.alert.application_name}}"

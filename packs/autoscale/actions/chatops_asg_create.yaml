@@ -1,9 +1,9 @@
 ---
-name: asg.create
+name: chatops.asg.create
 runner_type: mistral-v2
 description: Create a new AutoScale Group within StackStorm
 enabled: true
-entry_point: 'workflows/asg_create.yaml'
+entry_point: 'workflows/chatops_asg_create.yaml'
 parameters:
   name:
     type: string

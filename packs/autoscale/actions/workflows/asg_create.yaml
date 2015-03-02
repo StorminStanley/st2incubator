@@ -37,7 +37,7 @@ workflows:
           - get_current_epoch
           - notify
       get_current_epoch:
-        action: st2.epoch
+        action: autoscale.epoch
         publish:
           current_epoch: <% $.get_current_epoch.result %>
         on-success:
@@ -46,8 +46,8 @@ workflows:
         action: rackspace.create_loadbalancer
         input:
           name: 'asg_<% $.name %>_lb'
-          port: '<% $.port %>'
-          protocol: '<% $.protocol %>'
+          port: <% $.port %>
+          protocol: <% $.protocol %>
         publish:
           loadbalancer_id: "<% $.create_loadbalancer.result.id %>"
           loadbalancer_ipv4: "<% $.create_loadbalancer.result.ipv4_public %>"
@@ -73,7 +73,7 @@ workflows:
           kv_key: 'asg.<% $.name %>.dns_zone_id'
           kv_value: "<% $.dns_zone_id %>"
         on-success:
-          - store_dns_zone_id
+          - set_lb_ipv4_dns
           - kv_store
           - notify
       set_lb_ipv4_dns:
@@ -232,7 +232,7 @@ workflows:
       notify:
         action: slack.post_message
         input:
-          message: "ASG[<% $.name %>] <% $.notify_message %>"
+          message: "```ASG[<% $.name %>] <% $.notify_message %>```"
           channel: '<% $.channel %>'
       kv_store:
         action: st2.kv.set

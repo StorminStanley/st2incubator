@@ -12,6 +12,6 @@
       type: contains
       pattern: 'Alert ended'
   action:
-    ref: autoscale.asg.deflate
+    ref: autoscale.asg.deflate_app
     parameters:
-      asg: 'rsdemo'
+      application_name: "{{trigger.alert.application_name}}"

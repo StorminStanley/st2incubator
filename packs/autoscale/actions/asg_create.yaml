@@ -9,6 +9,10 @@ parameters:
     type: string
     description: Name of new AutoScale Group
     required: true
+  application_name:
+    type: string
+    description: 'New Relic Application Name'
+    default: 'Default Application'
   port:
     type: integer
     description: Port for front-end loadbalancer to listen on
@@ -61,7 +65,3 @@ parameters:
     type: string
     description: Slack channel to send ChatOps events
     default: '#bot-testing'
-  application_name:
-    type: string
-    description: Upstream New Relic application name
-    required: true
