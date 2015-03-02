@@ -1,0 +1,22 @@
+---
+  name: "pypi_st2client"
+  runner_type: "run-remote-script"
+  description: "Clean a git repo"
+  enabled: true
+  entry_point: "pypi_st2client.sh"
+  parameters: 
+    repo:
+      required: true
+      position: 1
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    cmd: 
+      immutable: true
+      default: ""
+    kwarg_op: 
+      immutable: true
+      default: "--"
