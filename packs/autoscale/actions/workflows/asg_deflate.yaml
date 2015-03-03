@@ -18,7 +18,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.channel'
         publish:
-          channel: '<% $.get_chatops_room.result %>'
+          channel: <% $.get_chatops_room.result %>
         on-success:
           - get_current_epoch
       get_current_epoch:
@@ -57,8 +57,8 @@ workflows:
       chatops_delete_nodes:
         action: slack.post_message
         input:
-          message: "ASG is a little bloated, it seems. Going to trim by <% $.deflate_by %> nodes..."
-          channel: '<% $.channel %>'
+          message: "```ASG[<% $.asg %>] ASG is a little bloated, it seems. Going to trim by <% $.deflate_by %> nodes...```"
+          channel: <% $.channel %>
         on-success:
           - get_asg_nodes
       get_asg_nodes:
@@ -66,7 +66,7 @@ workflows:
         input:
           count: <% $.deflate_by %>
           metadata:
-            asg: "<% $.asg %>"
+            asg: <% $.asg %>
         publish:
           asg_nodes: <% $.get_asg_nodes.result %>
         on-success:
@@ -85,13 +85,13 @@ workflows:
         action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.last_deflate_timestamp'
-          value: '<% $.current_epoch %>'
+          value: <% str($.current_epoch) %>
       notify:
         action: slack.post_message
-          message: 'ASG[<% $.asg %>] <% $.notify_message %>'
+          message: '```ASG[<% $.asg %>] <% $.notify_message %>```'
           channel: '<% $.channel %>'
       chatops_too_soon:
         action: slack.post_message
         input:
           message: 'Slow down there, hoss... a deflate event just happened! Try `force=true`'
-          channel: '<% $.channel %>'
+          channel: <% $.channel %>

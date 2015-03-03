@@ -17,13 +17,13 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.channel'
         publish:
-          channel: '<% $.get_chatops_channel.result %>'
+          channel: <% $.get_chatops_channel.result %>
         on-success:
           - generate_new_hostname
       generate_new_hostname:
         action: autoscale.generate_random_name count=2
         publish:
-          hostname: '<% $.generate_new_hostname.stdout %>'
+          hostname: <% $.generate_new_hostname.stdout %>
           notify_message: 'OK! Spinning up additional node <% $.hostname %> for ASG <% $.asg %>'
         on-success:
           - get_ssh_key
@@ -35,7 +35,7 @@ workflows:
         input:
           key: 'ssh_pub_key'
         publish:
-          ssh_pub_key: '<% $.get_ssh_key.result %>'
+          ssh_pub_key: <% $.get_ssh_key.result %>
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -45,7 +45,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.loadbalancer_id'
         publish:
-          loadbalancer_id: '<% $.get_loadbalancer_id.result %>'
+          loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - get_vm_size_id
       get_vm_size_id:
@@ -55,7 +55,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.vm_size_id'
         publish:
-          vm_size_id: '<% $.get_vm_size_id.result %>'
+          vm_size_id: <% $.get_vm_size_id.result %>
         on-success:
           - get_vm_image_id
       get_vm_image_id:
@@ -65,7 +65,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.vm_image_id'
         publish:
-          vm_image_id: '<% $.get_vm_image_id.result %>'
+          vm_image_id: <% $.get_vm_image_id.result %>
         on-success:
           - get_dns_zone_id
       get_dns_zone_id:
@@ -75,7 +75,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.dns_zone_id'
         publish:
-          dns_zone_id: '<% $.get_dns_zone_id.result %>'
+          dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - get_domain
       get_domain:
@@ -85,7 +85,7 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.domain'
         publish:
-          domain: '<% $.get_domain.result %>'
+          domain: <% $.get_domain.result %>
         on-success:
           - create_new_node
       create_new_node:
@@ -167,5 +167,5 @@ workflows:
           - notify
       notify:
         action: slack.post_message
-          message: "ASG[<% $.asg %>] <% $.notify_message %>"
+          message: "```ASG[<% $.asg %>] <% $.notify_message %>```"
           channel: <% $.channel %>

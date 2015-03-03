@@ -17,7 +17,7 @@ workflows:
         input:
           key: 'asg.<% $.name %>.loadbalancer_id'
         publish:
-          loadbalancer_id: '<% $.get_loadbalancer_id.result %>'
+          loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - delete_loadbalancer
       delete_loadbalancer:
@@ -37,13 +37,13 @@ workflows:
         input:
           key: 'asg.<% $.name %>.dns_zone_id'
         publish:
-          dns_zone_id: '<% $.get_dns_zone_id.result %>'
+          dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - delete_dns_zone
       delete_dns_zone:
         action: rackspace.delete_dns_zone
         input:
-          zone_id: "<% $.dns_zone_id %>"
+          zone_id: <% $.dns_zone_id %>
         on-success:
           - delete_dns_zone_key
       delete_dns_zone_key:
@@ -140,7 +140,7 @@ workflows:
         action: rackspace.list_vms
         input:
           metadata:
-            asg: "<% $.name %>"
+            asg: <% $.name %>
         publish:
           asg_nodes: <% $.get_asg_nodes.result %>
         on-success:
@@ -150,7 +150,7 @@ workflows:
         input:
           count: 0
           metadata:
-            asg: "<% $.asg %>"
+            asg: <% $.asg %>
         publish:
           asg_nodes: <% $.get_asg_nodes.result %>
         on-success:
@@ -167,4 +167,4 @@ workflows:
         join: all
         input:
           message: 'Successfully deleted all nodes in ASG <% $.asg %>'
-          channel: '<% $.channel %>'
+          channel: <% $.channel %>

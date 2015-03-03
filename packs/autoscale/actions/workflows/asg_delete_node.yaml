@@ -33,7 +33,7 @@ workflows:
           nameserver: '8.8.8.8'
           hostname: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
-          ipv4_address: '<% $.get_node_ip.result[0] %>'
+          ipv4_address: <% $.get_node_ip.result[0] %>
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -93,7 +93,7 @@ workflows:
         policies:
           wait-before: 1
         input:
-          vm_id: '<% $.vm_id %>'
+          vm_id: <% $.vm_id %>
         output:
           notify_message: 'Destroyed <% $.name %>...'
         on-success:
@@ -108,5 +108,5 @@ workflows:
           zone_id: <% $.dns_zone_id %>
       notify:
         action: slack.post_message
-          message: "ASG[<% $.asg %>] <% $.notify_message %>"
-          channel: '<% $.channel %>'
+          message: "```ASG[<% $.asg %>] <% $.notify_message %>```"
+          channel: <% $.channel %>

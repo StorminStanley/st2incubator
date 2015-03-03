@@ -30,7 +30,7 @@ workflows:
         action: st2.kv.set
         input:
           key: 'asg.<% $.name %>.channel'
-          value: '<% $.channel %>'
+          value: <% $.channel %>
         publish:
           notify_message: 'Starting to assemble new autoscale group: <% $.name %>... standby...'
         on-success:
@@ -71,7 +71,7 @@ workflows:
           dns_zone_id: "<% $.create_dns_zone.result.id %>"
           notify_message: "DNS Setup for <% $.name %>.<% $.domain %>"
           kv_key: 'asg.<% $.name %>.dns_zone_id'
-          kv_value: "<% $.dns_zone_id %>"
+          kv_value: <% str($.dns_zone_id) %>
         on-success:
           - set_lb_ipv4_dns
           - kv_store
@@ -96,7 +96,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.min_nodes'
-          value: "<% $.min_nodes %>"
+          value: <% str($.min_nodes) %>
         publish:
           nodes_to_provision: <% range(0,$.min_nodes).list() %>
         on-success:
@@ -107,7 +107,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.max_nodes'
-          value: "<% $.max_nodes %>"
+          value: <% str($.max_nodes) %>
         on-success:
           - store_domain
       store_domain:
@@ -116,7 +116,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.domain'
-          value: "<% $.domain %>"
+          value: <% $.domain %>
         on-success:
           - store_vm_size_id
       store_vm_size_id:
@@ -125,7 +125,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.vm_size_id'
-          value: "<% $.vm_size_id %>"
+          value: <% str($.vm_size_id) %>
         on-success:
           - store_vm_image_id
       store_vm_image_id:
@@ -134,7 +134,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.vm_image_id'
-          value: "<% $.vm_image_id %>"
+          value: <% str($.vm_image_id) %>
         on-success:
           - store_expand_by_nodes
       store_expand_by_nodes:
@@ -143,7 +143,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.expand_by'
-          value: '<% $.expand_by %>'
+          value: <% str($.expand_by) %>
         on-success:
           - store_expand_delay
       store_expand_delay:
@@ -152,7 +152,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.expand_delay'
-          value: '<% $.expand_delay %>'
+          value: <% str($.expand_delay) %>
         on-success:
           - store_last_expand_timestamp
       store_last_expand_timestamp:
@@ -161,7 +161,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.last_expand_timestamp'
-          value: '<% $.current_epoch %>'
+          value: <% str($.current_epoch) %>
         on-success:
           - store_deflate_by_nodes
       store_deflate_by_nodes:
@@ -170,7 +170,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.deflate_by'
-          value: '<% $.deflate_by %>'
+          value: <% str($.deflate_by) %>
         on-success:
           - store_deflate_delay
       store_deflate_delay:
@@ -179,7 +179,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.deflate_delay'
-          value: '<% $.deflate_delay %>'
+          value: <% str($.deflate_delay) %>
         on-success:
           - store_last_deflate_timestamp
       store_last_deflate_timestamp:
@@ -188,7 +188,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.last_deflate_timestamp'
-          value: '<% $.current_epoch %>'
+          value: <% str($.current_epoch) %>
         on-success:
           - store_application_name
       store_application_name:
@@ -197,7 +197,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.application_name'
-          value: '<% $.application_name %>'
+          value: <% $.application_name %>
         on-success:
           - store_incident_state
       store_incident_state:
@@ -206,7 +206,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.active_incident'
-          value: false
+          value: "false"
         on-success:
           - store_total_nodes
       store_total_nodes:
@@ -215,7 +215,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.total_nodes'
-          value: 0
+          value: "0"
         on-success:
           - create_servers
       create_servers:
