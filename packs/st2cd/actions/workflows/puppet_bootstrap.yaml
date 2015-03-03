@@ -26,7 +26,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hosts}}"
-        cmd: "bash /etc/puppet/script/bootstrap-linux"
+        cmd: "bash /opt/puppet/script/bootstrap-linux"
       on-success: "run_puppet_apply"
     - 
       name: "run_puppet_apply"

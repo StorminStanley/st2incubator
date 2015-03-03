@@ -24,10 +24,10 @@ def runAction(action_ref,params):
     }
 
     client = Client(st2_endpoints)
-    action_exec_mgr = client.managers['ActionExecution']
+    action_exec_mgr = client.managers['LiveAction']
     runner_mgr = client.managers['RunnerType']
 
-    execution = models.ActionExecution()
+    execution = models.LiveAction()
     execution.action = action_ref
     execution.parameters = param_parser(params)
     actionexec = action_exec_mgr.create(execution)

@@ -5,15 +5,14 @@
   enabled: true
   entry_point: ""
   parameters: 
-    dir: 
-      immutable: true
-      default: "/home/stanley/"
     sudo: 
       immutable: true
       default: true
     cmd: 
       immutable: true
-      default: "bash /etc/puppet/script/puppet-apply"
+      default: "bash /opt/puppet/script/puppet-apply"
     kwarg_op: 
       immutable: true
       default: "--"
+    timeout:
+      default: 1800

@@ -38,6 +38,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        timeout: 600
       on-success: "clean_repo"
     - 
       name: "clean_repo"

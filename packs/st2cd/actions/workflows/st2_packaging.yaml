@@ -21,6 +21,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
+        timeout: 180
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -30,6 +31,7 @@
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+        timeout: 300
       on-success: "version"
     -
       name: "version"
@@ -52,6 +54,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        timeout: 1800
       on-success: "rsync_debs"
     - 
       name: "rsync_debs"
@@ -62,6 +65,7 @@
         source: "/home/stanley/debbuild/*.deb"
         dest_server: "{{dl_server}}"
         destination: "/home/stanley/packages/deb/"
+        timeout: 600
       on-success: "add_packages"
     - 
       name: "add_packages"
@@ -70,12 +74,14 @@
         hosts: "{{dl_server}}"
         file: "/home/stanley/packages/deb/*.deb"
         distribution: "trusty"
+        timeout: 300
       on-success: "update_cache"
     - 
       name: "update_cache"
       ref: "freight.update_cache"
       params: 
         hosts: "{{dl_server}}"
+        timeout: 600
       on-success: "clean_repo"
     - 
       name: "clean_repo"
