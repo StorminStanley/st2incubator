@@ -5,12 +5,12 @@
   enabled: true
   entry_point: "write_pypirc.sh"
   parameters:
-    username: 
+    pypi_username: 
       type: "string"
       description: "PyPI account username"
       default: "{{system.st2_pypi_username}}"
       position: 0
-    password: 
+    pypi_password: 
       type: "string"
       description: "PyPI account password"
       default: "{{system.st2_pypi_password}}"
