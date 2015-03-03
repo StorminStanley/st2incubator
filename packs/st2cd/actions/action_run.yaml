@@ -5,9 +5,6 @@
   enabled: true
   entry_point: "action_run.py"
   parameters:
-    dir:
-      immutable: true
-      default: "/home/stanley/"
     sudo:
       default: false
     name:

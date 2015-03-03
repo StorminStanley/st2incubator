@@ -70,6 +70,7 @@
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
         url: "http://{{get_apt_repo.result}}/deb/keyring.gpg"
+        timeout: 600
       on-success: "set_hostname"
     -
       name: "set_hostname"
@@ -78,6 +79,7 @@
         distro: "UBUNTU14"
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         hostname: "{{hostname}}.{{dns_zone}}"
+        timeout: 300
       on-success: "reboot"
     -
       name: "reboot"

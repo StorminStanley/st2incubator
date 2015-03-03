@@ -43,6 +43,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install bower ; npm install gulp"
+        timeout: 600
       on-success: "install_npm_library_dependencies"
     -
       name: "install_npm_library_dependencies"
@@ -50,6 +51,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install"
+        timeout: 600
       on-success: "install_bower_library_dependencies"
     -
       name: "install_bower_library_dependencies"
@@ -57,6 +59,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/bower install"
+        timeout: 600
       on-success: "build_webui"
     -
       name: "build_webui"
@@ -64,6 +67,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/gulp production"
+        timeout: 600
       on-success: "create_build_artifact"
     -
       name: "create_build_artifact"
@@ -71,6 +75,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && tar --transform='s/build/webui/' -cvzpf webui.tar.gz build/"
+        timeout: 300
       on-success: "rename_build_artifact"
     -
       name: "rename_build_artifact"
@@ -88,6 +93,7 @@
         source: "{{clone_repo[get_build_server.result[0]].stdout}}/webui*.tar.gz"
         dest_server: "{{dl_server}}"
         destination: "/tmp"
+        timeout: 600
       on-success: "move_build_artifact"
     -
       name: "move_build_artifact"
@@ -95,5 +101,6 @@
       params:
         hosts: "{{dl_server}}"
         cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/ ; cp \"/tmp/webui-{{retrieve_version[get_build_server.result[0]].stdout}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/"
+        timeout: 600
 
   default: "get_current_build"

@@ -26,10 +26,7 @@ class KVPAction(Action):
             return kvp.value
         else:
             instance = KeyValuePair()
-            if action == 'create':
-                instance.id = key
-            else:
-                instance.id = client.keys.get_by_name(key).id
+            instance.id = client.keys.get_by_name(key).name
             instance.name = key
             instance.value = value
 
