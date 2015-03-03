@@ -54,7 +54,7 @@ workflows:
           loadbalancer_ipv6: "<% $.create_loadbalancer.result.ipv6_public %>"
           notify_message: "Loadbalancer created"
           kv_key: 'asg.<% $.name %>.loadbalancer_id'
-          kv_value: "<% $.loadbalancer_id %>"
+          kv_value: <% str($.create_loadbalancer.result.id) %>
         on-success:
           - create_dns_zone
           - kv_store
@@ -81,7 +81,7 @@ workflows:
         policies:
           wait-before: 1
         input:
-          zone_id: '<% $.dns_zone_id %>'
+          zone_id: <% str($.dns_zone_id) %>
           type: 'A'
           name: 'lb.<% $.name %>.<% $.domain %>'
           data: '<% $.loadbalancer_ipv4 %>'
@@ -233,7 +233,7 @@ workflows:
         action: slack.post_message
         input:
           message: "```ASG[<% $.name %>] <% $.notify_message %>```"
-          channel: '<% $.channel %>'
+          channel: <% $.channel %>
       kv_store:
         action: st2.kv.set
         input:
