@@ -1,0 +1,11 @@
+---
+name: chatops.asg.expand
+runner_type: mistral-v2
+description: ChatOps command to expand an autoscale group (uses Mistral)
+enabled: true
+entry_point: 'workflows/chatops_asg_expand.yaml'
+parameters:
+  message:
+    type: string
+    description: Incoming message from ChatOps
+    required: true

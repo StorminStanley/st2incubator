@@ -1,14 +1,14 @@
 ---
-  name: 'autoscale.chatops.asg.delete'
-  description: 'Delete an ASG via ChatOps'
+  name: 'autoscale.chatops.asg.delete_node'
+  description: 'ChatOps delete a node to an ASG'
   enabled: true
   trigger:
     type: 'slack.message'
   criteria:
     trigger.text:
       type: startswith
-      pattern: '!asg delete'
+      pattern: '!asg node delete'
   action:
-    ref: autoscale.chatops.asg.delete
+    ref: autoscale.chatops.asg.delete_node
     parameters:
       message: "{{trigger.text}}"

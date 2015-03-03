@@ -58,6 +58,6 @@ workflows:
           expand_delay: <% $.asg_params.expand_delay %>
           deflate_by: <% $.asg_params.deflate_by %>
           deflate_delay: <% $.asg_params.deflate_delay %>
-          vm_size_id: <% $.asg_params.name %>
-          vm_image_id: <% $.asg_params.name %>
-          channel: <% $.asg_params.name %>
+          vm_size_id: <% $.asg_params.vm_size_id %>
+          vm_image_id: <% $.asg_params.vm_image_id %>
+          channel: <% $.asg_params.channel %>

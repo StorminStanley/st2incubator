@@ -1,0 +1,11 @@
+---
+name: chatops.asg.add_node
+runner_type: mistral-v2
+description: ChatOps command to Add a node to an autoscale group (uses Mistral)
+enabled: true
+entry_point: 'workflows/chatops_asg_add_node.yaml'
+parameters:
+  message:
+    type: string
+    description: Incoming message from ChatOps
+    required: true

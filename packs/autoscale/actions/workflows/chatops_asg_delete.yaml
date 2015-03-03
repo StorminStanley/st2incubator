@@ -1,0 +1,26 @@
+---
+name: autoscale.chatops.asg.delete
+version: '2.0'
+
+workflows:
+  add_node:
+    description: ChatOps the creation of new ASGs
+    type: direct
+    input:
+      - message
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      parse_chatops_message:
+        action: autoscale.parse_chatops
+        input:
+          message: <% $.message %>
+        publish:
+          target_asg: <% $.parse_chatops_message.result.command[2] %>
+        on-success:
+          - execute_asg_delete
+      execute_asg_delete:
+        action: autoscale.asg.delete
+        input:
+          name: <% $.target_asg %>
