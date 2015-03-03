@@ -224,7 +224,7 @@ workflows:
           wait-before: 1
         with-items: i in <% $.nodes_to_provision %>
         input:
-          asg: '<% $.name %>'
+          asg: <% $.name %>
         publish:
           notify_message: "WOOT! ASG <% $.name %> setup, and a whole mess of nodes have been provisioned. Go and be merry!"
         on-success:
