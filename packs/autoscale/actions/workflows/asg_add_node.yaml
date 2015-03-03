@@ -115,8 +115,8 @@ workflows:
           zone_id: <% $.dns_zone_id %>
           type: 'A'
           data: <% $.ipv4_address %>
-        notify:
-          message: 'DNS now setup for <% $.hostname %>.<% $.asg %>.<% $.domain %>'
+        publish:
+          notify_message: 'DNS now setup for <% $.hostname %>.<% $.asg %>.<% $.domain %>'
         on-success:
           - refresh_apt_cache
           - notify
@@ -167,5 +167,6 @@ workflows:
           - notify
       notify:
         action: slack.post_message
+        input:
           message: "```ASG[<% $.asg %>] <% $.notify_message %>```"
           channel: <% $.channel %>
