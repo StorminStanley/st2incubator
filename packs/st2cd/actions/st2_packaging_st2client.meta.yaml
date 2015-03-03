@@ -18,10 +18,3 @@
       description: "The branch to build"
       default: "master"
       required: true
-    dl_server:
-      type: "string"
-      description: ""
-      required: true
-    environment:
-      type: "string"
-      description: ""
