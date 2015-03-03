@@ -1,0 +1,20 @@
+---
+    name: "st2cd_tag_release"
+    description: "Tags a branch with a release/"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.st2_packaging"
+            type: "matchregex"
+        trigger.parameters.branch:
+            pattern: "^v(\\d+\\.)(\\d+)$"
+            type: "matchregex"
+        trigger.parameters.environment:
+            pattern: "production"
+            type: "equals"
+    action:
+        ref: "st2cd.tag_branch"
+        parameters:
+            branch: "{{trigger.parameters.branch}}"
