@@ -58,6 +58,13 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+      on-success: "remove_pypirc"
+    -
+      name: "remove_pypirc"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cmd: "rm -f ~/.pypirc"
       on-success: "clean_repo"
     - 
       name: "clean_repo"
