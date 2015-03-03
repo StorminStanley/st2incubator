@@ -6,8 +6,8 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_packaging_ops"
-            type: "equals"
+            pattern: "st2cd\\.st2_packaging_ops"
+            type: "matchregex"
     action:
         ref: "slack.post_message"
         parameters:
