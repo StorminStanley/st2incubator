@@ -15,6 +15,6 @@
             pattern: "production"
             type: "equals"
     action:
-        ref: "st2cd.tag_branch"
+        ref: "st2cd.tag_release"
         parameters:
             branch: "{{trigger.parameters.branch}}"
