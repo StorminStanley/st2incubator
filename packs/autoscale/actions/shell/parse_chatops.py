@@ -13,7 +13,7 @@ class ParseChatops(Action):
         """
         command = []
         parameters = {}
-        search = re.compile('((\w+=[\'"][\w\s]+[\'"])|(\w+=\w+)|(\w+))')
+        search = re.compile('((\w+=[\'"][-\.\w\s]+[\'"])|(\w+=[-\.\w]+)|([-\.\w]+))')
         matches = re.findall(search, message)
         for match in matches:
             # Get rid of duplicates in the regex match

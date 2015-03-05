@@ -22,7 +22,7 @@ workflows:
         on-success:
           - get_current_epoch
       get_current_epoch:
-        action: st2.epoch
+        action: autoscale.epoch
         publish:
           current_epoch: <% $.get_current_epoch.result %>
         on-success:
@@ -62,36 +62,25 @@ workflows:
         on-success:
           - get_asg_nodes
       get_asg_nodes:
-        action: rackspace.list_vms_by_id
+        action: rackspace.get_vm_names
         input:
-          count: <% $.deflate_by %>
+          count: <% int($.deflate_by) %>
           metadata:
             asg: <% $.asg %>
         publish:
-          asg_nodes: <% $.get_asg_nodes.result %>
+          vm_names: <% $.get_asg_nodes.result %>
         on-success:
-          - delete_eligible_nodes
+        - delete_eligible_nodes
       delete_eligible_nodes:
-        action: rackspace.delete_vm
-        with-items: node in <% $.asg_nodes %>
+        action: autoscale.asg.delete_node
+        with-items: node in <% $.vm_names %>
         input:
-          vm_id: <% $.node %>
+          asg: <% $.asg %>
+          name: <% $.node %>
         on-success:
           - chatops_notify_deleted_success
       chatops_notify_deleted_success:
         action: slack.post_message
         input:
-          message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!"
-          channel: <% $.channel %>
-        on-success:
-          - record_updated_timestamp
-      record_updated_timestamp:
-        action: st2.kv.set
-        input:
-          key: 'asg.<% $.asg %>.last_deflate_timestamp'
-          value: <% str($.current_epoch) %>
-      chatops_too_soon:
-        action: slack.post_message
-        input:
-          message: 'Slow down there, hoss... a deflate event just happened! Try `force=true`'
+          message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!```"
           channel: <% $.channel %>

@@ -98,7 +98,7 @@ workflows:
           channel: <% $.channel %>
         on-success:
           - set_lb_ipv4_dns
-      set_lb_ipv4_ns:
+      set_lb_ipv4_dns:
         action: rackspace.create_dns_record
         policies:
           wait-before: 1
@@ -252,9 +252,9 @@ workflows:
         input:
           asg: <% $.name %>
         on-success:
-          - notify_succssful_create
+          - notify_successful_create
       notify_successful_create:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.name %>] WOOT! ASG setup, and a whole mess of nodes have been provisioned. Go and be merry!``"
+          message: "```ASG[<% $.name %>] WOOT! ASG setup, and a whole mess of nodes have been provisioned. Go and be merry!```"
           channel: <% $.channel %>

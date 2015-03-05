@@ -34,3 +34,9 @@ workflows:
         input:
           message: "```ASG[<% $.asg %>] Sent New Relic recovery webhook to StackStorm for <% $.application %>```"
           channel: '#<% $.channel %>'
+        on-success:
+          - begin_expand
+      begin_expand:
+        action: autoscale.asg.expand
+        input:
+          asg: <% $.asg %>

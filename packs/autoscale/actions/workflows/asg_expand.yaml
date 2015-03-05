@@ -23,12 +23,13 @@ workflows:
           - notify_start_wf
       notify_start_wf:
         action: slack.post_message
+        input:
           message: "```ASG[<% $.asg %>] ASG needs some help, eh? Let me get on that.```"
           channel: <% $.channel %>
         on-success:
           - get_current_epoch
       get_current_epoch:
-        action: st2.epoch
+        action: autoscale.epoch
         publish:
           current_epoch: <% $.get_current_epoch.result %>
         on-success:
@@ -78,3 +79,10 @@ workflows:
         input:
           key: 'asg.<% $.asg %>.last_expand_timestamp'
           value: <% $.current_epoch %>
+        on-success:
+          - notify_success_wf
+        notify_success_wf:
+          action: slack.post_message
+          input:
+            message: "```ASG[<% $.asg %>] Successfully expanded ASG```"
+            channel: <% $.channel %>

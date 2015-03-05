@@ -17,8 +17,8 @@ workflows:
         input:
           message: <% $.message %>
         publish:
-          target_asg: <% $.parse_chatops_message.result.command[3] %>
-          target_server: <% $.parse_chatops_message.result.parameters['server'] %>
+          target_asg: <% $.parse_chatops_message.result.parameters.asg %>
+          target_server: <% $.parse_chatops_message.result.parameters.name %>
         on-success:
           - execute_asg_delete
       execute_asg_delete:

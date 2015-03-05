@@ -1,6 +1,6 @@
 ---
 name: asg.delete_node
-runner_type: action-chain
+runner_type: mistral-v2
 description: Remove a node to from an autoscale group
 enabled: true
 entry_point: 'workflows/asg_delete_node.yaml'

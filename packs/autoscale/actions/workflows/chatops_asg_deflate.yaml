@@ -17,7 +17,7 @@ workflows:
         input:
           message: <% $.message %>
         publish:
-          target_asg: <% $.parse_chatops_message.result.command[2] %>
+          target_asg: <% $.parse_chatops_message.result.parameters.asg %>
         on-success:
           - execute_asg_deflate
       execute_asg_deflate:

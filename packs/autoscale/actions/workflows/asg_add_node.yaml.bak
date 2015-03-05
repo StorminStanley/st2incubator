@@ -128,12 +128,35 @@ workflows:
         policies:
           wait-before: 5
         on-success:
+          - install_chef
+      install_chef:
+        action: chef.install
+        input:
+          hosts: <% $.ipv4_address %>
+          username: root
+        policies:
+          wait-before: 1
+        on-success:
           - notify_begin_chef_install
       notify_begin_chef_install:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.```"
+          message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.`"
           channel: <% $.channel %>
+        on-success:
+          - provision_node
+      provision_node:
+        action: chef.solo
+        policies:
+          wait-before: 1
+        input:
+          hosts: <% $.ipv4_address %>
+          attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
+          recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
+          timeout: 600
+          username: root
+        publish:
+          notify_message: 'Node <% $.hostname %> successfully provisioned! Things are going so well!'
         on-success:
           - notify_successful_provision
       notify_successful_provision:

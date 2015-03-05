@@ -12,6 +12,21 @@ workflows:
       on-error:
         - fail
     tasks:
+      get_chatops_channel:
+        action: st2.kv.get
+        input:
+          key: 'asg.<% $.asg %>.channel'
+        publish:
+          channel: <% $.get_chatops_channel.result %>
+        on-success:
+          - notify_start_wf
+      notify_start_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Deleting ASG.```"
+          channel: <% $.channel %>
+        on-success:
+          - get_loadbalancer_id
       get_loadbalancer_id:
         action: st2.kv.get
         input:
@@ -81,7 +96,7 @@ workflows:
         input:
           key: 'asg.<% $.name %>.domain'
         on-success:
-          - delete_server_role
+          - delete_expand_by_key
       delete_expand_by_key:
         action: st2.kv.delete
         input:
@@ -99,7 +114,7 @@ workflows:
         input:
           key: 'asg.<% $.name %>.last_expand_timestamp'
         on-success:
-          - delete_last_deflate_timestamp
+          - delete_deflate_by_key
       delete_deflate_by_key:
         action: st2.kv.delete
         input:
@@ -137,34 +152,23 @@ workflows:
         on-success:
           - get_asg_nodes
       get_asg_nodes:
-        action: rackspace.list_vms
+        action: rackspace.get_vm_names
         input:
           metadata:
             asg: <% $.name %>
         publish:
-          asg_nodes: <% $.get_asg_nodes.result %>
-        on-success:
-          - get_asg_nodes
-      get_asg_nodes:
-        action: rackspace.list_vms_by_id
-        input:
-          count: 0
-          metadata:
-            asg: <% $.asg %>
-        publish:
-          asg_nodes: <% $.get_asg_nodes.result %>
+          vm_names: <% $.get_asg_nodes.result %>
         on-success:
           - delete_eligible_nodes
       delete_eligible_nodes:
         action: rackspace.delete_vm
-        with-items: node in <% $.asg_nodes %>
+        with-items: node in <% $.vm_names %>
         input:
           vm_id: <% $.node %>
         on-success:
           - chatops_all_vms_gone
       chatops_all_vms_gone:
         action: slack.post_message
-        join: all
         input:
           message: 'Successfully deleted all nodes in ASG <% $.asg %>'
           channel: <% $.channel %>

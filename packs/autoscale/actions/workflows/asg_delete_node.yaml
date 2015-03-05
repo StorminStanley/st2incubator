@@ -12,6 +12,21 @@ workflows:
       on-error:
         - fail
     tasks:
+      get_chatops_channel:
+        action: st2.kv.get
+        input:
+          key: 'asg.<% $.asg %>.channel'
+        publish:
+          channel: <% $.get_chatops_channel.result %>
+        on-success:
+          - notify_start_wf
+      notify_start_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Beginning deletion of <% $.name %> from ASG```"
+          channel: <% $.channel %>
+        on-success:
+          - get_domain
       get_domain:
         action: st2.kv.get
         policies:
@@ -21,22 +36,23 @@ workflows:
         publish:
           domain: <% $.get_domain.result %>
         on-success:
-          - notify_start_wf
-      notify_start_wf:
-        action: slack.post_message
-          message: "```ASG[<% $.asg %>] Deleting <% $.name %>.<% $.asg %>.<% $.domain %>.```"
-          channel: <% $.channel %>
+          - get_vm_id
+      get_vm_id:
+        action: rackspace.find_vm_id
+        input:
+          name: <% $.name %>
+        publish:
+          vm_id: <% $.get_vm_id.result %>
         on-success:
           - get_node_ip
       get_node_ip:
-        action: linux.dig
+        action: rackspace.get_vm_info
         policies:
           wait-before: 1
         input:
-          nameserver: '8.8.8.8'
-          hostname: '<% $.name %>.<% $.asg %>.<% $.domain %>'
+          vm_id: <% $.vm_id %>
         publish:
-          ipv4_address: <% $.get_node_ip.result[0] %>
+          ipv4_address: <% $.get_node_ip.result.public_ips[1] %>
         on-success:
           - get_loadbalancer_id
       get_loadbalancer_id:
@@ -64,19 +80,10 @@ workflows:
         policies:
           wait-before: 1
         input:
+          zone_id: <% $.dns_zone_id %>
           name: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
           dns_record_id: <% $.get_dns_record_id.result %>
-        on-success:
-          - get_vm_id
-      get_vm_id:
-        action: rackspace.find_vm_id
-        policies:
-          wait-before: 1
-        input:
-          name: '<% $.name %>'
-        publish:
-          vm_id: <% $.get_vm_id.result %>
         on-success:
           - remove_node_loadbalancer
       remove_node_loadbalancer:
@@ -90,6 +97,7 @@ workflows:
           - notify_removed_lb
       notify_removed_lb:
         action: slack.post_message
+        input:
           message: "```ASG[<% $.asg %>] Removed <% $.name %> from loadbalancer```"
           channel: <% $.channel %>
         on-success:
@@ -101,9 +109,10 @@ workflows:
         input:
           vm_id: <% $.vm_id %>
         on-success:
-          - notify_destryed_vm
+          - notify_destroyed_vm
       notify_destroyed_vm:
         action: slack.post_message
+        input:
           message: "```ASG[<% $.asg %>] Destroyed VM <% $.name %>.```"
           channel: <% $.channel %>
         on-success:
@@ -119,5 +128,13 @@ workflows:
           - notify_deleted_dns
       notify_deleted_dns:
         action: slack.post_message
+        input:
           message: "```ASG[<% $.asg %>] Deleted <% $.name %> DNS```"
+          channel: <% $.channel %>
+        on-success:
+          - notify_success_wf
+      notify_success_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Successfully deleted <% $.name %>```"
           channel: <% $.channel %>

@@ -1,0 +1,15 @@
+---
+name: extract_ips
+runner_type: run-python
+description: Extract IP addresses from RAX payload
+enabled: true
+entry_point: 'shell/extract_ips.py'
+parameters:
+  nodes:
+    type: object
+    description: RAX Payload from `rackspace.list_vms`
+    required: true
+  count:
+    type: integer
+    description: Optionally decide to limit the number of IPs to return
+
