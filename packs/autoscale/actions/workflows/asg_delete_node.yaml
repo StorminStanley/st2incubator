@@ -18,13 +18,16 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.asg %>.domain'
-        output:
-          notify_message: 'Deleting <% $.name %>.<% $.asg %>.<% $.domain %>...'
         publish:
           domain: <% $.get_domain.result %>
         on-success:
+          - notify_start_wf
+      notify_start_wf:
+        action: slack.post_message
+          message: "```ASG[<% $.asg %>] Deleting <% $.name %>.<% $.asg %>.<% $.domain %>.```"
+          channel: <% $.channel %>
+        on-success:
           - get_node_ip
-          - notify
       get_node_ip:
         action: linux.dig
         policies:
@@ -83,22 +86,28 @@ workflows:
         input:
           loadbalancer_id: <% $.loadbalancer_id %>
           ip: <% $.ipv4_address %>
-        output:
-          notify_message: 'Removed <% $.name %> from loadbalancer...'
+        on-success:
+          - notify_removed_lb
+      notify_removed_lb:
+        action: slack.post_message
+          message: "```ASG[<% $.asg %>] Removed <% $.name %> from loadbalancer```"
+          channel: <% $.channel %>
         on-success:
           - destroy_vm
-          - notify
       destroy_vm:
         action: rackspace.delete_vm
         policies:
           wait-before: 1
         input:
           vm_id: <% $.vm_id %>
-        output:
-          notify_message: 'Destroyed <% $.name %>...'
+        on-success:
+          - notify_destryed_vm
+      notify_destroyed_vm:
+        action: slack.post_message
+          message: "```ASG[<% $.asg %>] Destroyed VM <% $.name %>.```"
+          channel: <% $.channel %>
         on-success:
           - remove_dns_record
-          - notify
       remove_dns_record:
         action: rackspace.delete_dns_record
         policies:
@@ -106,7 +115,9 @@ workflows:
         input:
           record_id: <% $.dns_record_id %>
           zone_id: <% $.dns_zone_id %>
-      notify:
+        on-success:
+          - notify_deleted_dns
+      notify_deleted_dns:
         action: slack.post_message
-          message: "```ASG[<% $.asg %>] <% $.notify_message %>```"
+          message: "```ASG[<% $.asg %>] Deleted <% $.name %> DNS```"
           channel: <% $.channel %>

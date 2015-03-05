@@ -76,20 +76,20 @@ workflows:
         with-items: node in <% $.asg_nodes %>
         input:
           vm_id: <% $.node %>
-        publish:
-          notify_message: "ASG is slimmer now. Looking good!"
+        on-success:
+          - chatops_notify_deleted_success
+      chatops_notify_deleted_success:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!"
+          channel: <% $.channel %>
         on-success:
           - record_updated_timestamp
-          - notify
       record_updated_timestamp:
         action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.last_deflate_timestamp'
           value: <% str($.current_epoch) %>
-      notify:
-        action: slack.post_message
-          message: '```ASG[<% $.asg %>] <% $.notify_message %>```'
-          channel: '<% $.channel %>'
       chatops_too_soon:
         action: slack.post_message
         input:

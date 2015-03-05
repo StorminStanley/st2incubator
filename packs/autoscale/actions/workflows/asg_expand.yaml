@@ -19,10 +19,14 @@ workflows:
           key: 'asg.<% $.asg %>.channel'
         publish:
           channel: <% $.get_chatops_channel.result %>
-          notify_message: 'ASG <% $.asg %> needs some help, eh? Let me get on that...'
         on-success:
-          - get_last_expand_timestamp
-          - notify
+          - notify_start_wf
+      notify_start_wf:
+        action: slack.post_message
+          message: "```ASG[<% $.asg %>] ASG needs some help, eh? Let me get on that.```"
+          channel: <% $.channel %>
+        on-success:
+          - get_current_epoch
       get_current_epoch:
         action: st2.epoch
         publish:

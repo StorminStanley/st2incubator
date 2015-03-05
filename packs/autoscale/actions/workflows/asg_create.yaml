@@ -31,11 +31,15 @@ workflows:
         input:
           key: 'asg.<% $.name %>.channel'
           value: <% $.channel %>
-        publish:
-          notify_message: 'Starting to assemble new autoscale group: <% $.name %>... standby...'
+        on-success:
+          - notify_start_wf
+      notify_start_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Starting to assemble new autoscale group.```"
+          channel: <% $.channel %>
         on-success:
           - get_current_epoch
-          - notify
       get_current_epoch:
         action: autoscale.epoch
         publish:
@@ -52,13 +56,22 @@ workflows:
           loadbalancer_id: "<% $.create_loadbalancer.result.id %>"
           loadbalancer_ipv4: "<% $.create_loadbalancer.result.ipv4_public %>"
           loadbalancer_ipv6: "<% $.create_loadbalancer.result.ipv6_public %>"
-          notify_message: "Loadbalancer created"
-          kv_key: 'asg.<% $.name %>.loadbalancer_id'
-          kv_value: <% str($.create_loadbalancer.result.id) %>
+        on-success:
+          - save_loadbalancer_id
+      save_loadbalancer_id:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.name %>.loadbalancer_id'
+          value: <% str($.loadbalancer_id) %>
+        on-success:
+          - notify_loadbalancer_created
+      notify_loadbalancer_created:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Loadbalancer successfully created [ID: <% $.loadbalancer_id %>]```"
+          channel: <% $.channel %>
         on-success:
           - create_dns_zone
-          - kv_store
-          - notify
       create_dns_zone:
         action: rackspace.create_dns_zone
         policies:
@@ -69,14 +82,23 @@ workflows:
           comment: 'ASG: <% $.name %>. Automatically created by StackStorm'
         publish:
           dns_zone_id: "<% $.create_dns_zone.result.id %>"
-          notify_message: "DNS Setup for <% $.name %>.<% $.domain %>"
-          kv_key: 'asg.<% $.name %>.dns_zone_id'
-          kv_value: <% str($.dns_zone_id) %>
+        on-success:
+          - save_dns_zone_id
+      save_dns_zone_id:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.name %>.dns_zone_id'
+          value: <% str($.dns_zone_id) %>
+        on-success:
+          - notify_dns_zone_created
+      notify_dns_zone_created:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] DNS Zone Setup [ID: <% $.dns_zone_id %>].```"
+          channel: <% $.channel %>
         on-success:
           - set_lb_ipv4_dns
-          - kv_store
-          - notify
-      set_lb_ipv4_dns:
+      set_lb_ipv4_ns:
         action: rackspace.create_dns_record
         policies:
           wait-before: 1
@@ -88,8 +110,14 @@ workflows:
         publish:
           notify_message: 'Loadbalancer DNS Setup, ready to be accessed at lb.<% $.name %>.<% $.domain %> [<% $.loadbalancer_ipv4 %>]'
         on-success:
+          - notify_lb_in_dns
+      notify_lb_in_dns:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Loadbalancer DNS Setup, ready to be accessed at lb.<% $.name %>.<% $.domain %> [<% $.loadbalancer_ipv4 %>]'```"
+          channel: <% $.channel %>
+        on-success:
           - store_min_nodes
-          - notify
       store_min_nodes:
         action: st2.kv.set
         policies:
@@ -223,17 +251,10 @@ workflows:
         with-items: i in <% range(0,$.min_nodes).list() %>
         input:
           asg: <% $.name %>
-        publish:
-          notify_message: "WOOT! ASG <% $.name %> setup, and a whole mess of nodes have been provisioned. Go and be merry!"
         on-success:
-          - notify
-      notify:
+          - notify_succssful_create
+      notify_successful_create:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.name %>] <% $.notify_message %>```"
+          message: "```ASG[<% $.name %>] WOOT! ASG setup, and a whole mess of nodes have been provisioned. Go and be merry!``"
           channel: <% $.channel %>
-      kv_store:
-        action: st2.kv.set
-        input:
-          key: <% $.kv_key %>
-          value: <% $.kv_value %>
