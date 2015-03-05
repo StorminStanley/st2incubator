@@ -4,20 +4,33 @@ version: "2.0"
 
 workflows:
   main:
-    description: 'Simulate a recovery event via New Relic API'
+    description: 'Simulate a recovery webhook as sent via New Relic API'
     type: direct
     input:
+      - message
       - channel
     task-defaults:
       on-error:
         - fail
     tasks:
-      send_webhook:
-        action: autoscale.simulate_recovery
+      parse_chatops:
+        action: autoscale.parse_chatops
+        input:
+          message: <% $.message %>
+        publish:
+          application: <% $.parse_chatops.result.parameters.application %>
+        on-success:
+          - get_asg
+      get_asg:
+        action: autoscale.asg.lookup
+        input:
+          application_name: <% $.application %>
+        publish:
+          asg: <% $.get_asg.result %>
         on-success:
           - chatops_report
       chatops_report:
         action: slack.post_message
         input:
-          message: "Sent NewRelic Recovery WebHook to StackStorm..."
-          channel: '<% $.channel %>'
+          message: "```ASG[<% $.asg %>] Sent New Relic recovery webhook to StackStorm for <% $.application %>```"
+          channel: '#<% $.channel %>'

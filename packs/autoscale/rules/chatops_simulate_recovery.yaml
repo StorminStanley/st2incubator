@@ -6,9 +6,10 @@
     type: 'slack.message'
   criteria:
     trigger.text:
-      type: eq
+      type: startswith
       pattern: '!asg simulate recovery'
   action:
     ref: autoscale.chatops.simulate_recovery
     parameters:
-      channel: '{{trigger.channel.room}}'
+      message: '{{trigger.text}}'
+      channel: '{{trigger.channel.name}}'

@@ -97,8 +97,6 @@ workflows:
         input:
           key: 'asg.<% $.name %>.min_nodes'
           value: <% str($.min_nodes) %>
-        publish:
-          nodes_to_provision: <% range(0,$.min_nodes).list() %>
         on-success:
           - store_max_nodes
       store_max_nodes:
@@ -222,7 +220,7 @@ workflows:
         action: autoscale.asg.add_node
         policies:
           wait-before: 1
-        with-items: i in <% $.nodes_to_provision %>
+        with-items: i in <% range(0,$.min_nodes).list() %>
         input:
           asg: <% $.name %>
         publish:

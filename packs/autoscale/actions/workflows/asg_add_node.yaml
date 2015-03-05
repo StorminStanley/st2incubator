@@ -30,8 +30,6 @@ workflows:
           - notify
       get_ssh_key:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'ssh_pub_key'
         publish:
@@ -40,8 +38,6 @@ workflows:
           - get_loadbalancer_id
       get_loadbalancer_id:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.asg %>.loadbalancer_id'
         publish:
@@ -50,8 +46,6 @@ workflows:
           - get_vm_size_id
       get_vm_size_id:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.asg %>.vm_size_id'
         publish:
@@ -60,8 +54,6 @@ workflows:
           - get_vm_image_id
       get_vm_image_id:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.asg %>.vm_image_id'
         publish:
@@ -70,8 +62,6 @@ workflows:
           - get_dns_zone_id
       get_dns_zone_id:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.asg %>.dns_zone_id'
         publish:
@@ -80,8 +70,6 @@ workflows:
           - get_domain
       get_domain:
         action: st2.kv.get
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.asg %>.domain'
         publish:
@@ -90,8 +78,6 @@ workflows:
           - create_new_node
       create_new_node:
         action: rackspace.create_vm
-        policies:
-          wait-before: 1
         input:
           name: <% $.hostname %>
           flavor_id: <% $.vm_size_id %>
