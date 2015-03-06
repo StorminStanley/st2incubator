@@ -1,0 +1,31 @@
+---
+  name: "install_st2action"
+  runner_type: "run-remote-script"
+  description: "Branch st2 repo and push to remote."
+  enabled: true
+  entry_point: "install_st2action.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of cloned st2mistral repo on disk."
+      required: true
+      position: 0
+      default: "/home/stanley/st2mistral"
+    branch:
+      type: "string"
+      description: "Branch name to use."
+      required: true
+      position: 1
+      default: "master"
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

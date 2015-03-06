@@ -1,0 +1,53 @@
+---
+  chain:
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2build.service.consul"
+        rand: true
+        count: 1
+      on-success: "clone_st2_repo"
+    -
+      name: "clone_st2_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_repo}}"
+        branch: "{{st2_branch}}"
+        target: "{{st2_repo_target}}"
+      on-success: "clone_mistral_repo"
+    -
+      name: "clone_mistral_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_mistral_fork}}"
+        branch: "{{st2_mistral_fork_branch}}"
+        target: "{{mistral_repo_target}}"
+      on-success: "clone_st2mistral_repo"
+    -
+      name: "clone_st2mistral_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2mistral_repo}}"
+        branch: "{{st2mistral_branch}}"
+        target: "{{st2mistral_repo_target}}"
+      on-success: "install_mistral_st2action"
+    -
+      name: "make_itests"
+      ref: "st2cd.make_itests"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+        timeout: 600
+      on-success: "clean_st2_repo"
+    -
+      name: "clean_st2_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+
+  default: "get_build_server"

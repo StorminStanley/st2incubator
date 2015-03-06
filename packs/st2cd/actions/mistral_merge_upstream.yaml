@@ -1,0 +1,37 @@
+---
+  name: "mistral_merge_upstream"
+  runner_type: "run-remote-script"
+  description: "Branch st2 repo and push to remote."
+  enabled: true
+  entry_point: "merge_upstream.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of cloned mistral fork on disk."
+      required: true
+      position: 0
+      default: "/home/stanley/mistral"
+    branch:
+      type: "string"
+      description: "Branch name to use."
+      required: true
+      position: 1
+      default: "master"
+    upstream_repo:
+      type: "string"
+      description: "Upstream mistral repo location",
+      default: "https://github.com/stackforge/mistral.git",
+      required: true
+      position: 2
+    dir:
+      immutable: true
+      default: "/home/stanley/"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
