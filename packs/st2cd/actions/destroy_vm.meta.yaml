@@ -17,3 +17,13 @@
       type: "string"
       description: "Short hostname"
       required: true
+    notification_channel:
+      type: "string"
+      description: "used by rule with actiontrigger"
+      immutable: true
+      default: "#opstown"
+    notification:
+      type: "string"
+      description: "used by rule with actiontrigger"
+      immutable: true
+      default: "slack"

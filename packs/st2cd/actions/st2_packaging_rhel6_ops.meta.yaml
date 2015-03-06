@@ -28,6 +28,8 @@
     environment:
       type: "string"
       description: ""
+    revision:
+      type: "string"
     destination_base:
       type: "string"
       description: "Destination directory on releases_server"

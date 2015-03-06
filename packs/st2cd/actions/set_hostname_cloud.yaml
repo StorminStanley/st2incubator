@@ -20,7 +20,7 @@
         - "UBUNTU14"
     cmd:
       immutable: true
-      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% endif -%}'
+      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{redhat}}{% endif -%}'
     redhat:
       type: "string"
       immutable: true

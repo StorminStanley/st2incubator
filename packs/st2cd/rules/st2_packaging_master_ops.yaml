@@ -6,8 +6,8 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.webui_packaging"
-            type: "equals"
+            pattern: "st2cd\\.webui_packaging"
+            type: "matchregex"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
@@ -16,5 +16,6 @@
         parameters:
             repo: "https://github.com/StackStorm/st2.git"
             branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
             releases_server: "{{system.releases_server}}"
             environment: "production"

@@ -20,6 +20,7 @@
       ref: "st2cd.run_puppet_bootstrap"
       params: 
         hosts: "{{hosts}}"
+        timeout: 1800
       on-success: "run_linux_bootstrap"
     - 
       name: "run_linux_bootstrap"
@@ -27,10 +28,18 @@
       params:
         hosts: "{{hosts}}"
         cmd: "bash /opt/puppet/script/bootstrap-linux"
+      on-success: "add_role"
+    -
+      name: "add_role"
+      ref: "st2cd.add_role"
+      params:
+        hosts: "{{hosts}}"
+        role: "{{role}}"
       on-success: "run_puppet_apply"
     - 
       name: "run_puppet_apply"
       ref: "st2cd.run_puppet_apply"
       params: 
         hosts: "{{hosts}}"
+        timeout: 1800
   default: "token"

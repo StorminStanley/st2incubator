@@ -22,4 +22,5 @@
             hostname: "{{system.st2_ci_host}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
             environment: "{{trigger.parameters.environment}}"

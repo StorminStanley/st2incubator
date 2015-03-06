@@ -14,8 +14,8 @@ touch ${PYPIRC}
 cat <<pypirc >${PYPIRC}
 [distutils]
 index-servers =
-    pypi
-    pypitest
+    pypi
+    pypitest
 
 [pypi]
 repository: https://pypi.python.org/pypi

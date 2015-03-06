@@ -18,3 +18,4 @@
             branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_origin_staging}}"
             environment: "staging"
+            revision: "{{trigger.parameters.revision}}"
