@@ -1,5 +1,5 @@
 ---
-  name: "install_st2action"
+  name: "install_mistral_client"
   runner_type: "run-remote-script"
   description: "Branch st2 repo and push to remote."
   enabled: true
@@ -10,7 +10,7 @@
       description: "Location of cloned st2mistral repo on disk."
       required: true
       position: 0
-      default: "/home/stanley/st2mistral"
+      default: "/home/stanley/python-mistralclient"
     branch:
       type: "string"
       description: "Branch name to use."

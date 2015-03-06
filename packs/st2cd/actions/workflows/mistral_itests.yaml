@@ -34,6 +34,46 @@
         repo: "{{st2mistral_repo}}"
         branch: "{{st2mistral_branch}}"
         target: "{{st2mistral_repo_target}}"
+      on-success: "clone_mistral_client_repo"
+    -
+      name: "clone_mistral_client_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{mistral_client_repo}}"
+        branch: "{{mistral_client_branch}}"
+        target: "{{mistral_client_repo_target}}"
+      on-success: "install_mistral_st2action"
+    -
+      name: "install_mistral_st2action"
+      ref: "st2cd.install_st2action"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2mistral_repo}}"
+        branch: "{{st2mistral_branch}}"
+      on-success: "install_mistral_st2action"
+    -
+      name: "install_mistral_client"
+      ref: "st2cd.install_mistral_client"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{mistral_client_repo}}"
+        branch: "{{mistral_client_branch}}"
+      on-success: "install_mistral_st2action"
+    -
+      name: "install_mistral"
+      ref: "st2cd.install_mistral"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_mistral_fork}}"
+        branch: "{{st2_mistral_fork_branch}}"
+      on-success: "install_mistral_st2action"
+    -
+      name: "run_mistral"
+      ref: "st2cd.run_mistral"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_mistral_fork}}"
       on-success: "install_mistral_st2action"
     -
       name: "make_itests"
@@ -49,5 +89,34 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
-
+      on-success: "clean_mistral_repo"
+    -
+      name: "clean_mistral_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
+    -
+      name: "clean_mistral_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
+    -
+      name: "clean_st2mistral_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+    -
+      name: "clean_mistral_client_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
+    -
+      name: "teardown_mistral_itests"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
   default: "get_build_server"

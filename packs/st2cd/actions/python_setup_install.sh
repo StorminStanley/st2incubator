@@ -20,9 +20,9 @@ then
   OUT=`$PYTHON setup.py develop > $OUTPUT`
   if [[ $? == 0 ]]
   then
-    echo 'Link to /etc/mistral/st2action?'
+    echo 'SUCCESS: Installed artifacts from $REPO.'
   else
-    echo 'ERROR: Failed to install st2action.'
+    echo 'ERROR: Failed to install artifacts from $REPO.'
   fi
 else
   cat ${OUTPUT}
