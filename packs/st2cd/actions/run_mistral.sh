@@ -16,4 +16,4 @@ then
 fi
 
 cd $REPO
-$REPO/mistral/.venv/bin/python $REPO/mistral/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf 2>&1 > /tmp/mistral-itests-DATE.log
+$REPO/.venv/bin/python $REPO/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf 2>&1 > /tmp/mistral-itests-DATE.log

@@ -76,8 +76,8 @@
         repo: "{{st2_mistral_fork}}"
       on-success: "install_mistral_st2action"
     -
-      name: "make_itests"
-      ref: "st2cd.make_itests"
+      name: "run_mistral_itests"
+      ref: "st2cd.run_mistral_itests"
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
@@ -116,7 +116,7 @@
         repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
     -
       name: "teardown_mistral_itests"
-      ref: "st2cd.git_clean"
+      ref: "st2cd.teardown_mistral_itests"
       params:
         hosts: "{{get_build_server.result[0]}}"
   default: "get_build_server"

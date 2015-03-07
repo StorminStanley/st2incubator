@@ -19,8 +19,8 @@
       default: "master"
     upstream_repo:
       type: "string"
-      description: "Upstream mistral repo location",
-      default: "https://github.com/stackforge/mistral.git",
+      description: "Upstream mistral repo location"
+      default: "https://github.com/stackforge/mistral.git"
       required: true
       position: 2
     dir:

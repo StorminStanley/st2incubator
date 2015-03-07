@@ -1,0 +1,16 @@
+---
+  name: "teardown_mistral_itests"
+  runner_type: "run-remote-script"
+  description: "teardown mistral itests deps."
+  enabled: true
+  entry_point: "teardown_mistral_itests.sh"
+  parameters:
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

@@ -20,9 +20,9 @@ then
   OUT=`$PYTHON setup.py develop > $OUTPUT`
   if [[ $? == 0 ]]
   then
-    echo 'SUCCESS: Installed artifacts from $REPO.'
+    echo "SUCCESS: Installed artifacts from ${REPO}."
   else
-    echo 'ERROR: Failed to install artifacts from $REPO.'
+    echo "ERROR: Failed to install artifacts from ${REPO}."
   fi
 else
   cat ${OUTPUT}

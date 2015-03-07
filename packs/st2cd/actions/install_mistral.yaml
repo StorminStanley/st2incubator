@@ -28,7 +28,6 @@
       default: "/home/stanley/"
     sudo:
       immutable: true
-      default: true
     cmd:
       immutable: true
       default: ""

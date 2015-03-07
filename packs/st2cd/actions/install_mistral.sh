@@ -20,40 +20,34 @@ cd $REPO
 install_mistral() {
     # XXX: Ideally these steps should be actions of their own workflow.
     virtualenv --no-site-packages .venv
-    if [[ $? == 0 ]]
+    if [[ $? != 0 ]]
     then
         echo 'Failed creating virtualenv'
         exit 2
     else
-        . $REPO/mistral/.venv/bin/activate
+        . $REPO/.venv/bin/activate
     fi
 
     git checkout -q -b ${BRANCH} origin/${BRANCH}
-    if [[ $? == 0 ]]
+    pip install -r requirements.txt >> $OUTPUT
+    if [[ $? != 0 ]]
     then
-        echo 'Failed checking out branch $BRANCH'
+        echo 'Failed installing pip requirements for branch: $BRANCH'
         exit 3
     fi
 
-    pip install -r requirements.txt >> $OUTPUT
-    if [[ $? == 0 ]]
-    then
-        echo 'Failed installing pip requirements for branch: $BRANCH'
-        exit 4
-    fi
-
     pip install -q mysql-python
-    if [[ $? == 0 ]]
+    if [[ $? != 0 ]]
     then
         echo 'Failed installing mysql-python'
         exit 4
     fi
 
     python setup.py develop >> $OUTPUT
-    if [[ $? == 0 ]]
+    if [[ $? != 0 ]]
     then
         echo 'Failed installing mistral'
-        exit 4
+        exit 5
     fi
     echo 'SUCCESS: Installed mistral.'
 }
@@ -73,13 +67,13 @@ max_pool_size=50
 [pecan]
 auth_enable=false
 mistral_config
-echo 'SUCCESS: Mistral config in ${CONFIG_DIR}/mistral.conf'
+echo "SUCCESS: Mistral config in ${CONFIG_DIR}/mistral.conf"
 }
 
 setup_mysql_db() {
     mysql -uroot -pStackStorm -e "DROP DATABASE IF EXISTS mistral-itests"
     mysql -uroot -pStackStorm -e "CREATE DATABASE mistral-itests"
-    mysql -uroot -pStackStorm -e "GRANT ALL PRIVILEGES ON mistral-itests.* TO 'mistral-itests'@'%' IDENTIFIED BY 'StackStorm'"
+    mysql -uroot -pStackStorm -e "GRANT ALL PRIVILEGES ON mistral.* TO 'mistral'@'%' IDENTIFIED BY 'StackStorm'"
     mysql -uroot -pStackStorm -e "FLUSH PRIVILEGES"
     $REPO/.venv/bin/python $REPO/tools/sync_db.py --config-file ${CONFIG_DIR}/mistral.conf
 }
