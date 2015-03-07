@@ -96,24 +96,21 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
-    -
-      name: "clean_mistral_repo"
-      ref: "st2cd.git_clean"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "clean_st2mistral_repo"
     -
       name: "clean_st2mistral_repo"
       ref: "st2cd.git_clean"
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "clean_mistral_client_repo"
     -
       name: "clean_mistral_client_repo"
       ref: "st2cd.git_clean"
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
+      on-success: "teardown_mistral_itests"
     -
       name: "teardown_mistral_itests"
       ref: "st2cd.teardown_mistral_itests"
