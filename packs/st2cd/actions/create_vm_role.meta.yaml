@@ -41,6 +41,7 @@
       enum:
         - "RHEL6"
         - "F20"
+        - "F21"
         - "UBUNTU14"
     notification_channel:
       type: "string"

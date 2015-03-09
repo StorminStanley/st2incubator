@@ -1,0 +1,30 @@
+---
+  name: "st2_upgrade_f20"
+  runner_type: "action-chain"
+  description: "Upgrades an existing st2 installation"
+  enabled: true
+  entry_point: "workflows/st2_upgrade_f20.yaml"
+  parameters: 
+    hostname: 
+      type: "string"
+      description: "Host to upgrade st2 on"
+      required: true
+    action: 
+      type: "string"
+      description: "Action to run after upgrade"
+      default: "core.local"
+    action_params:
+      type: "string"
+      description: "Parameters of action to be run"
+      default: "date"
+    repo:
+      type: "string"
+      description: "Git repository for this project"
+    branch:
+      type: "string"
+      description: ""
+    environment:
+      type: "string"
+      description: ""
+    revision:
+      type: "string"

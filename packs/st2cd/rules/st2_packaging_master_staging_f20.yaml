@@ -1,20 +1,21 @@
 ---
-    name: "st2_packaging_master_ops"
+    name: "st2_packaging_master_staging_f20"
     description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.webui_packaging"
-            type: "matchregex"
+            pattern: "st2cd.pytests"
+            type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
     action:
-        ref: "st2cd.st2_packaging_ops"
+        ref: "st2cd.st2_packaging_f20"
         parameters:
-            repo: "https://github.com/StackStorm/st2.git"
+            repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            releases_server: "{{system.releases_server}}"
-            environment: "production"
+            dl_server: "{{system.apt_origin_staging}}"
+            environment: "staging"
+            revision: "{{trigger.parameters.revision}}"

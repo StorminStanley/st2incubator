@@ -17,14 +17,19 @@
       enum:
         - "RHEL6"
         - "F20"
+        - "F21"
         - "UBUNTU14"
     cmd:
       immutable: true
-      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{redhat}}{% endif -%}'
+      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{fedora}}{% elif distro == "F21" -%}{{fedora}}{% endif -%}'
     redhat:
       type: "string"
       immutable: true
       default: 'sed -i -e "s/\(HOSTNAME=\).*/\1{{hostname}}/" /etc/sysconfig/network && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
+    fedora:
+      type: "string"
+      immutable: true
+      default: 'echo -e "HOSTNAME={{hostname}}" >> /etc/sysconfig/network && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
     ubuntu:
       type: "string"
       immutable: true

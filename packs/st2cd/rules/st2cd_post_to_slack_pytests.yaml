@@ -11,4 +11,5 @@
     action:
         ref: "slack.post_message"
         parameters:
-            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    BUILD_NUMBER: {% set build = trigger.result.get_current_build.result|int +1 %}{{build}}\n     BUILD_HOST: {{trigger.result.get_build_server.result[0]}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
+            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    BUILD_NUMBER: {% set build = trigger.result.get_current_build.result|int +1 %}{{build}}\n     BUILD_HOST: {{trigger.result.get_build_server.result[0]}}\n    BRANCH: {{trigger.parameters.branch}}```"
