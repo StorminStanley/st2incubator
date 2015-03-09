@@ -42,6 +42,13 @@ workflows:
         publish:
           asg_params: <% $.merge_defaults.result %>
         on-success:
+          - notify_creating
+      notify_creating:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg_params.name %>] Creating new ASG with parameters: application_name=<% $.asg_params.application_name %>, domain=<% $.asg_params.domain %>, port=<% $.asg_params.port %>, protocol=<% $.asg_params.protocol %>, admin_contact=<% $.asg_params.admin_contact %>, min_nodes=<% $.asg_params.min_nodes %>, max_nodes=<% $.asg_params.max_nodes %>, expand_by=<% $.asg_params.expand_by %>, deflate_by=<% $.asg_params.deflate_by %>, deflate_delay=<% $.asg_params.deflate_delay %>, vm_size_id=<% $.asg_params.vm_size_id %>, vm_image_id=<% $.asg_params.vm_image_id %>, channel=<% $.asg_params.channel %>```"
+          channel: <% $.asg_params.channel %>
+        on-success:
           - execute_asg_create
       execute_asg_create:
         action: autoscale.asg.create
@@ -61,3 +68,10 @@ workflows:
           vm_size_id: <% $.asg_params.vm_size_id %>
           vm_image_id: <% $.asg_params.vm_image_id %>
           channel: <% $.asg_params.channel %>
+        on-error:
+          - failure_asg_create
+      failure_asg_create:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] One or more required parameters missing. Check history for more details```"
+          channel: <% $.channel %>

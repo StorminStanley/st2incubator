@@ -58,6 +58,8 @@ workflows:
           loadbalancer_ipv6: "<% $.create_loadbalancer.result.ipv6_public %>"
         on-success:
           - save_loadbalancer_id
+        on-error:
+          - notify_failure_creating_lb
       save_loadbalancer_id:
         action: st2.kv.set
         input:
@@ -84,6 +86,8 @@ workflows:
           dns_zone_id: "<% $.create_dns_zone.result.id %>"
         on-success:
           - save_dns_zone_id
+        on-error:
+          - failure_create_dns_zone
       save_dns_zone_id:
         action: st2.kv.set
         input:
@@ -111,6 +115,8 @@ workflows:
           notify_message: 'Loadbalancer DNS Setup, ready to be accessed at lb.<% $.name %>.<% $.domain %> [<% $.loadbalancer_ipv4 %>]'
         on-success:
           - notify_lb_in_dns
+        on-error:
+          - failure_create_lb_dns
       notify_lb_in_dns:
         action: slack.post_message
         input:
@@ -257,4 +263,19 @@ workflows:
         action: slack.post_message
         input:
           message: "```ASG[<% $.name %>] WOOT! ASG setup, and a whole mess of nodes have been provisioned. Go and be merry!```"
+          channel: <% $.channel %>
+      notify_failure_creating_lb:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Unable to create new load balancer. Check action history for more details...```"
+          channel: <% $.channel %>
+      failure_create_dns_zone:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Unable to create new DNS Zone. Check action history for more details...```"
+          channel: <% $.channel %>
+      failure_create_lb_dns:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.name %>] Unable to set DNS for Load Balancer. Check action history for more details...```"
           channel: <% $.channel %>

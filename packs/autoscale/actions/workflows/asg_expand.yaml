@@ -80,9 +80,9 @@ workflows:
           key: 'asg.<% $.asg %>.last_expand_timestamp'
           value: <% $.current_epoch %>
         on-success:
-          - notify_success_wf
-        notify_success_wf:
-          action: slack.post_message
-          input:
-            message: "```ASG[<% $.asg %>] Successfully expanded ASG```"
-            channel: <% $.channel %>
+          - notify_end_wf
+      notify_end_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] ASG Successfully Expanded!```"
+          channel: <% $.channel %>

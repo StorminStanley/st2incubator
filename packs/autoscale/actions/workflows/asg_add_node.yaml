@@ -41,6 +41,8 @@ workflows:
           ssh_pub_key: <% $.get_ssh_key.result %>
         on-success:
           - get_loadbalancer_id
+        on-error:
+          - failure_ssh_key_kvstore
       get_loadbalancer_id:
         action: st2.kv.get
         input:
@@ -49,6 +51,8 @@ workflows:
           loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - get_vm_size_id
+        on-error:
+          - failure_get_loadbalancer_id
       get_vm_size_id:
         action: st2.kv.get
         input:
@@ -57,6 +61,8 @@ workflows:
           vm_size_id: <% $.get_vm_size_id.result %>
         on-success:
           - get_vm_image_id
+        on-error:
+          - failure_get_vm_size_id
       get_vm_image_id:
         action: st2.kv.get
         input:
@@ -65,6 +71,8 @@ workflows:
           vm_image_id: <% $.get_vm_image_id.result %>
         on-success:
           - get_dns_zone_id
+        on-error:
+          - failure_get_vm_image_id
       get_dns_zone_id:
         action: st2.kv.get
         input:
@@ -73,6 +81,8 @@ workflows:
           dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - get_domain
+        on-error:
+          - failure_get_dns_zone_id
       get_domain:
         action: st2.kv.get
         input:
@@ -81,6 +91,8 @@ workflows:
           domain: <% $.get_domain.result %>
         on-success:
           - create_new_node
+        on-error:
+          - failure_get_domain
       create_new_node:
         action: rackspace.create_vm
         input:
@@ -95,6 +107,8 @@ workflows:
           ipv6_address: '<% $.create_new_node.result.public_ips[0] %>'
         on-success:
           - notify_successful_build
+        on-error:
+          - failure_create_new_node
       notify_successful_build:
         action: slack.post_message
         input:
@@ -113,6 +127,8 @@ workflows:
           data: <% $.ipv4_address %>
         on-success:
           - notify_dns_setup
+        on-error:
+          - failure_setup_ipv4_dns
       notify_dns_setup:
         action: slack.post_message
         input:
@@ -129,6 +145,8 @@ workflows:
           wait-before: 5
         on-success:
           - notify_begin_chef_install
+        on-error:
+          - failure_refresh_apt_cache
       notify_begin_chef_install:
         action: slack.post_message
         input:
@@ -136,6 +154,8 @@ workflows:
           channel: <% $.channel %>
         on-success:
           - notify_successful_provision
+        on-error:
+          - failure_chef_install
       notify_successful_provision:
         action: slack.post_message
         input:
@@ -146,15 +166,72 @@ workflows:
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
         policies:
-          wait-before: 4
+          wait-before: 10
         input:
           loadbalancer_id: '<% $.loadbalancer_id %>'
           ip: <% $.ipv4_address %>
           port: '8080'
         on-success:
           - notify_added_to_lb
+        on-error:
+          - failure_add_lb
       notify_added_to_lb:
         action: slack.post_message
         input:
           message: "```ASG[<% $.asg %>] Added <% $.hostname %> to lb.<% $.asg %>.<% $.domain %>```"
+          channel: <% $.channel %>
+      failure_ssh_key_kvstore:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve SSH Key from Keystore (ssh_pub_key)```"
+          channel: <% $.channel %>
+      failure_get_loadbalancer_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve Loadbalancer ID from Keystore (asg.<% $.asg %>.loadbalancer_id)```"
+          channel: <% $.channel %>
+      failure_get_vm_size_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve VM Size ID from Keystore (asg.<% $.asg %>.vm_size_id)```"
+          channel: <% $.channel %>
+      failure_get_vm_image_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve VM image ID from Keystore (asg.<% $.asg %>.vm_image_id)```"
+          channel: <% $.channel %>
+      failure_get_dns_zone_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve DNS Zone ID from Keystore (asg.<% $.asg %>.dns_zone_id)```"
+          channel: <% $.channel %>
+      failure_get_domain:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve Domain Name from Keystore (asg.<% $.asg %>.domain)```"
+          channel: <% $.channel %>
+      failure_create_new_node:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to provision new node. Check action history for more details.```"
+          channel: <% $.channel %>
+      failure_setup_ipv4_dns:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to create DNS for new node. Check action history for more details.```"
+          channel: <% $.channel %>
+      failure_refresh_apt_cache:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to update apt on <% $.hostname %>. Check action history for more details.```"
+          channel: <% $.channel %>
+      failure_chef_install:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to install chef on <% $.hostname %>. Check action history for more details.```"
+          channel: <% $.channel %>
+      failure_add_lb:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to add <% $.hostname %> to loadbalancer. Check action history for more details.```"
           channel: <% $.channel %>

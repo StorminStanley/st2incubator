@@ -15,7 +15,7 @@ workflows:
       get_chatops_channel:
         action: st2.kv.get
         input:
-          key: 'asg.<% $.asg %>.channel'
+          key: 'asg.<% $.name %>.channel'
         publish:
           channel: <% $.get_chatops_channel.result %>
         on-success:
@@ -23,7 +23,7 @@ workflows:
       notify_start_wf:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.asg %>] Deleting ASG.```"
+          message: "```ASG[<% $.name %>] Deleting ASG.```"
           channel: <% $.channel %>
         on-success:
           - get_loadbalancer_id
@@ -35,6 +35,8 @@ workflows:
           loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - delete_loadbalancer
+        on-failure:
+          - get_dns_zone_id
       delete_loadbalancer:
         action: rackspace.delete_loadbalancer
         input:
@@ -47,6 +49,8 @@ workflows:
           key: 'asg.<% $.name %>.loadbalancer_id'
         on-success:
           - get_dns_zone_id
+        on-error:
+          - get_dns_zone_id
       get_dns_zone_id:
         action: st2.kv.get
         input:
@@ -55,23 +59,31 @@ workflows:
           dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - delete_dns_zone
+        on-error:
+          - delete_dns_zone
       delete_dns_zone:
         action: rackspace.delete_dns_zone
         input:
           zone_id: <% $.dns_zone_id %>
         on-success:
           - delete_dns_zone_key
+        on-error:
+          - delete_dns_zone_key
       delete_dns_zone_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.dns_zone_id'
         on-success:
-          - chatops_clear_memory
+          - delete_min_nodes_key
+        on-error:
+          - delete_min_nodes_key
       delete_min_nodes_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.min_nodes'
         on-success:
+          - delete_max_nodes_key
+        on-error:
           - delete_max_nodes_key
       delete_max_nodes_key:
         action: st2.kv.delete
@@ -79,11 +91,15 @@ workflows:
           key: 'asg.<% $.name %>.max_nodes'
         on-success:
           - chatops_clear_memory
+        on-error:
+          - chatops_clear_memory
       delete_vm_size_id_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.vm_size_id'
         on-success:
+          - delete_vm_image_id_key
+        on-error:
           - delete_vm_image_id_key
       delete_vm_image_id_key:
         action: st2.kv.delete
@@ -91,11 +107,15 @@ workflows:
           key: 'asg.<% $.name %>.vm_image_id'
         on-success:
           - delete_domain_key
+        on-error:
+          - delete_domain_key
       delete_domain_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.domain'
         on-success:
+          - delete_expand_by_key
+        on-error:
           - delete_expand_by_key
       delete_expand_by_key:
         action: st2.kv.delete
@@ -103,11 +123,15 @@ workflows:
           key: 'asg.<% $.name %>.expand_by'
         on-success:
           - delete_expand_delay_key
+        on-error:
+          - delete_expand_delay_key
       delete_expand_delay_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.expand_delay'
         on-success:
+          - delete_last_expand_timestamp
+        on-error:
           - delete_last_expand_timestamp
       delete_last_expand_timestamp:
         action: st2.kv.delete
@@ -115,11 +139,15 @@ workflows:
           key: 'asg.<% $.name %>.last_expand_timestamp'
         on-success:
           - delete_deflate_by_key
+        on-error:
+          - delete_deflate_by_key
       delete_deflate_by_key:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.deflate_by'
         on-success:
+          - delete_deflate_delay_key
+        on-error:
           - delete_deflate_delay_key
       delete_deflate_delay_key:
         action: st2.kv.delete
@@ -127,11 +155,15 @@ workflows:
           key: 'asg.<% $.name %>.deflate_delay'
         on-success:
           - delete_last_deflate_timestamp
+        on-error:
+          - delete_last_deflate_timestamp
       delete_last_deflate_timestamp:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.last_deflate_timestamp'
         on-success:
+          - delete_application_name
+        on-error:
           - delete_application_name
       delete_application_name:
         action: st2.kv.delete
@@ -139,11 +171,15 @@ workflows:
           key: 'asg.<% $.name %>.application_name'
         on-success:
           - delete_incident_state
+        on-error:
+          - delete_incident_state
       delete_incident_state:
         action: st2.kv.delete
         input:
           key: 'asg.<% $.name %>.active_incident'
         on-success:
+          - delete_total_nodes
+        on-error:
           - delete_total_nodes
       delete_total_nodes:
         action: st2.kv.delete
@@ -151,8 +187,10 @@ workflows:
           key: 'asg.<% $.name %>.total_nodes'
         on-success:
           - get_asg_nodes
+        on-error:
+          - get_asg_nodes
       get_asg_nodes:
-        action: rackspace.get_vm_names
+        action: rackspace.get_vm_ids
         input:
           metadata:
             asg: <% $.name %>
@@ -160,6 +198,8 @@ workflows:
           vm_names: <% $.get_asg_nodes.result %>
         on-success:
           - delete_eligible_nodes
+        on-error:
+          - chatops_all_vms_gone
       delete_eligible_nodes:
         action: rackspace.delete_vm
         with-items: node in <% $.vm_names %>
@@ -170,5 +210,5 @@ workflows:
       chatops_all_vms_gone:
         action: slack.post_message
         input:
-          message: 'Successfully deleted all nodes in ASG <% $.asg %>'
+          message: 'Successfully deleted all nodes in ASG <% $.name %>'
           channel: <% $.channel %>
