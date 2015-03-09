@@ -182,5 +182,5 @@ workflows:
       failure_get_dns_record_id:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve DNS Record ID from DNS```"
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve DNS Record ID from DNS for <% $.name %>```"
           channel: <% $.channel %>
