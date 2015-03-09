@@ -55,9 +55,42 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
         timeout: 1800
+      on-success: "create_build_dir"
+    -
+      name: "create_build_dir"
+      ref: "core.remote"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "mkdir -p /home/stanley/st2cd/ubuntu14/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}"
       on-success: "rsync_debs"
     - 
       name: "rsync_debs"
+      ref: "linux.rsync"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/home/stanley/debbuild/*"
+        dest_server: "{{system.releases_server}}"
+        destination: "/home/stanley/st2cd/ubuntu14/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}/"
+        timeout: 600
+      on-success: "cp_debs"
+    - 
+      name: "cp_debs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/ && cp -Rf /home/stanley/st2cd/ubuntu14/{{version[get_build_server.result[0]].stdout}}/* /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/"
+        timeout: 1800
+      on-success: "update_current"
+    -
+      name: "update_current"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && ln -s /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/{{get_current_build.result|trim}} /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && echo '{{get_current_build.result}}' > /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/VERSION.txt"
+      on-success: "rsync_debs_repo"
+    - 
+      name: "rsync_debs_repo"
       ref: "linux.rsync"
       params: 
         hosts: "{{get_build_server.result[0]}}"

@@ -19,7 +19,7 @@
         parameters:
             action: "core.local"
             action_params: "hostname"
-            hostname: "{{system.st2_ci_host}}"
+            hostname: "fedora-staging201"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
