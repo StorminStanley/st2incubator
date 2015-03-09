@@ -6,9 +6,9 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.webui\\_packaging$"
+            pattern: "st2cd\\.webui_packaging$"
             type: "matchregex"
     action:
         ref: "slack.post_message"
         parameters:
-            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    BUILD_NUMBER: {{trigger.result.get_current_build.result}}\n    BUILD_HOST: {{trigger.result.get_build_server.result[0]}}\n    DL_HOST: {{trigger.parameters.dl_server}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    DL_HOST: {{trigger.parameters.dl_server}}\n    BRANCH: {{trigger.parameters.branch}}```"

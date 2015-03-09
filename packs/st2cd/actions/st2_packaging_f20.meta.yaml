@@ -1,13 +1,10 @@
 ---
-  name: "st2_packaging_rhel6_ops"
+  name: "st2_packaging_f20"
   runner_type: "action-chain"
-  description: "Clones a repo to a remote host and builds packages for releases server"
+  description: "Clones a repo to a remote host and builds packages"
   enabled: true
-  entry_point: "workflows/st2_packaging_rhel6_ops.yaml"
+  entry_point: "workflows/st2_packaging_f20.yaml"
   parameters:
-    build_server:
-      type: "string"
-      required: true
     repo:
       type: "string"
       description: "Url of the repo to clone"
@@ -21,16 +18,12 @@
       description: "The branch to build"
       default: "master"
       required: true
-    releases_server:
+    dl_server:
       type: "string"
       description: ""
-      default: "ops001.stackstorm.net"
+      required: true
     environment:
       type: "string"
       description: ""
     revision:
       type: "string"
-    destination_base:
-      type: "string"
-      description: "Destination directory on releases_server"
-      default: "/home/stanley/st2cd/el6/"

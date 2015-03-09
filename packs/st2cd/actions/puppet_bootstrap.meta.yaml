@@ -9,3 +9,7 @@
       type: "string"
       description: "Host to run build on"
       required: true
+    role:
+      type: "string"
+      description: "role to use during puppet apply"
+      default: ""

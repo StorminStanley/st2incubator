@@ -25,3 +25,5 @@
     environment:
       type: "string"
       description: ""
+    revision:
+      type: "string"

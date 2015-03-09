@@ -20,5 +20,6 @@
             build_server: "{{system.build_server_rhel6}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
             releases_server: "{{system.releases_server}}"
             environment: "production"

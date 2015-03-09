@@ -29,3 +29,5 @@
       type: "string"
       description: "Destination directory on releases_server"
       default: "/home/stanley/st2cd/debs/"
+    revision:
+      type: "string"

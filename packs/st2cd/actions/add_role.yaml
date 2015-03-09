@@ -1,5 +1,5 @@
 ---
-  name: "git_clean"
+  name: "add_role"
   runner_type: "run-remote"
   description: "Clean a git repo"
   enabled: true
@@ -7,13 +7,13 @@
   parameters: 
     sudo: 
       immutable: true
-      default: false
-    repo:
+      default: true
+    role:
       required: true
-      default: "master"
+      default: "default"
     cmd: 
       immutable: false
-      default: "rm -Rf {{dir}}/{{repo}} && echo '{{repo}} deleted'"
+      default: "echo -e '---\\nrole: {{role}}' > /etc/facter/facts.d/role.yaml"
     kwarg_op: 
       immutable: true
       default: "--"
