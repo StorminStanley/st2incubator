@@ -1,5 +1,5 @@
 ---
-    name: "st2cd_post_to_slack_integration_tests"
+    name: "st2cd_post_to_slack_integration_test"
     description: "Post results of st2cd workflows to slack"
     enabled: true
     trigger:
@@ -11,4 +11,5 @@
     action:
         ref: "slack.post_message"
         parameters:
-            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
+            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}\n    BRANCH: {{trigger.parameters.branch}}```"

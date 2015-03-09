@@ -23,9 +23,6 @@
       required: true
       position: 2
       default: "v{{version}}"
-    dir:
-      immutable: true
-      default: "/home/stanley/"
     sudo:
       immutable: true
       default: false

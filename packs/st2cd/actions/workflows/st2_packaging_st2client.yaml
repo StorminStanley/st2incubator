@@ -1,0 +1,76 @@
+---
+  chain:
+    -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "get_build_server"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2-build-slave-ubuntu.service.consul"
+        rand: true
+        count: 1
+      on-success: "clean_build_env"
+    -
+      name: "clean_build_env"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
+      on-success: "clone_repo"
+    - 
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+      on-success: "version"
+    -
+      name: "version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+      on-success: "version_hack"
+    - 
+      name: "version_hack"
+      ref: "st2cd.version_hack"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        build: "{{get_current_build.result}}"
+      on-success: "write_pypirc"
+    - 
+      name: "write_pypirc"
+      ref: "st2cd.write_pypirc"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+      on-success: "sdist_upload"
+    -
+      name: "sdist_upload"
+      ref: "st2cd.pypi_st2client"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+      on-success: "remove_pypirc"
+    -
+      name: "remove_pypirc"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cmd: "rm -f ~/.pypirc"
+      on-success: "clean_repo"
+    - 
+      name: "clean_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+
+  default: "get_current_build"

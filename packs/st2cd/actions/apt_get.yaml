@@ -5,15 +5,12 @@
   enabled: true
   entry_point: ""
   parameters:
-    dir:
-      immutable: true
-      default: "/home/stanley/"
     sudo:
       immutable: true
       default: true
     cmd:
       immutable: true
-      default: "apt-get {{act}} {{packages}} > /dev/null"
+      default: "apt-get {{act}} {{packages}} &> /dev/null"
     kwarg_op:
       immutable: true
       default: "--"

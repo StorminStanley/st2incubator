@@ -5,9 +5,6 @@
   enabled: true
   entry_point: ""
   parameters: 
-    dir: 
-      immutable: true
-      default: "/home/stanley/"
     sudo: 
       immutable: true
       default: true
@@ -15,8 +12,27 @@
       type: "string"
       description: "The hostname to set"
       required: true
-    cmd: 
-      immutable: false
+    distro:
+      required: true
+      enum:
+        - "RHEL6"
+        - "F20"
+        - "F21"
+        - "UBUNTU14"
+    cmd:
+      immutable: true
+      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{fedora}}{% elif distro == "F21" -%}{{fedora}}{% endif -%}'
+    redhat:
+      type: "string"
+      immutable: true
+      default: 'sed -i -e "s/\(HOSTNAME=\).*/\1{{hostname}}/" /etc/sysconfig/network && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
+    fedora:
+      type: "string"
+      immutable: true
+      default: 'echo -e "HOSTNAME={{hostname}}" >> /etc/sysconfig/network && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
+    ubuntu:
+      type: "string"
+      immutable: true
       default: 'sed -i -e "s/\(preserve_hostname: \)false/\1true/" /etc/cloud/cloud.cfg && echo "{{hostname}}" > /etc/hostname && hostname {{hostname}} && echo "127.0.0.1 {{hostname}}" >> /etc/hosts'
     kwarg_op: 
       immutable: true

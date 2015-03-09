@@ -5,9 +5,6 @@
   enabled: true
   entry_point: ""
   parameters: 
-    dir: 
-      immutable: true
-      default: "/home/stanley/"
     sudo: 
       immutable: true
       default: false
@@ -16,7 +13,7 @@
       default: "master"
     cmd: 
       immutable: false
-      default: "rm -Rf {{repo}}* && echo '{{repo}} deleted'"
+      default: "rm -Rf {{dir}}/{{repo}} && echo '{{repo}} deleted'"
     kwarg_op: 
       immutable: true
       default: "--"

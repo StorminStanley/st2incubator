@@ -1,0 +1,15 @@
+---
+    name: "st2cd_post_to_slack_provision"
+    description: "Post to slack on provisioning"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.create_vm_role"
+            type: "matchregex"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            channel: "#opstown"
+            message: "{% if trigger.status != 'succeeded' %}*{% endif %}[{{trigger.status.upper()}}]{% if trigger.status != 'succeeded' %}*{% endif %} {{trigger.parameters.hostname}} was {% if trigger.status != 'succeeded' %}*NOT* {% endif %} created with role {{trigger.parameters.role}} in {{trigger.parameters.environment}}"

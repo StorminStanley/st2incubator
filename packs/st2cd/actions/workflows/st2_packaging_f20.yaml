@@ -1,0 +1,113 @@
+---
+  chain:
+    -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "get_build_server"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2-build-slave-fedora.service.consul"
+        rand: true
+        count: 1
+      on-success: "clean_build_env"
+    -
+      name: "clean_build_env"
+      ref: "core.remote"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        cmd: "rm -Rf ~/st2* && rm -Rf rpmbuild/*"
+        timeout: 180
+      on-success: "clone_repo"
+    - 
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+        timeout: 300
+      on-success: "version"
+    -
+      name: "version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+      on-success: "version_hack"
+    - 
+      name: "version_hack"
+      ref: "st2cd.version_hack"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        build: "{{get_current_build.result}}"
+      on-success: "make_rpms"
+    - 
+      name: "make_rpms"
+      ref: "st2cd.make_rpms"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        timeout: 1800
+      on-success: "create_build_dir"
+    -
+      name: "create_build_dir"
+      ref: "core.remote"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "mkdir -p /home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}"
+      on-success: "rsync_rpms"
+    - 
+      name: "rsync_rpms"
+      ref: "linux.rsync"
+      params: 
+        hosts: "{{get_build_server.result[0]}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/home/stanley/rpmbuild/RPMS/noarch/*"
+        dest_server: "{{system.releases_server}}"
+        destination: "/home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/{{get_current_build.result|trim}}/"
+        timeout: 600
+      on-success: "cp_rpms"
+    - 
+      name: "cp_rpms"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/ && cp -Rf /home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/* /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/"
+        timeout: 1800
+      on-success: "cp_rpms_repo"
+    -
+      name: "cp_rpms_repo"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "cp -Rf /home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/* /var/yumrepos/f20/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+      on-success: "rebuild_repo"
+    -
+      name: "rebuild_repo"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "createrepo /var/yumrepos/f20/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+      on-success: "update_current"
+    -
+      name: "update_current"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{system.releases_server}}"
+        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/current && ln -s /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/{{get_current_build.result|trim}} /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/current && echo '{{get_current_build.result}}' > /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/rpms/VERSION.txt"
+      on-success: "clean_repo"
+    - 
+      name: "clean_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+
+  default: "get_current_build"

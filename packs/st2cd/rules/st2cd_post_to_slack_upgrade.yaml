@@ -6,9 +6,10 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.st2\\_upgrade"
-            type: "matchregex"
+            pattern: "st2cd.st2_upgrade"
+            type: "equals"
     action:
         ref: "slack.post_message"
         parameters:
-            message: "```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
+            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}\n    BRANCH: {{trigger.parameters.branch}}```"

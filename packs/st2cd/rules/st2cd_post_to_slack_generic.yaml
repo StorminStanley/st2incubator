@@ -1,0 +1,15 @@
+---
+    name: "st2cd_post_to_slack_generic"
+    description: "Post to slack generic"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.parameters.notification:
+            pattern: "slack"
+            type: "matchregex"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            channel: "{{trigger.parameters.notification_channel}}"
+            message: "[{{trigger.action_name}}: {{trigger.status.upper()}}]"

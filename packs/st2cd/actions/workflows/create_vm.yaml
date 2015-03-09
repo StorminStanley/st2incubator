@@ -37,7 +37,7 @@
         hostname: "{{run_instance.result[0][0].private_ip_address}}"
         username: "stanley"
         keyfile: "{{keyfile}}"
-        timeout: 20
+        ssh_timeout: 20
         retries: 30
       on-success: "add_name_tag"
     -
@@ -70,20 +70,22 @@
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         name: "stackstorm"
         url: "http://{{get_apt_repo.result}}/deb/keyring.gpg"
+        timeout: 600
       on-success: "set_hostname"
     -
       name: "set_hostname"
       ref: "st2cd.set_hostname_cloud"
       params:
+        distro: "UBUNTU14"
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
         hostname: "{{hostname}}.{{dns_zone}}"
+        timeout: 300
       on-success: "reboot"
     -
       name: "reboot"
       ref: "core.remote_sudo"
       params:
         hosts: "{{run_instance.result[0][0].private_ip_address}}"
-        sudo: true
         cmd: "reboot"
       on-success: "wait_for_ssh_post_reboot"
     -
@@ -93,7 +95,7 @@
         hostname: "{{run_instance.result[0][0].private_ip_address}}"
         username: "stanley"
         keyfile: "{{keyfile}}"
-        timeout: 30
+        ssh_timeout: 30
         retries: 10
       on-success: "puppet_bootstrap"
     -

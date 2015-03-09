@@ -75,7 +75,6 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        sudo: true
         cmd: 'sed -i -e "s~# \(allow_origin = \).*~\1 \*~g" /etc/st2/st2.conf'
       on-success: "update_web_config"
       on-failure: "slack_failure"
@@ -92,7 +91,6 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        sudo: true
         cmd: "st2ctl restart"
       on-success: "gulp_in_screen"
       on-failure: "slack_failure"

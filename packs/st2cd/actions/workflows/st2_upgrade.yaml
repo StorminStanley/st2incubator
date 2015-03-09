@@ -13,7 +13,7 @@
       ref: "st2cd.apt_get"
       params:
         hosts: "{{hostname}}"
-        act: "install -y"
+        act: "install -y -o Dpkg::Options::=\"--force-confnew\""
         packages: "st2common st2reactor st2actions st2api st2auth"
       on-success: "upgrade_st2client"
     -
@@ -29,8 +29,8 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "st2ctl reload && nohup bg st2ctl restart >& /dev/null < /dev/null; sleep 20"
-        sudo: true
+        cmd: "st2ctl reload &> /dev/null && nohup bg st2ctl restart &> /dev/null; sleep 20"
+        # cmd: "st2ctl reload && nohup bg st2ctl restart; sleep 20" 
       on-success: "action_run"
     -
       name: "action_run"

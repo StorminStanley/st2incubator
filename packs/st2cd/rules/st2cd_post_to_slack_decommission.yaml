@@ -1,0 +1,15 @@
+---
+    name: "st2cd_post_to_slack_decommission"
+    description: "Post to slack on decommission"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.destroy_vm"
+            type: "matchregex"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            channel: "#opstown"
+            message: "{% if trigger.status != 'succeeded' %}*{% endif %}[{{trigger.status.upper()}}]{% if trigger.status != 'succeeded' %}*{% endif %} {{trigger.parameters.hostname}} was {% if trigger.status != 'succeeded' %}*NOT* {% endif %}destroyed\n"

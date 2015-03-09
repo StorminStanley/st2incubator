@@ -1,0 +1,29 @@
+---
+  name: "write_pypirc"
+  runner_type: "run-remote-script"
+  description: "Write the pypirc file."
+  enabled: true
+  entry_point: "write_pypirc.sh"
+  parameters:
+    pypi_username: 
+      type: "string"
+      description: "PyPI account username"
+      default: "{{system.st2_pypi_username}}"
+      position: 0
+    pypi_password: 
+      type: "string"
+      description: "PyPI account password"
+      default: "{{system.st2_pypi_password}}"
+      position: 1
+    dir: 
+      immutable: true
+      default: "/home/stanley/"
+    sudo: 
+      immutable: true
+      default: false
+    cmd: 
+      immutable: true
+      default: ""
+    kwarg_op: 
+      immutable: true
+      default: "--"

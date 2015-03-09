@@ -1,0 +1,15 @@
+---
+    name: "st2cd_post_to_slack_packaging_f20"
+    description: "Post results of st2cd workflows to slack"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.st2_packaging_f20"
+            type: "matchregex"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
+            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    BUILD_NUMBER: {{trigger.result.get_current_build.result}}\n    BUILD_HOST: {{trigger.result.get_build_server.result[0]}}\n    DL_HOST: {{trigger.parameters.dl_server}}\n    BRANCH: {{trigger.parameters.branch}}```"

@@ -25,7 +25,7 @@
       name: "destroy_vm"
       ref: "aws.ec2_terminate_instances"
       params:
-        instance_ids: "{{id.localhost.stdout}}"
+        instance_ids: "{{id.stdout}}"
       on-success: "delete_cname"
       on-failure: "slack_failure"
     -
@@ -34,18 +34,4 @@
       params:
         zone: "{{dns_zone}}"
         name: "{{hostname}}.{{dns_zone}}"
-      on-success: "slack_success"
-      on-failure: "slack_failure"
-    -
-      name: "slack_success"
-      ref: "slack.post_message"
-      params:
-        channel: "#opstown"
-        message: "```[Terminate Instance]\n STATUS: SUCCESS\n HOSTNAME: {{hostname}}\n INSTANCE: {{id.localhost.stdout}}```"
-    -
-      name: "slack_failure"
-      ref: "slack.post_message"
-      params:
-        channel: "#opstown"
-        message: "```[Terminate Instance]\n STATUS: FAILURE\n HOSTNAME: {{hostname}}\n INSTANCE: {{id.localhost.stdout}}```"
   default: "get_instance_dns"

@@ -1,0 +1,32 @@
+---
+  name: "docs"
+  runner_type: "action-chain"
+  description: "Build st2docs"
+  enabled: true
+  entry_point: "workflows/st2_docs.yaml"
+  parameters: 
+    repo: 
+      type: "string"
+      description: "Url of the repo to clone"
+      default: "https://github.com/StackStorm/st2.git"
+      required: true
+    branch:
+      type: "string"
+      description: "The branch to test"
+      default: "master"
+      required: true
+    repo_target: 
+      type: "string"
+      default: "st2_{{branch}}"
+      description: "Possible options are all, actions, rules."
+    latest:
+      type: "boolean"
+      default: false
+    revision: 
+      type: "string"
+      description: ""
+      required: true
+    author: 
+      type: "string"
+      description: ""
+      required: true

@@ -1,0 +1,20 @@
+---
+  name: "add_role"
+  runner_type: "run-remote"
+  description: "Clean a git repo"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    sudo: 
+      immutable: true
+      default: true
+    role:
+      required: true
+      default: "default"
+    cmd: 
+      immutable: false
+      default: "echo -e '---\\nrole: {{role}}' > /etc/facter/facts.d/role.yaml"
+    kwarg_op: 
+      immutable: true
+      default: "--"
+
