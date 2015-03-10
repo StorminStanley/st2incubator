@@ -45,19 +45,11 @@
         target: "{{mistral_client_repo_target}}"
       on-success: "install_mistral_st2action"
     -
-      name: "install_mistral_st2action"
-      ref: "st2cd.install_st2action"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2mistral_repo}}"
-        branch: "{{st2mistral_branch}}"
-      on-success: "install_mistral_st2action"
-    -
       name: "install_mistral_client"
       ref: "st2cd.install_mistral_client"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{mistral_client_repo}}"
+        repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
         branch: "{{mistral_client_branch}}"
       on-success: "install_mistral_st2action"
     -
@@ -65,8 +57,9 @@
       ref: "st2cd.install_mistral"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2_mistral_fork}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
         branch: "{{st2_mistral_fork_branch}}"
+        st2action_dir: "clone_st2mistral_repo[get_build_server.result[0]].stdout"
       on-success: "install_mistral_st2action"
     -
       name: "run_mistral"
@@ -74,7 +67,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_mistral_fork}}"
-      on-success: "install_mistral_st2action"
+      on-success: "run_mistral_itests"
     -
       name: "run_mistral_itests"
       ref: "st2cd.run_mistral_itests"

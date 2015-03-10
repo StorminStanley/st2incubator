@@ -23,6 +23,11 @@
       required: true
       position: 2
       default: "/home/stanley/"
+    st2action_dir:
+      type: "string"
+      description: "Dir containing st2actions"
+      position: 3
+      default: "/home/stanley/st2mistral"
     dir:
       immutable: true
       default: "/home/stanley/"
