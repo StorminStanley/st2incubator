@@ -13,7 +13,7 @@
       params:
         action: "update"
         key: "st2_{{branch}}_build_number"
-        value: "{% set build = get_current_build.result|int +1 %} {{build}}"
+        value: "{% set build = get_current_build.result|int +1 %}{{build}}"
       on-success: "get_build_server"
     -
       name: "get_build_server"

@@ -1,0 +1,42 @@
+---
+  chain:
+    -
+      name: "create_vm_role"
+      ref: "st2cd.create_vm_role"
+      params:
+        hostname: "{{hostname}}"
+        instance_type: "{{instance_type}}"
+        environment: "{{environment}}"
+        key_name: "{{key_name}}"
+        keyfile: "{{keyfile}}"
+        distro: "{{distro}}"
+        role: "{{role}}"
+      on-success: "fetch_st2_deploy"
+    -
+      name: "fetch_st2_deploy"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "curl -o /tmp/st2_deploy.sh https://ops.stackstorm.net/releases/st2/scripts/st2_deploy.sh"
+      on-success: "run_st2_deploy"
+    -
+      name: "run_st2_deploy"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "bash /tmp/st2_deploy.sh {{version}}"
+        timeout: 3600
+      on-success: "run_tests"
+    -
+      name: "run_tests"
+      ref: "st2cd.integration_tests"
+      params:
+        hostname: "{{hostname}}"
+      on-success: "destroy_vm"
+    -
+      name: "destroy_vm"
+      ref: "st2cd.destroy_vm"
+      params:
+        hostname: "{{hostname}}"
+
+  default: "create_vm_role"

@@ -1,0 +1,41 @@
+---
+  name: "st2_deploy_test"
+  runner_type: "action-chain"
+  description: "Tests st2 deployment script that is used in st2express"
+  enabled: true
+  entry_point: "workflows/st2_deploy_test.yaml"
+  parameters:
+    version: 
+      type: "string"
+      description: "Version of StackStorm to deploy"
+      default: "0.8.1"
+    distro:
+      type: "string"
+      description: "Linux distro to test against"
+      default: "UBUNTU14"
+    instance_type:
+      type: "string"
+      description: "Flavor of to use for instance creation"
+      default: "m3.medium"
+    environment:
+      type: "string"
+      description: "Environment to deploy host to"
+      default: "sandbox"
+    key_name:
+      type: "string"
+      description: "SSH key to use during intial instance creation"
+      default: "st2_deploy"
+    base_user:
+      type: "string"
+      description: "Username for initial ssh test"
+      default: "ubuntu"
+    keyfile:
+      type: "string"
+      description: "Path to local private key that corresponds to {{key_name}}"
+      default: "/home/stanley/.ssh/stanley_rsa"
+    hostname:
+      type: "string"
+      required: true
+    role:
+      type: "string"
+      default: ""

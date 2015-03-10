@@ -1,0 +1,36 @@
+---
+  name: "st2_packaging_rhel6"
+  runner_type: "action-chain"
+  description: "Clones a repo to a remote host and builds packages for releases server"
+  enabled: true
+  entry_point: "workflows/st2_packaging_rhel6.yaml"
+  parameters:
+    build_server:
+      type: "string"
+      required: true
+    repo:
+      type: "string"
+      description: "Url of the repo to clone"
+      required: true
+    repo_target:
+      type: "string"
+      default: "st2_{{branch}}"
+      description: "Possible options are all, actions, rules."
+    branch:
+      type: "string"
+      description: "The branch to build"
+      default: "master"
+      required: true
+    releases_server:
+      type: "string"
+      description: ""
+      default: "ops001.stackstorm.net"
+    environment:
+      type: "string"
+      description: ""
+    revision:
+      type: "string"
+    destination_base:
+      type: "string"
+      description: "Destination directory on releases_server"
+      default: "/home/stanley/st2cd/el6/"
