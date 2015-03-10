@@ -1,0 +1,15 @@
+---
+    name: "st2cd_post_to_slack_upgrade_f20"
+    description: "Post results of st2cd workflows to slack"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd.st2_upgrade_f20"
+            type: "equals"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
+            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}\n    BRANCH: {{trigger.parameters.branch}}```"
