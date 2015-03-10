@@ -5,6 +5,16 @@
   enabled: true
   entry_point: "teardown_mistral_itests.sh"
   parameters:
+    st2_repo:
+      type: "string"
+      required: true
+      position: 0
+      description: "Location of cloned st2 repo on disk."
+    drop_st2_db:
+      type: "string"
+      required: true
+      position: 1
+      default: "false"
     sudo:
       immutable: true
       default: true
