@@ -14,7 +14,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_repo}}"
-        branch: "{{st2_branch}}"
+        branch: "{{st2_repo_branch}}"
         target: "{{st2_repo_target}}"
       on-success: "clone_mistral_repo"
     -
@@ -22,9 +22,9 @@
       ref: "st2cd.git_clone"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2_mistral_fork}}"
-        branch: "{{st2_mistral_fork_branch}}"
-        target: "{{mistral_repo_target}}"
+        repo: "{{mistral_fork}}"
+        branch: "{{mistral_fork_branch}}"
+        target: "{{mistral_fork_target}}"
       on-success: "clone_st2mistral_repo"
     -
       name: "clone_st2mistral_repo"
@@ -41,7 +41,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{mistral_client_repo}}"
-        branch: "{{mistral_client_branch}}"
+        branch: "{{mistral_client_repo_branch}}"
         target: "{{mistral_client_repo_target}}"
       on-success: "install_mistral_st2action"
     -
@@ -58,7 +58,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
-        branch: "{{st2_mistral_fork_branch}}"
+        branch: "{{mistral_fork_branch}}"
         st2action_dir: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
       on-success: "run_mistral"
     -
@@ -116,4 +116,6 @@
       ref: "st2cd.teardown_mistral_itests"
       params:
         hosts: "{{get_build_server.result[0]}}"
+        st2_repo: "{{clone_st2_repo[get_build_server.result[0].stdout}}"
+        drop_st2_db: "true"
   default: "get_build_server"
