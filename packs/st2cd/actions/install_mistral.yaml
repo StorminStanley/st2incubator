@@ -28,6 +28,7 @@
       description: "Dir containing st2actions"
       position: 3
       default: "/home/stanley/st2mistral"
+      required: true
     dir:
       immutable: true
       default: "/home/stanley/"
