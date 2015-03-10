@@ -1,0 +1,12 @@
+---
+  name: 'autoscale.scaledown'
+  description: 'Scale down an ASG slowly if an alert has not cleared'
+  enabled: true
+  trigger:
+    type: 'autoscale.ScaleDownPulse'
+  criteria: {}
+  action:
+    ref: slack.post-message
+    parameters:
+      message: "ScaleDownPulse for {{trigger.asg}}"
+      channel: "#bot-testing"

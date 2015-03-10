@@ -13,30 +13,12 @@ workflows:
       on-error:
         - fail
     tasks:
-      parse_chatops:
-        action: autoscale.parse_chatops
-        input:
-          message: <% $.message %>
-        publish:
-          application: <% $.parse_chatops.result.parameters.application %>
-        on-success:
-          - get_asg
-      get_asg:
-        action: autoscale.asg.lookup
-        input:
-          application_name: <% $.application %>
-        publish:
-          asg: <% $.get_asg.result %>
-        on-success:
-          - chatops_report
       chatops_report:
         action: slack.post_message
         input:
-          message: "```ASG[<% $.asg %>] Sent New Relic recovery webhook to StackStorm for <% $.application %>```"
+          message: "```ASG[<% $.asg %>] Sent New Relic recovery webhook to StackStorm```"
           channel: '#<% $.channel %>'
         on-success:
-          - begin_expand
-      begin_expand:
-        action: autoscale.asg.expand
-        input:
-          asg: <% $.asg %>
+          - send_webhook
+      send_webhook:
+        action: autoscale.simulate_recovery

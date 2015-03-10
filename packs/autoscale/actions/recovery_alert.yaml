@@ -1,0 +1,11 @@
+---
+name: recovery_alert
+runner_type: mistral-v2
+description: Entry point for recovery alerts via New Relic
+enabled: true
+entry_point: 'workflows/recovery_alert.yaml'
+parameters:
+  application:
+    type: string
+    description: Affected application via New Relic
+    required: true

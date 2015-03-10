@@ -153,9 +153,23 @@ workflows:
           message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.```"
           channel: <% $.channel %>
         on-success:
-          - notify_successful_provision
+          - provision_node
         on-error:
           - failure_chef_install
+      provision_node:
+        action: chef.solo
+        policies:
+          wait-before: 1
+        input:
+          username: root
+          hosts: <% $.ipv4_address %>
+          attributes: https://raw.githubusercontent.com/StackStorm/chef-st2-demo-webapp/master/runtime/dna.json
+          recipe_url: https://github.com/StackStorm/chef-st2-demo-webapp/raw/master/runtime/cookbooks.tgz
+          timeout: 600
+        on-success:
+          - notify_successful_provision
+        on-error:
+          - failure_provision_node
       notify_successful_provision:
         action: slack.post_message
         input:
@@ -234,4 +248,9 @@ workflows:
         action: slack.post_message
         input:
           message: "```ASG[<% $.asg %>] FAILURE: Unable to add <% $.hostname %> to loadbalancer. Check action history for more details.```"
+          channel: <% $.channel %>
+      failure_provision_node:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to provision chef on <% $.hostname %>. Check action history for more details.```"
           channel: <% $.channel %>

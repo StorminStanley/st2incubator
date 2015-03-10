@@ -1,0 +1,12 @@
+---
+  name: 'autoscale.scaleup'
+  description: 'Keep providing help to an ASG if an alert has not cleared'
+  enabled: true
+  trigger:
+    type: 'autoscale.ScaleUpPulse'
+  criteria: {}
+  action:
+    ref: slack.post-message
+    parameters:
+      message: "ScaleUpPulse for {{trigger.asg}}"
+      channel: "#bot-testing"

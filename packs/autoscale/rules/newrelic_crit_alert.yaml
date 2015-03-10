@@ -1,10 +1,10 @@
 ---
-  name: 'autoscale.newrelic.recovery_alert'
+  name: 'autoscale.newrelic.crit_alert'
   description: 'Trigger automatic remediation on New Relic failure'
   enabled: true
   trigger:
     type: 'newrelic.ServerAlertTrigger'
-  recoveryeria:
+  criteria:
     trigger.alert.severity:
       type: eq
       pattern: 'critical'
@@ -13,8 +13,8 @@
       pattern: "Default server alert policy"
     trigger.long_description:
       type: startswith
-      pattern: "Alert ended"
+      pattern: 'Alert opened'
   action:
-    ref: autoscale.recovery_alert
+    ref: autoscale.crit_alert
     parameters:
       application_name: "Default Application"
