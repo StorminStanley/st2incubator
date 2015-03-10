@@ -87,7 +87,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{system.releases_server}}"
-        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && ln -s /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/{{get_current_build.result|trim}} /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && echo '{{get_current_build.result}}' > /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/VERSION.txt"
+        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && ln -s /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/{{get_current_build.result|trim}} /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current && echo '{{get_current_build.result|trim}}' > /var/www/sites/releases/html/releases/st2/{{version[get_build_server.result[0]].stdout}}/debs/current/VERSION.txt"
       on-success: "rsync_debs_repo"
     - 
       name: "rsync_debs_repo"

@@ -15,7 +15,7 @@
         },
         "cmd": {
             "immutable": false,
-            "default": "cd {{repo}} && make rhel-rpms"
+            "default": "cd {{dir}}/{{repo}} && make rhel-rpms"
         },
         "kwarg_op": {
             "immutable": true,
