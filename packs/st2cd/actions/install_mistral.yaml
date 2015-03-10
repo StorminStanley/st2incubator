@@ -40,3 +40,5 @@
     kwarg_op:
       immutable: true
       default: "--"
+    timeout:
+      default: 180
