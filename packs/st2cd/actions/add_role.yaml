@@ -9,11 +9,11 @@
       immutable: true
       default: true
     role:
-      required: true
-      default: "default"
+      type: "string"
+      default: ""
     cmd: 
       immutable: false
-      default: "echo -e '---\\nrole: {{role}}' > /etc/facter/facts.d/role.yaml"
+      default: "{% if role != \"\" %}echo -e '---\\nrole: {{role}}' > /etc/facter/facts.d/role.yaml{% else %}echo -e 'No role defined'{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"
