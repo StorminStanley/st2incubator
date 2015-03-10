@@ -238,7 +238,7 @@ workflows:
           wait-before: 1
         input:
           key: 'asg.<% $.name %>.active_incident'
-          value: "false"
+          value: "False"
         on-success:
           - store_total_nodes
       store_total_nodes:

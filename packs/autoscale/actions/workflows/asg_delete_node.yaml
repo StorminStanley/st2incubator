@@ -123,9 +123,24 @@ workflows:
         input:
           vm_id: <% $.vm_id %>
         on-success:
-          - notify_destroyed_vm
+          - get_total_node_count
         on-error:
           - remove_dns_record
+      get_total_node_count:
+        action: st2.kv.get
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+        publish:
+          total_nodes: <% $.get_total_node_count.result %>
+        on-success:
+          - decrement_total_node_count
+      decrement_total_node_count:
+        action: st2.kv.set
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+          value: <% str(int($.total_nodes) - 1) %>
+        on-success:
+          - notify_destroyed_vm
       notify_destroyed_vm:
         action: slack.post_message
         input:

@@ -24,7 +24,7 @@ workflows:
         action: st2.kv.set
         input:
           key: "asg.<% $.asg %>.active_incident"
-          value: "false"
+          value: "False"
         on-success:
           - begin_deflate
       begin_deflate:

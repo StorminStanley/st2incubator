@@ -1,5 +1,6 @@
 import time
 import eventlet
+import ast
 from st2reactor.sensor.base import PollingSensor
 
 __all_ = [
@@ -14,7 +15,7 @@ eventlet.monkey_patch(
     time=True)
 
 class AutoscaleGovernorSensor(PollingSensor):
-    def __init__(self, sensor_service, config=None, poll_interval=None):
+    def __init__(self, sensor_service, config=None, poll_interval=30):
         super(AutoscaleGovernorSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
@@ -45,12 +46,10 @@ class AutoscaleGovernorSensor(PollingSensor):
             if 'active_incident' in kvp.name:
                 asg_data = kvp.name.split('.')
                 asg      = asg_data[1]
-                if bool(kvp.value):
+                if ast.literal_eval(kvp.value):
                     alerting_asgs.append(asg)
                 else:
                     stable_asgs.append(asg)
-
-
 
         # Attempt to determine if an ASG needs to scale up...
         for asg in alerting_asgs:
@@ -82,29 +81,26 @@ class AutoscaleGovernorSensor(PollingSensor):
         node_bound           = self._kvp_get('asg.%s.%s_nodes' % (asg, bound), local=False)
         total_nodes          = self._kvp_get('asg.%s.total_nodes' % (asg), local=False)
 
-        print "Last event timestamp"
-        print last_event_timestamp
-
         # ensure we have all the required variables
         if last_event_timestamp and event_delay and current_node_count and node_bound and total_nodes:
             # See if an ASG is even eligible to be acted upon, min or max.
-            bound_check = getattr(self, '_%s_bound_check' % bound)(float(node_bound), float(total_nodes))
-            delay_check = self._event_delay_check(float(last_event_timestamp), float(event_delay))
+            bound_check = getattr(self, '_%s_bound_check' % bound)(int(node_bound), int(total_nodes))
+            delay_check = self._event_delay_check(int(last_event_timestamp), int(event_delay))
             if bound_check and delay_check:
                 self._dispatch_trigger(trigger_type, asg)
         else:
             self._logger.info("AutoScaleGovernor: Not all K/V pairs exist for ASG %s. Skipping..." % asg)
 
     def _event_delay_check(self, last_event_timestamp, event_delay):
-        check = True if last_event_timestamp + event_delay < int(time.time()) else False
+        check = True if last_event_timestamp + (event_delay * 60) < int(time.time()) else False
         return check
 
     def _max_bound_check(self, max_nodes, total_nodes):
-        check = True if total_nodes < max_nodes else False
+        check = True if total_nodes > max_nodes else False
         return check
 
     def _min_bound_check(self, min_nodes, total_nodes):
-        check = True if total_nodes > max_nodes else False
+        check = True if total_nodes > min_nodes else False
         return check
 
     def _dispatch_trigger(self, trigger, asg):

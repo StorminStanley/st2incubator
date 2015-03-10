@@ -106,9 +106,24 @@ workflows:
           ipv4_address: '<% $.create_new_node.result.public_ips[1] %>'
           ipv6_address: '<% $.create_new_node.result.public_ips[0] %>'
         on-success:
-          - notify_successful_build
+          - get_total_node_count
         on-error:
           - failure_create_new_node
+      get_total_node_count:
+        action: st2.kv.get
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+        publish:
+          total_nodes: <% $.get_total_node_count.result %>
+        on-success:
+          - increment_total_node_count
+      increment_total_node_count:
+        action: st2.kv.set
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+          value: <% str(int($.total_nodes) + 1) %>
+        on-success:
+          - notify_successful_build
       notify_successful_build:
         action: slack.post_message
         input:

@@ -24,7 +24,7 @@ workflows:
         action: st2.kv.set
         input:
           key: "asg.<% $.asg %>.active_incident"
-          value: "true"
+          value: "True"
         on-success:
           - begin_expand
       begin_expand:

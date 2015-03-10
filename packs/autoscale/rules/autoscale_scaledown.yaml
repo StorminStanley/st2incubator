@@ -6,7 +6,6 @@
     type: 'autoscale.ScaleDownPulse'
   criteria: {}
   action:
-    ref: slack.post-message
+    ref: autoscale.asg.deflate
     parameters:
-      message: "ScaleDownPulse for {{trigger.asg}}"
-      channel: "#bot-testing"
+      asg: "{{trigger.asg}}"
