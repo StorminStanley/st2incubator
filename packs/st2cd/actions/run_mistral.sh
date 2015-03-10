@@ -30,6 +30,6 @@ LOG_FILE=/tmp/mistral-itests-$DATE.log
 sed -i s:/var/log/mistral.log:$LOG_FILE:g $LOG_CONFIG_FILE
 
 cd $REPO
-CMD="$REPO/.venv/bin/python $REPO/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf --log-config-append $LOG_CONFIG_FILE &"
+CMD="$REPO/.venv/bin/python $REPO/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf --log-config-append $LOG_CONFIG_FILE"
 echo "Mistral command: $CMD"
-$CMD
+$CMD &
