@@ -59,14 +59,21 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
         branch: "{{st2_mistral_fork_branch}}"
-        st2action_dir: "clone_st2mistral_repo[get_build_server.result[0]].stdout"
-      on-success: "install_mistral_st2action"
+        st2action_dir: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "run_mistral"
     -
       name: "run_mistral"
       ref: "st2cd.run_mistral"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2_mistral_fork}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "run_st2"
+    -
+      name: "run_st2"
+      ref: "st2cd.run_st2"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
       on-success: "run_mistral_itests"
     -
       name: "run_mistral_itests"
