@@ -6,8 +6,8 @@
         type: "webhooks.github_event"
     criteria:
         trigger.body.ref:
-            pattern: "refs/heads/v0.8"
-            type: "equals"
+            pattern: "refs/heads/v0\\.8"
+            type: "matchregex"
         trigger.body.repository.full_name:
             pattern: "StackStorm/st2"
             type: "equals"
