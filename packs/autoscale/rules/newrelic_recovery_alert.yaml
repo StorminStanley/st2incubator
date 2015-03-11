@@ -4,7 +4,7 @@
   enabled: true
   trigger:
     type: 'newrelic.ServerAlertTrigger'
-  recoveryeria:
+  criteria:
     trigger.alert.severity:
       type: eq
       pattern: 'critical'
