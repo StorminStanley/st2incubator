@@ -3,7 +3,7 @@ name: apt_get_install
 description: Install a package from APT
 runner_type: run-remote
 enabled: true
-entry_point: 'apt-get-install.sh'
+entry_point: ''
 parameters:
   package:
     type: string
@@ -14,4 +14,14 @@ parameters:
     type: string
     description: Version of the package to be installed
     position: 2
-
+  sudo:
+    immutable: true
+    default: true
+  env:
+    default:
+      DEBIAN_FRONTEND: noninteractive
+    immutable: true
+  cmd:
+    type: string
+    default: 'apt-get -y install {{package}}{% if version %}={{version}}{% endif %}'
+    immutable: true

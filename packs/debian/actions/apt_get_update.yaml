@@ -1,6 +1,14 @@
 ---
 name: apt_get_update
 description: Update the APT cache
-runner_type: run-remote
-entry_point: 'apt-get-update.sh'
+runner_type: run-remote-script
+entry_point: ''
 enabled: true
+parameters:
+  sudo:
+    immutable: true
+    default: true
+  cmd:
+    type: string
+    default: 'apt-get update'
+    immutable: true

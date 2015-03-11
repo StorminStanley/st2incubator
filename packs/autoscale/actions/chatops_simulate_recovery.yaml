@@ -1,10 +1,15 @@
 ---
 name: chatops.simulate_recovery
 runner_type: mistral-v2
-description: ChatOps entry point to simulate NR recovery
+description: ChatOps entry point to simulate New Relic recovery webhook
 enabled: true
 entry_point: 'workflows/chatops_simulate_recovery.yaml'
 parameters:
+  message:
+    type: string
+    description: ChatOps message to determine which application to simulate recovery webhook
+    required: true
   channel:
     type: string
-    description: Room to output ChatOps events to
+    description: ChatOps channel to emit events back to
+    required: true

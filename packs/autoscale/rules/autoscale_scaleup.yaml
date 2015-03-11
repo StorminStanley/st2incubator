@@ -1,0 +1,11 @@
+---
+  name: 'autoscale.scaleup'
+  description: 'Keep providing help to an ASG if an alert has not cleared'
+  enabled: true
+  trigger:
+    type: 'autoscale.ScaleUpPulse'
+  criteria: {}
+  action:
+    ref: autoscale.asg.expand
+    parameters:
+      asg: "{{trigger.asg}}"

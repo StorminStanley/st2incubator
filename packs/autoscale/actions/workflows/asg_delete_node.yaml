@@ -12,102 +12,190 @@ workflows:
       on-error:
         - fail
     tasks:
-      chatops_report:
+      get_chatops_channel:
+        action: st2.kv.get
+        input:
+          key: 'asg.<% $.asg %>.channel'
+        publish:
+          channel: <% $.get_chatops_channel.result %>
+        on-success:
+          - notify_start_wf
+      notify_start_wf:
         action: slack.post_message
         input:
-          message: '{$.chatops_status}'
-          channel: '#bot-testing'
+          message: "```ASG[<% $.asg %>] Beginning deletion of <% $.name %> from ASG```"
+          channel: <% $.channel %>
+        on-success:
+          - get_domain
       get_domain:
         action: st2.kv.get
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.domain'
-        output:
-          chatops_status: '[ASG {$.asg}]: Deleting {$.name}.{$.asg}.{$.domain}...'
+          key: 'asg.<% $.asg %>.domain'
         publish:
-          domain: $.get_domain.result
+          domain: <% $.get_domain.result %>
+        on-success:
+          - get_vm_id
+        on-error:
+          - failure_get_domain
+      get_vm_id:
+        action: rackspace.find_vm_id
+        input:
+          name: <% $.name %>
+        publish:
+          vm_id: <% $.get_vm_id.result %>
         on-success:
           - get_node_ip
-          - chatops_report
+        on-error:
+          - failure_get_vm_id
       get_node_ip:
-        action: linux.dig
+        action: rackspace.get_vm_info
         policies:
           wait-before: 1
         input:
-          nameserver: '8.8.8.8'
-          hostname: '{$.name}.{$.asg}.{$.domain}'
+          vm_id: <% $.vm_id %>
         publish:
-          ipv4_address: '{$.get_node_ip.result[0]'
+          ipv4_address: <% $.get_node_ip.result.public_ips[1] %>
         on-success:
           - get_loadbalancer_id
+        on-error:
+          - failure_get_node_ip
       get_loadbalancer_id:
         action: st2.kv.get
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.loadbalancer_id'
+          key: 'asg.<% $.asg %>.loadbalancer_id'
         publish:
-          loadbalancer_id: $.get_loadbalancer_id.result
+          loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - get_dns_zone_id
+        on-error:
+          - failure_get_loadbalancer_id
       get_dns_zone_id:
         action: st2.kv.get
         policies:
           wait-before: 1
         input:
-          key: 'asg.{$.asg}.dns_zone_id'
+          key: 'asg.<% $.asg %>.dns_zone_id'
         publish:
-          dns_zone_id: $.get_dns_zone_id.result
+          dns_zone_id: <% $.get_dns_zone_id.result %>
         on-success:
           - get_dns_record_id
+        on-error:
+          - failure_get_dns_zone_id
       get_dns_record_id:
         action: rackspace.find_dns_record_id
         policies:
           wait-before: 1
         input:
-          name: '{$.name}.{$.asg}.{$.domain}'
+          zone_id: <% $.dns_zone_id %>
+          name: '<% $.name %>.<% $.asg %>.<% $.domain %>'
         publish:
-          dns_record_id: $.get_dns_record_id.result
-        on-success:
-          - get_vm_id
-      get_vm_id:
-        action: rackspace.find_vm_id
-        policies:
-          wait-before: 1
-        input:
-          name: '{$.name}'
-        publish:
-          vm_id: $.get_vm_id.result
+          dns_record_id: <% $.get_dns_record_id.result %>
         on-success:
           - remove_node_loadbalancer
+        on-error:
+          - failure_get_dns_record_id
       remove_node_loadbalancer:
         action: rackspace.delete_node_from_loadbalancer
         policies:
           wait-before: 1
         input:
-          loadbalancer_id: $.loadbalancer_id
-          ip: $.ipv4_address
-        output:
-          chatops_status: '[ASG {$.asg}]: Removed {$.name} from loadbalancer...'
+          loadbalancer_id: <% $.loadbalancer_id %>
+          ip: <% $.ipv4_address %>
+        on-success:
+          - notify_removed_lb
+        on-error:
+          - destroy_vm
+      notify_removed_lb:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Removed <% $.name %> from loadbalancer```"
+          channel: <% $.channel %>
         on-success:
           - destroy_vm
-          - chatops_report
       destroy_vm:
         action: rackspace.delete_vm
         policies:
           wait-before: 1
         input:
-          vm_id: '{$.vm_id}'
-        output:
-          chatops_status: '[ASG {$.asg}]: Destroyed {$.name}...'
+          vm_id: <% $.vm_id %>
+        on-success:
+          - get_total_node_count
+        on-error:
+          - remove_dns_record
+      get_total_node_count:
+        action: st2.kv.get
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+        publish:
+          total_nodes: <% $.get_total_node_count.result %>
+        on-success:
+          - decrement_total_node_count
+      decrement_total_node_count:
+        action: st2.kv.set
+        input:
+          key: "asg.<% $.asg %>.total_nodes"
+          value: <% str(int($.total_nodes) - 1) %>
+        on-success:
+          - notify_destroyed_vm
+      notify_destroyed_vm:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Destroyed VM <% $.name %>.```"
+          channel: <% $.channel %>
         on-success:
           - remove_dns_record
-          - chatops_report
       remove_dns_record:
         action: rackspace.delete_dns_record
         policies:
           wait-before: 1
         input:
-          record_id: $.dns_record_id
-          zone_id: $.dns_zone_id
+          record_id: <% $.dns_record_id %>
+          zone_id: <% $.dns_zone_id %>
+        on-success:
+          - notify_deleted_dns
+      notify_deleted_dns:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Deleted <% $.name %> DNS```"
+          channel: <% $.channel %>
+        on-success:
+          - notify_success_wf
+      notify_success_wf:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] Successfully deleted <% $.name %>```"
+          channel: <% $.channel %>
+      failure_get_domain:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve domain from Keystore (asg.<% $.asg %>.domain)```"
+          channel: <% $.channel %>
+      failure_get_node_ip:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve IP for <% $.name %> from DNS```"
+          channel: <% $.channel %>
+      failure_get_vm_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve VM ID from Keystore (asg.<% $.asg %>.vm_id)```"
+          channel: <% $.channel %>
+      failure_get_loadbalancer_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve Loadbalancer ID from Keystore (asg.<% $.asg %>.loadbalancer_id)```"
+          channel: <% $.channel %>
+      failure_get_dns_zone_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve DNS Zone ID from Keystore (asg.<% $.asg %>.dns_zone_id)```"
+          channel: <% $.channel %>
+      failure_get_dns_record_id:
+        action: slack.post_message
+        input:
+          message: "```ASG[<% $.asg %>] FAILURE: Unable to retrieve DNS Record ID from DNS for <% $.name %>```"
+          channel: <% $.channel %>

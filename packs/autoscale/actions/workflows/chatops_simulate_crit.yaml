@@ -4,20 +4,21 @@ version: "2.0"
 
 workflows:
   main:
-    description: 'Simulate a critical event via New Relic API'
+    description: 'Simulate a critical webhook as sent via New Relic API'
     type: direct
     input:
+      - message
       - channel
     task-defaults:
       on-error:
         - fail
     tasks:
-      send_webhook:
-        action: autoscale.simulate_crit
-        on-success:
-          - chatops_report
       chatops_report:
         action: slack.post_message
         input:
-          message: "Sent NewRelic Critical WebHook to StackStorm..."
-          channel: '{$.channel}'
+          message: "```ASG[<% $.asg %>] Sent New Relic critical webhook to StackStorm```"
+          channel: '#<% $.channel %>'
+        on-success:
+          - send_webhook
+      send_webhook:
+        action: autoscale.simulate_crit

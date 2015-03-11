@@ -1,14 +1,14 @@
 ---
-  name: 'autoscale.chatopn.asg.delete'
-  description: 'Delete AutoScale Group'
+  name: 'autoscale.chatops.asg.delete'
+  description: 'Delete an ASG via ChatOps'
   enabled: true
   trigger:
     type: 'slack.message'
   criteria:
     trigger.text:
       type: startswith
-      pattern: '!asg delete name=rsdemo'
+      pattern: '!asg delete'
   action:
-    ref: autoscale.asg.delete
+    ref: autoscale.chatops.asg.delete
     parameters:
-      name: 'rsdemo'
+      message: "{{trigger.text}}"

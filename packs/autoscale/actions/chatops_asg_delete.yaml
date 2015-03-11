@@ -1,9 +1,9 @@
 ---
-name: chatops.asg.create
+name: chatops.asg.delete
 runner_type: mistral-v2
-description: Create a new AutoScale Group within StackStorm
+description: ChatOps command to teardown autoscale group
 enabled: true
-entry_point: 'workflows/chatops_asg_create.yaml'
+entry_point: 'workflows/chatops_asg_delete.yaml'
 parameters:
   message:
     type: string

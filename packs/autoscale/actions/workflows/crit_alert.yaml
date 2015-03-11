@@ -1,0 +1,34 @@
+---
+name: autoscale.crit_alert
+version: "2.0"
+
+workflows:
+  main:
+    description: 'Respond to a critical webhook as sent via New Relic API'
+    type: direct
+    input:
+      - application
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      get_asg:
+        action: autoscale.asg.lookup
+        input:
+          application_name: <% $.application %>
+        publish:
+          asg: <% $.get_asg.result %>
+        on-success:
+          - set_asg_alert_state
+      set_asg_alert_state:
+        action: st2.kv.set
+        input:
+          key: "asg.<% $.asg %>.active_incident"
+          value: "True"
+        on-success:
+          - begin_expand
+      begin_expand:
+        action: slack.post_message
+        input:
+          message: "CRIT ALERT FOR <% %.asg %>"
+          channel: "#bot-testing"

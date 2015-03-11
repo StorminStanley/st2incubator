@@ -1,0 +1,11 @@
+---
+name: asg.lookup
+runner_type: run-python
+description: Lookup ASG based on Application Name
+enabled: true
+entry_point: 'shell/asg_lookup.py'
+parameters:
+  application_name:
+    type: string
+    description: Name of application to dereference to an autoscale group
+    required: true

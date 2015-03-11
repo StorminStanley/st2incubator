@@ -1,0 +1,11 @@
+---
+  name: 'autoscale.scaledown'
+  description: 'Scale down an ASG slowly if an alert has not cleared'
+  enabled: true
+  trigger:
+    type: 'autoscale.ScaleDownPulse'
+  criteria: {}
+  action:
+    ref: autoscale.asg.deflate
+    parameters:
+      asg: "{{trigger.asg}}"

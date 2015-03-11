@@ -1,0 +1,7 @@
+---
+name: epoch
+runner_type: run-python
+description: Add a node to an autoscale group (uses Mistral)
+enabled: true
+entry_point: 'shell/epoch.py'
+parameters: {}

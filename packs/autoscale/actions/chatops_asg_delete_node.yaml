@@ -1,0 +1,11 @@
+---
+name: chatops.asg.delete_node
+runner_type: mistral-v2
+description: ChatOps command to remove a node to from an autoscale group
+enabled: true
+entry_point: 'workflows/chatops_asg_delete_node.yaml'
+parameters:
+  message:
+    type: string
+    description: Incoming message from ChatOps
+    required: true
