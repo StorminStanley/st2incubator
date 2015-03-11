@@ -5,9 +5,6 @@
   enabled: true
   entry_point: ""
   parameters: 
-    sudo: 
-      immutable: true
-      default: false
     repo:
       type: "string"
       required: true
@@ -17,18 +14,27 @@
       required: true
       default: "st2-doc-test"
       description: "The base path to the bucket"
+    version:
+      type: "string"
+      required: true
+      description: "St2 version"
     latest:
       type: "boolean"
       description: "Boolean flag for latest docs"
       required: true
       default: false
+    stable:
+      type: "boolean"
+      description: "Boolean flag for latest stable docs"
+      required: true
+      default: false
     bucket_url:
       type: "string"
       immutable: true
-      default: "s3://{{bucket}}/{% if latest == true -%}latest/{% endif -%}"
+      default: "s3://{{bucket}}"
     cmd: 
       immutable: false
-      default: "cd {{repo}}/docs/build/html && s3cmd --recursive put * {{bucket_url}}"
+      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if latest == true %} && s3cmd put --recursive * {{bucket_url}/latest/ {% elif stable == true %} && s3cmd put --recursive * {{bucket_url}/{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"

@@ -12,4 +12,4 @@
         ref: "slack.post_message"
         parameters:
             channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
-            message: "{% if trigger.status != 'succeeded' %}@channel\n{% endif %}```[{{trigger.action_name}}: {{trigger.status.upper()}}]\n    BUILD: {{trigger.result.get_current_build.result|trim}}\n    BUILD_HOST: {{trigger.parameters.build_server}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            message: "{% if trigger.status != 'succeeded' %}<!channel>\n{% endif %}```[{{trigger.action_name}}: {{trigger.status.upper()}}]\n    BUILD: {{trigger.result.get_current_build.result|trim}}\n    BUILD_HOST: {{trigger.parameters.build_server}}\n    BRANCH: {{trigger.parameters.branch}}```"

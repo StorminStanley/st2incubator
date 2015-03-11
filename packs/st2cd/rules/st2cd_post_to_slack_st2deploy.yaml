@@ -1,15 +1,15 @@
 ---
-    name: "st2cd_post_to_slack_packaging"
+    name: "st2cd_post_to_slack_st2deploy"
     description: "Post results of st2cd workflows to slack"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.st2_packaging$"
+            pattern: "st2cd\\.st2\\_deploy\\_test"
             type: "matchregex"
     action:
         ref: "slack.post_message"
         parameters:
             channel: "{% if trigger.status == 'succeeded' %}#thunderdome{% else %}#stackstorm{% endif %}"
-            message: "{% if trigger.status != 'succeeded' %}<!channel>\n{% endif %}```[{{trigger.action_name}} - {{trigger.parameters.environment}}: {{trigger.status.upper()}}]\n    SHA: {{trigger.parameters.revision}}\n    BRANCH: {{trigger.parameters.branch}}```"
+            message: "{% if trigger.status != 'succeeded' %}<!channel>\n{% endif %}```[{{trigger.action_name}}: {{trigger.status.upper()}}]\n    HOST: {{trigger.parameters.hostname}}```"
