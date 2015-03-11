@@ -14,7 +14,7 @@
       default: "st2_master"
     cmd: 
       immutable: false
-      default: "cd {{repo}} && make docs"
+      default: "cd {{dir}}/{{repo}} && make docs"
     kwarg_op: 
       immutable: true
       default: "--"

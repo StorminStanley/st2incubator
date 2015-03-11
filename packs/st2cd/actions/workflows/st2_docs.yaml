@@ -20,7 +20,7 @@
       ref: "core.remote"
       params:
         hosts: "{{get_build_server.result[0]}}"
-        cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
+        cmd: "rm -Rf /tmp/st2*"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -58,9 +58,11 @@
       ref: "st2cd.s3_docs"
       params: 
         hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        repo: "/tmp/{{clone_repo[get_build_server.result[0]].stdout}}"
         bucket: "st2-doc-test"
         latest: "{{latest}}"
+        stable: "{{stable}}"
+        version: "{{version[get_build_server.result[0]].stdout|truncate(3)}}"
       on-success: "clean_repo"
     - 
       name: "clean_repo"

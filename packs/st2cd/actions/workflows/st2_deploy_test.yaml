@@ -11,6 +11,13 @@
         keyfile: "{{keyfile}}"
         distro: "{{distro}}"
         role: "{{role}}"
+      on-success: "generate_ssh_key"
+    -
+      name: "generate_ssh_key"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "ssh-keygen -f /home/stanley/.ssh/stanley_rsa -P '' && cat /home/stanley/.ssh/stanley_rsa.pub >> /home/stanley/.ssh/authorized_keys && chmod 0600 /home/stanley/.ssh/authorized_keys"
       on-success: "fetch_st2_deploy"
     -
       name: "fetch_st2_deploy"
@@ -33,17 +40,10 @@
       params:
         hostname: "{{hostname}}"
       on-success: "destroy_vm"
-      on-failure: "slack_message"
     -
       name: "destroy_vm"
       ref: "st2cd.destroy_vm"
       params:
         hostname: "{{hostname}}"
-    -
-      name: "slack_message"
-      ref: "slack.post_message"
-      params:
-        channel: "#stackstorm"
-        message: "[*FAILED*] st2_deploy.sh test failed on {{hostname}}"
 
   default: "create_vm_role"
