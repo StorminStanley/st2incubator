@@ -1,7 +1,7 @@
 ---
 name: apt_get_update
 description: Update the APT cache
-runner_type: run-remote-script
+runner_type: run-remote
 entry_point: ''
 enabled: true
 parameters:
