@@ -8,7 +8,7 @@
     st2_repo:
       type: "string"
       description: "Url of the st2 repo to clone"
-      default: "https://9cbf33e6243099dc8a535734c06ef6ebaa05c01f@github.com/StackStorm/st2.git"
+      default: "https://github.com/StackStorm/st2.git"
     st2_repo_target:
       type: "string"
       default: "/home/stanley/st2"
