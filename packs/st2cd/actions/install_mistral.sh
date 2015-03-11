@@ -33,24 +33,24 @@ install_mistral() {
     pip install -r requirements.txt >> $OUTPUT
     if [[ $? != 0 ]]
     then
-        echo 'Failed installing pip requirements for branch: $BRANCH'
+        echo "Failed installing pip requirements for branch: $BRANCH"
         exit 3
     fi
 
     pip install -q mysql-python
     if [[ $? != 0 ]]
     then
-        echo 'Failed installing mysql-python'
+        echo "Failed installing mysql-python"
         exit 4
     fi
 
     python setup.py develop >> $OUTPUT
     if [[ $? != 0 ]]
     then
-        echo 'Failed installing mistral'
+        echo "Failed installing mistral"
         exit 5
     fi
-    echo 'SUCCESS: Installed mistral.'
+    echo "SUCCESS: Installed mistral."
     deactivate >> $OUTPUT
 }
 
@@ -64,14 +64,14 @@ install_st2action() {
     . $REPO/.venv/bin/activate
     if [[ $? != 0 ]]
     then
-        echo 'ERROR: Failed activating mistral virtualenv'
+        echo "ERROR: Failed activating mistral virtualenv"
         exit 7
     fi
 
     python setup.py develop >> $OUTPUT
     if [[ $? != 0 ]]
     then
-        echo 'ERROR: Failed install st2action into mistral virtualenv'
+        echo "ERROR: Failed install st2action into mistral virtualenv"
         exit 8
     fi
     deactivate

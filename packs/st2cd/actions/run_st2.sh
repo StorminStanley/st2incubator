@@ -27,8 +27,4 @@ fi
 echo "DEBUG: Launching st2..."
 $REPO/tools/launchdev.sh startclean
 
-if [[ $? != 0 ]]
-then
-    echo "ERROR: Failed to launch st2."
-    exit 4
-fi
+exit 0

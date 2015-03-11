@@ -27,7 +27,9 @@ fi
 LOG_CONFIG_FILE=$CONFIG_DIR/wf_trace_logging.conf
 cp $REPO/etc/wf_trace_logging.conf.sample $LOG_CONFIG_FILE
 LOG_FILE=/tmp/mistral-itests-$DATE.log
+LOG_TRACE_FILE=/tmp/mistral-trace-itests-$DATE.log
 sed -i s:/var/log/mistral.log:$LOG_FILE:g $LOG_CONFIG_FILE
+sed -i s:/var/log/mistral_wf_trace.log:$LOG_TRACE_FILE:g $LOG_CONFIG_FILE
 
 cd $REPO
 CMD="$REPO/.venv/bin/python $REPO/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf --log-config-append $LOG_CONFIG_FILE"
