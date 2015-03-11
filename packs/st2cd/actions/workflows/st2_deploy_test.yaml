@@ -33,10 +33,17 @@
       params:
         hostname: "{{hostname}}"
       on-success: "destroy_vm"
+      on-failure: "slack_message"
     -
       name: "destroy_vm"
       ref: "st2cd.destroy_vm"
       params:
         hostname: "{{hostname}}"
+    -
+      name: "slack_message"
+      ref: "slack.post_message"
+      params:
+        channel: "#stackstorm"
+        message: "[*FAILED*] st2_deploy.sh test failed on {{hostname}}"
 
   default: "create_vm_role"

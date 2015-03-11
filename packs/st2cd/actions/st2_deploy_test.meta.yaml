@@ -8,7 +8,7 @@
     version: 
       type: "string"
       description: "Version of StackStorm to deploy"
-      default: "0.8.1"
+      default: "0.8.2"
     distro:
       type: "string"
       description: "Linux distro to test against"
