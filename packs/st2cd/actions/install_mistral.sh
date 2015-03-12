@@ -6,7 +6,7 @@ DATE=`date +%s`
 BRANCH=$2
 CONFIG_DIR=$3
 ST2_ACTIONS_DIR=$4
-OUTPUT=/tmp/output-$DATE
+OUTPUT=/tmp/mistral-install-output-$DATE
 
 touch $OUTPUT
 

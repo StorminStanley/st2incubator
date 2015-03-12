@@ -5,7 +5,7 @@ PYTHON=`which python`
 REPO=$1
 DATE=`date +%s`
 BRANCH=$2
-OUTPUT=/tmp/git-output-$DATE
+OUTPUT=/tmp/setup-py-install-git-output-$DATE
 
 if [[ ! -d "$REPO" ]]
 then
@@ -21,8 +21,10 @@ then
   if [[ $? == 0 ]]
   then
     echo "SUCCESS: Installed artifacts from ${REPO}."
+    rm ${OUTPUT}
   else
     echo "ERROR: Failed to install artifacts from ${REPO}."
+    rm ${OUTPUT}
   fi
 else
   cat ${OUTPUT}

@@ -15,6 +15,18 @@
       on-success: "get_build_server"
       on-failure: "slack_lock_acquire_failure"
     -
+      name: "slack_lock_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: LOCK_EXITS.\n```"
+    -
+      name: "slack_lock_acquire_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: LOCKING_FAILED.\n```"
+    -
       name: "get_build_server"
       ref: "linux.dig"
       params:
@@ -113,54 +125,8 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
         timeout: 600
-      on-success: "clean_st2_repo"
-      on-failure: "slack_failure"
-    -
-      name: "clean_st2_repo"
-      ref: "st2cd.git_clean"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
-      on-success: "clean_mistral_repo"
-      on-failure: "slack_failure"
-    -
-      name: "clean_mistral_repo"
-      ref: "st2cd.git_clean"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
-      on-success: "clean_st2mistral_repo"
-      on-failure: "slack_failure"
-    -
-      name: "clean_st2mistral_repo"
-      ref: "st2cd.git_clean"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
-      on-success: "clean_mistral_client_repo"
-      on-failure: "slack_failure"
-    -
-      name: "clean_mistral_client_repo"
-      ref: "st2cd.git_clean"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
-      on-success: "teardown_mistral_itests"
-      on-failure: "slack_failure"
-    -
-      name: "teardown_mistral_itests"
-      ref: "st2cd.teardown_mistral_itests"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        st2_repo: "{{clone_st2_repo[get_build_server.result[0].stdout}}"
-        drop_st2_db: "true"
       on-success: "slack_success"
       on-failure: "slack_failure"
-    -
-      name: "release_lock"
-      ref: "core.local"
-      params:
-        cmd: "st2 key delete key=\"mistral.lock\""
     -
       name: "slack_success"
       ref: "slack.post_message"
@@ -178,16 +144,51 @@
       on-success: "release_lock"
       on-failure: "release_lock"
     -
-      name: "slack_lock_failure"
-      ref: "slack.post_message"
+      name: "release_lock"
+      ref: "core.local"
       params:
-        channel: "#thunderdome"
-        message: "```[MISTRAL_ITESTS]\n STATUS: LOCK_EXITS.\n```"
+        cmd: "st2 key delete key=\"mistral.lock\""
+      on-success: "teardown_mistral_itests"
+      on-failure: "teardown_mistral_itests"
     -
-      name: "slack_lock_acquire_failure"
-      ref: "slack.post_message"
+      name: "teardown_mistral_itests"
+      ref: "st2cd.teardown_mistral_itests"
       params:
-        channel: "#thunderdome"
-        message: "```[MISTRAL_ITESTS]\n STATUS: LOCKING_FAILED.\n```"
+        hosts: "{{get_build_server.result[0]}}"
+        st2_repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+        drop_st2_db: "true"
+      on-success: "clean_st2_repo"
+      on-failure: "clean_st2_repo"
+    -
+      name: "clean_st2_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+        sudo: true
+      on-success: "clean_mistral_repo"
+      on-failure: "clean_mistral_repo"
+    -
+      name: "clean_mistral_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "clean_st2mistral_repo"
+      on-failure: "clean_st2mistral_repo"
+    -
+      name: "clean_st2mistral_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "clean_mistral_client_repo"
+      on-failure: "clean_mistral_client_repo"
+    -
+      name: "clean_mistral_client_repo"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
 
   default: "get_lock"

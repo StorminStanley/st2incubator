@@ -4,17 +4,16 @@
   description: "Clean a git repo"
   enabled: true
   entry_point: ""
-  parameters: 
-    sudo: 
-      immutable: true
+  parameters:
+    sudo:
       default: false
     repo:
       required: true
       default: "master"
-    cmd: 
+    cmd:
       immutable: false
       default: "rm -Rf {{repo}} && echo '{{repo}} deleted'"
-    kwarg_op: 
+    kwarg_op:
       immutable: true
       default: "--"
 
