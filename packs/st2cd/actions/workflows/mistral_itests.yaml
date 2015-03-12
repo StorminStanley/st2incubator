@@ -139,7 +139,7 @@
       name: "slack_failure"
       ref: "slack.post_message"
       params:
-        channel: "#thunderdome"
+        channel: "#stackstorm"
         message: "```[MISTRAL_ITESTS]\n STATUS: FAILED.\n```"
       on-success: "release_lock"
       on-failure: "release_lock"
