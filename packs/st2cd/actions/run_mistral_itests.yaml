@@ -1,0 +1,19 @@
+---
+  name: "run_mistral_itests"
+  runner_type: "run-remote"
+  description: "Run mistral integration tests."
+  enabled: true
+  entry_point: ""
+  parameters:
+    sudo:
+      immutable: true
+      default: false
+    repo:
+      type: "string"
+      required: true
+    cmd:
+      immutable: false
+      default: "cd {{repo}} && make mistral-itests"
+    kwarg_op:
+      immutable: true
+      default: "--"
