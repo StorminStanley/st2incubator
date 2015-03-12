@@ -23,6 +23,7 @@ then
     echo "ERROR: make distclean failed in st2."
 fi
 
+service mistral stop
 # Kill mistral
 MISTRAL_PID=`ps auxww | grep mistral | grep -v grep | awk '{print $2}'`
 kill -s TERM $MISTRAL_PID

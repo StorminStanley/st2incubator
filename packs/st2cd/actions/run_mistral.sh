@@ -20,7 +20,7 @@ netstat -tupln | grep 8989
 if [[ $? == 0 ]]
 then
     echo "ERROR: Mistral is already running on the box."
-    exit 1  # Just exit for now.
+    exit 2  # Just exit for now.
 fi
 
 ## Setup mistral logging
@@ -31,7 +31,11 @@ LOG_TRACE_FILE=/tmp/mistral-trace-itests-$DATE.log
 sed -i s:/var/log/mistral.log:$LOG_FILE:g $LOG_CONFIG_FILE
 sed -i s:/var/log/mistral_wf_trace.log:$LOG_TRACE_FILE:g $LOG_CONFIG_FILE
 
-cd $REPO
-CMD="$REPO/.venv/bin/python $REPO/mistral/cmd/launch.py --config-file ${CONFIG_DIR}/mistral.conf --log-config-append $LOG_CONFIG_FILE"
-echo "Mistral command: $CMD"
-$CMD &
+service mistral start
+
+if [[ $? != 0 ]]
+then
+  echo "ERROR: Failed to start service - mistral."
+  exit 3
+fi
+exit 0
