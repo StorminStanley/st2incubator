@@ -34,7 +34,7 @@
       default: "s3://{{bucket}}"
     cmd: 
       immutable: false
-      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if latest == true %} && s3cmd put --recursive * {{bucket_url}/latest/ {% elif stable == true %} && s3cmd put --recursive * {{bucket_url}/{% endif %}"
+      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if latest == true %} && s3cmd put --recursive * {{bucket_url}}/latest/{% elif stable == true %} && s3cmd put --recursive * {{bucket_url}}/ &>> /tmp/s3_docs.log{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"
