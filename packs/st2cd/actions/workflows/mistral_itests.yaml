@@ -4,7 +4,7 @@
       name: "get_lock"
       ref: "core.local"
       params:
-        cmd: "st2 key get \"mistral.lock\" | grep foo"
+        cmd: "st2 key get key=\"mistral.lock\" | grep value"
       on-success: "slack_lock_failure"
       on-failure: "set_lock"
     -
@@ -158,10 +158,9 @@
       on-failure: "slack_failure"
     -
       name: "release_lock"
-      ref: "st2cd.kvstore"
+      ref: "core.local"
       params:
-        action: "delete"
-        key: "mistral.lock"
+        cmd: "st2 key delete key=\"mistral.lock\""
     -
       name: "slack_success"
       ref: "slack.post_message"
@@ -183,7 +182,7 @@
       ref: "slack.post_message"
       params:
         channel: "#thunderdome"
-        message: "```[MISTRAL_ITESTS]\n STATUS: ALREADY_RUNNING.\n```"
+        message: "```[MISTRAL_ITESTS]\n STATUS: LOCK_EXITS.\n```"
     -
       name: "slack_lock_acquire_failure"
       ref: "slack.post_message"
