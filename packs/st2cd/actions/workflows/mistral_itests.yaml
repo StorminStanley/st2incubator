@@ -1,14 +1,19 @@
 ---
   chain:
     -
-      name: "set_lock"
-      ref: "st2cd.kvstore"
+      name: "get_lock"
+      ref: "core.local"
       params:
-        action: "create"
-        key: "mistral.lock"
-        value: "1"
+        cmd: "st2 key get \"mistral.lock\" | grep foo"
+      on-success: "slack_lock_failure"
+      on-failure: "set_lock"
+    -
+      name: "set_lock"
+      ref: "core.local"
+      params:
+        cmd: "st2 key set key=\"mistral.lock\" value=\"1\""
       on-success: "get_build_server"
-      on-failure: "slack_lock_failure"
+      on-failure: "slack_lock_acquire_failure"
     -
       name: "get_build_server"
       ref: "linux.dig"
@@ -44,7 +49,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2mistral_repo}}"
-        branch: "{{st2mistral_branch}}"
+        branch: "{{st2mistral_repo_branch}}"
         target: "{{st2mistral_repo_target}}"
       on-success: "clone_mistral_client_repo"
       on-failure: "slack_failure"
@@ -179,5 +184,11 @@
       params:
         channel: "#thunderdome"
         message: "```[MISTRAL_ITESTS]\n STATUS: ALREADY_RUNNING.\n```"
+    -
+      name: "slack_lock_acquire_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: LOCKING_FAILED.\n```"
 
-  default: "get_build_server"
+  default: "get_lock"
