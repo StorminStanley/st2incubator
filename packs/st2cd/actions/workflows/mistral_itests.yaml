@@ -1,6 +1,15 @@
 ---
   chain:
     -
+      name: "set_lock"
+      ref: "st2cd.kvstore"
+      params:
+        action: "create"
+        key: "mistral.lock"
+        value: "1"
+      on-success: "get_build_server"
+      on-failure: "slack_lock_failure"
+    -
       name: "get_build_server"
       ref: "linux.dig"
       params:
@@ -8,6 +17,7 @@
         rand: true
         count: 1
       on-success: "clone_st2_repo"
+      on-failure: "slack_failure"
     -
       name: "clone_st2_repo"
       ref: "st2cd.git_clone"
@@ -17,6 +27,7 @@
         branch: "{{st2_repo_branch}}"
         target: "{{st2_repo_target}}"
       on-success: "clone_mistral_repo"
+      on-failure: "slack_failure"
     -
       name: "clone_mistral_repo"
       ref: "st2cd.git_clone"
@@ -26,6 +37,7 @@
         branch: "{{mistral_fork_branch}}"
         target: "{{mistral_fork_target}}"
       on-success: "clone_st2mistral_repo"
+      on-failure: "slack_failure"
     -
       name: "clone_st2mistral_repo"
       ref: "st2cd.git_clone"
@@ -35,6 +47,7 @@
         branch: "{{st2mistral_branch}}"
         target: "{{st2mistral_repo_target}}"
       on-success: "clone_mistral_client_repo"
+      on-failure: "slack_failure"
     -
       name: "clone_mistral_client_repo"
       ref: "st2cd.git_clone"
@@ -44,6 +57,7 @@
         branch: "{{mistral_client_repo_branch}}"
         target: "{{mistral_client_repo_target}}"
       on-success: "install_mistral_client"
+      on-failure: "slack_failure"
     -
       name: "install_mistral_client"
       ref: "st2cd.install_mistral_client"
@@ -52,6 +66,7 @@
         repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
         branch: "{{mistral_client_repo_branch}}"
       on-success: "install_mistral"
+      on-failure: "slack_failure"
     -
       name: "install_mistral"
       ref: "st2cd.install_mistral"
@@ -60,7 +75,16 @@
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
         branch: "{{mistral_fork_branch}}"
         st2action_dir: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+      on-success: "setup_mistral_upstart"
+      on-failure: "slack_failure"
+    -
+      name: "setup_mistral_upstart"
+      ref: "st2cd.setup_mistral_upstart"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
       on-success: "run_mistral"
+      on-failure: "slack_failure"
     -
       name: "run_mistral"
       ref: "st2cd.run_mistral"
@@ -68,6 +92,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
       on-success: "run_st2"
+      on-failure: "slack_failure"
     -
       name: "run_st2"
       ref: "st2cd.run_st2"
@@ -75,6 +100,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
       on-success: "run_mistral_itests"
+      on-failure: "slack_failure"
     -
       name: "run_mistral_itests"
       ref: "st2cd.run_mistral_itests"
@@ -83,6 +109,7 @@
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
         timeout: 600
       on-success: "clean_st2_repo"
+      on-failure: "slack_failure"
     -
       name: "clean_st2_repo"
       ref: "st2cd.git_clean"
@@ -90,6 +117,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
       on-success: "clean_mistral_repo"
+      on-failure: "slack_failure"
     -
       name: "clean_mistral_repo"
       ref: "st2cd.git_clean"
@@ -97,6 +125,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
       on-success: "clean_st2mistral_repo"
+      on-failure: "slack_failure"
     -
       name: "clean_st2mistral_repo"
       ref: "st2cd.git_clean"
@@ -104,6 +133,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
       on-success: "clean_mistral_client_repo"
+      on-failure: "slack_failure"
     -
       name: "clean_mistral_client_repo"
       ref: "st2cd.git_clean"
@@ -111,6 +141,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
       on-success: "teardown_mistral_itests"
+      on-failure: "slack_failure"
     -
       name: "teardown_mistral_itests"
       ref: "st2cd.teardown_mistral_itests"
@@ -118,4 +149,35 @@
         hosts: "{{get_build_server.result[0]}}"
         st2_repo: "{{clone_st2_repo[get_build_server.result[0].stdout}}"
         drop_st2_db: "true"
+      on-success: "slack_success"
+      on-failure: "slack_failure"
+    -
+      name: "release_lock"
+      ref: "st2cd.kvstore"
+      params:
+        action: "delete"
+        key: "mistral.lock"
+    -
+      name: "slack_success"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: SUCCEEDED.\n```"
+      on-success: "release_lock"
+      on-failure: "release_lock"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: FAILED.\n```"
+      on-success: "release_lock"
+      on-failure: "release_lock"
+    -
+      name: "slack_lock_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#thunderdome"
+        message: "```[MISTRAL_ITESTS]\n STATUS: ALREADY_RUNNING.\n```"
+
   default: "get_build_server"
