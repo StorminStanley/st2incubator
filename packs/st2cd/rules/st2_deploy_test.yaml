@@ -1,0 +1,20 @@
+---
+    name: "st2_deploy_test"
+    description: "Test st2_deploy.sh on each build"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd\\.st2_packaging"
+            type: "matchregex"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_deploy_test"
+        parameters:
+            hostname: "st2_deploy_{{trigger.parameters.branch}}_{{trigger.parameters.revision}}"

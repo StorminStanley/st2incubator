@@ -55,6 +55,17 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
         timeout: 1800
+      on-success: "rsync_st2_deploy"
+    -
+      name: "rsync_st2_deploy"
+      ref: "linux.rsync"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/tmp/{{clone_repo[get_build_server.result[0]].stdout}}/tools/st2_deploy.sh"
+        dest_server: "{{system.releases_server}}"
+        destination: "/home/stanley/st2cd/ubuntu14/{{version[get_build_server.result[0]].stdout}}/"
+        timeout: 600
       on-success: "create_build_dir"
     -
       name: "create_build_dir"
