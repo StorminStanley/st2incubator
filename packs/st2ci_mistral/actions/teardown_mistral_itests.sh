@@ -24,13 +24,7 @@ then
 fi
 
 service mistral stop
-# Kill mistral
-MISTRAL_PID=`ps auxww | grep mistral | grep -v grep | awk '{print $2}'`
-if [ ! -z "$MISTRAL_PID" ]
-then
-    echo "MISTRAL_PID: $MISTRAL_PID is still running. Trying to kill."
-    kill -s TERM $MISTRAL_PID
-fi
+sleep 10
 
 # Wipe clean dbs
 if [ "$DROP_DBS" == "true" ] || [ "$DROP_DBS" == "True" ] || [ "$DROP_DBS" == "TRUE" ]
@@ -40,4 +34,12 @@ then
     then
         echo "ERROR: Unable to drop database 'st2' in mongo."
     fi
+fi
+
+# Kill mistral
+MISTRAL_PID=`ps auxww | grep mistral | grep launch.py | grep -v grep | awk '{print $2}'`
+if [ ! -z "$MISTRAL_PID" ]
+then
+    echo "MISTRAL_PID: $MISTRAL_PID is still running. Trying to kill."
+    kill -s TERM $MISTRAL_PID
 fi
