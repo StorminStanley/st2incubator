@@ -65,3 +65,7 @@
       type: "string"
       default: "mistralclient_{{mistral_client_repo_branch}}"
       description: "Prefix to dir to clone python-mistralclient to."
+    itests_status_file:
+      type: "string"
+      default: "/tmp/MISTRAL-SUCCESS.lock"
+      description: "File to create when itests succeed."

@@ -1,0 +1,22 @@
+---
+  name: "status_file_check"
+  runner_type: "run-remote-script"
+  description: "Check if mistral status file exists."
+  enabled: true
+  entry_point: "status_file_check.sh"
+  parameters:
+    file:
+      type: "string"
+      required: true
+      position: 0
+      description: "Location of mistral-itests status file"
+      default: "/tmp/MISTRAL-SUCCESS.lock"
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
+    dir:
+      immutable: true
+      default: "/home/stanley/"
