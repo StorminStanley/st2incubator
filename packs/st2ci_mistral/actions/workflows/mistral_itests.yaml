@@ -92,6 +92,7 @@
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
         branch: "{{mistral_fork_branch}}"
         st2action_dir: "{{clone_st2mistral_repo[get_build_server.result[0]].stdout}}"
+        timeout: 600
       on-success: "setup_mistral_upstart"
       on-failure: "slack_failure"
     -
@@ -116,6 +117,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+        timeout: 600
       on-success: "run_mistral_itests"
       on-failure: "slack_failure"
     -
@@ -124,6 +126,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
+        status_file: "{{itests_status_file}}"
         timeout: 600
       on-success: "slack_success"
       on-failure: "slack_failure"
@@ -190,5 +193,13 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_client_repo[get_build_server.result[0]].stdout}}"
+      on-success: "evaluate_workflow_status"
+      on-failure: "evaluate_workflow_status"
+    -
+      name: "evaluate_workflow_status"
+      ref: "st2ci_mistral.status_file_check"
+      params:
+        file: "{{itests_status_file}}"
+        hosts: "{{get_build_server.result[0]}}"
 
   default: "get_lock"

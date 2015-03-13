@@ -5,15 +5,20 @@
   enabled: true
   entry_point: ""
   parameters:
-    sudo:
-      immutable: true
-      default: true
     repo:
       type: "string"
       required: true
+    status_file:
+      type: "string"
+      description: "Success file to create when tests pass."
+      required: true
+      default: "/tmp/MISTRAL-SUCCESS.lock"
+    sudo:
+      immutable: true
+      default: true
     cmd:
       immutable: false
-      default: "cd {{repo}} && make mistral-itests"
+      default: "cd {{repo}} && make mistral-itests && touch {{status_file}}"
     kwarg_op:
       immutable: true
       default: "--"
