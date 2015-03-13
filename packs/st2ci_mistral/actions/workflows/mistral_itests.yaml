@@ -19,7 +19,7 @@
       ref: "slack.post_message"
       params:
         channel: "#thunderdome"
-        message: "```[MISTRAL_ITESTS]\n STATUS: LOCK_EXITS.\n```"
+        message: "```[MISTRAL_ITESTS]\n STATUS: LOCK_EXISTS.\n```"
     -
       name: "slack_lock_acquire_failure"
       ref: "slack.post_message"
@@ -96,7 +96,7 @@
       on-failure: "slack_failure"
     -
       name: "setup_mistral_upstart"
-      ref: "st2cd.setup_mistral_upstart"
+      ref: "st2ci_mistral.setup_mistral_upstart"
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_mistral_repo[get_build_server.result[0]].stdout}}"
