@@ -201,5 +201,6 @@
       params:
         file: "{{itests_status_file}}"
         hosts: "{{get_build_server.result[0]}}"
+        sudo: true
 
   default: "get_lock"
