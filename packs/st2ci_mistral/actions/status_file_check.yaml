@@ -20,3 +20,5 @@
     dir:
       immutable: true
       default: "/home/stanley/"
+    sudo:
+      default: true
