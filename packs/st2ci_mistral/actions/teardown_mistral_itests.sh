@@ -28,6 +28,7 @@ service mistral stop
 MISTRAL_PID=`ps auxww | grep mistral | grep -v grep | awk '{print $2}'`
 if [ ! -z "$MISTRAL_PID" ]
 then
+    echo "MISTRAL_PID: $MISTRAL_PID is still running. Trying to kill."
     kill -s TERM $MISTRAL_PID
 fi
 
