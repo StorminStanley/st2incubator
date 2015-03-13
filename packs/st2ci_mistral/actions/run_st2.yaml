@@ -23,4 +23,4 @@
       immutable: true
       default: "/home/stanley/"
     timeout:
-      default: 180
+      default: 600
