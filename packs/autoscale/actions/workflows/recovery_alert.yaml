@@ -32,3 +32,9 @@ workflows:
         input:
           message: "RECOVERY ALERT FOR <% $.asg %>"
           channel: "#bot-testing"
+        on-success:
+          - deflate
+      deflate:
+        action: autoscale.asg.deflate
+        input:
+          asg: <% $.asg %>

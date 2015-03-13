@@ -19,6 +19,12 @@ workflows:
         publish:
           channel: <% $.get_chatops_channel.result %>
         on-success:
+          - generate_splay
+      generate_splay:
+        action: autoscale.splay
+        publish:
+          splay: <% $.generate_splay.result %>
+        on-success:
           - generate_new_hostname
       generate_new_hostname:
         action: autoscale.generate_random_name count=2
@@ -168,6 +174,13 @@ workflows:
           message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.```"
           channel: <% $.channel %>
         on-success:
+          - chef_install
+      chef_install:
+        action: chef.install
+        input:
+          username: root
+          hosts: <% $.ipv4_address %>
+        on-success:
           - provision_node
         on-error:
           - failure_chef_install
@@ -195,7 +208,7 @@ workflows:
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
         policies:
-          wait-before: 10
+          wait-before: <% $.splay %>
         input:
           loadbalancer_id: '<% $.loadbalancer_id %>'
           ip: <% $.ipv4_address %>

@@ -4,7 +4,7 @@ version: "2.0"
 
 workflows:
   main:
-    description: "Main workflow to provision a VM"
+    description: "Main workflow to provision an Autoscale Group"
     type: direct
     input:
       - name

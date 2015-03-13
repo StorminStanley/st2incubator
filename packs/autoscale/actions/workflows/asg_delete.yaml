@@ -35,7 +35,7 @@ workflows:
           loadbalancer_id: <% $.get_loadbalancer_id.result %>
         on-success:
           - delete_loadbalancer
-        on-failure:
+        on-error:
           - get_dns_zone_id
       delete_loadbalancer:
         action: rackspace.delete_loadbalancer

@@ -1,0 +1,7 @@
+---
+name: splay
+runner_type: run-python
+description: Generate random splay
+enabled: true
+entry_point: 'shell/splay.py'
+parameters: {}

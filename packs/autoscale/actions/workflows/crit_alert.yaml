@@ -30,5 +30,11 @@ workflows:
       begin_expand:
         action: slack.post_message
         input:
-          message: "CRIT ALERT FOR <% %.asg %>"
+          message: "CRIT ALERT FOR <% $.asg %>"
           channel: "#bot-testing"
+        on-success:
+          - expand
+      expand:
+        action: autoscale.asg.expand
+        input:
+          asg: <% $.asg %>

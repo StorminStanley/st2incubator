@@ -89,6 +89,6 @@ workflows:
       failure_get_last_deflate_timestamp:
         action: slack.post_message
         input:
-          message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!```"
+          message: "```ASG[<% $.asg %>] ASG is slimmer now. Looking good!```"
           channel: <% $.channel %>
 
