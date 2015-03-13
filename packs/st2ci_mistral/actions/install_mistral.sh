@@ -61,19 +61,21 @@ install_st2action() {
         exit 6
     fi
 
-    . $REPO/.venv/bin/activate
+    source $REPO/.venv/bin/activate
     if [[ $? != 0 ]]
     then
         echo "ERROR: Failed activating mistral virtualenv"
         exit 7
     fi
 
+    cd $ST2_ACTIONS_DIR
     python setup.py develop >> $OUTPUT
     if [[ $? != 0 ]]
     then
         echo "ERROR: Failed install st2action into mistral virtualenv"
         exit 8
     fi
+    cd $REPO
     deactivate
     echo "SUCCESS: Installed st2action."
 }
