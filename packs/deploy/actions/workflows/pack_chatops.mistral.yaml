@@ -1,0 +1,83 @@
+---
+name: deploy.pack.chatops
+version: "2.0"
+
+workflows:
+  main:
+    description: "Main workflow to deploy packs via ChatOps"
+    type: direct
+    input:
+      - message
+      - channel
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      parse_chatops_message:
+        action: deploy.parse.pack.chatops
+        input:
+          message: <% $.message %>
+        publish:
+          chatops_command: <% $.parse_chatops_message.result.command %>
+          chatops_parameters: <% $.parse_chatops_message.result.parameters %>
+        on-success:
+          - determine_if_locked
+      determine_if_locked:
+        action: st2.kv.get
+        input:
+          key: 'deploy.pack.<% $.parameters.pack %>.locked'
+        publish:
+          locked_by: <% $.determine_if_locked.result %>
+        on-success:
+          - fail_locked
+        on-error:
+          - notify_deploy
+      fail_locked:
+        action: slack.post_message
+        input:
+          message: '```Deploy of pack <% $.pack %> locked by <% $.locked_by %>. Go bug that person!```'
+          channel: <% $.channel %>
+      notify_deploy:
+        action: slack.post_message
+        input:
+          message: '```Deploying pack <% $.pack %> branch=<% $.branch %>```'
+          channel: <% $.channel %>
+        on-success:
+          - retrieve_st2_hosts
+      retrieve_st2_hosts:
+        action: core.local
+        input:
+          cmd: 'echo noop'
+        publish:
+          st2_servers:
+            - localhost
+        on-success:
+          - kickoff_deploy
+      kickoff_deploy:
+        action: deploy.pack
+        with-items: i in <% $.st2_servers %>
+        input:
+          pack: <% $.pack %>
+          repo: <% $.repo %>
+          subtree: <% $.subtree %>
+          branch: <% $.branch %>
+          info: <% $.info %>
+          debug: <% $.debug %>
+          delete: <% $.delete %>
+          force: <% $.force %>
+        publish:
+          deploy_output: <% $.kickoff_deploy.result.stdout %>
+        on-success:
+          - notify_success
+        on-error:
+          - notify_failure
+      notify_success:
+        action: slack.post_message
+        input:
+          message: '```<% $.deploy_output %>```'
+          channel: <% $.channel %>
+      notify_failure:
+        action: slack.post_message
+        input:
+          message: '```Failure deploying pack <% $.pack %>. Check history for details.```'
+          channel: <% $.channel %>

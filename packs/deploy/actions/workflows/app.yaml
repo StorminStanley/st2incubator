@@ -1,0 +1,23 @@
+---
+name: deploy.app
+version: "2.0"
+
+workflows:
+  main:
+    description: "Deploy application via git to server(s)"
+    type: direct
+    input:
+      - app
+      - source
+      - path
+      - role
+      - branch
+      - post_deploy
+    task-defaults:
+      on-error:
+        - fail
+    tasks:
+      chatops_echo:
+        action: core.local
+        input:
+          command: "Deploying <% $.app %> from <% $.source %> to <% $.role %>:<% $.path %> with branch <% $.branch %>, running <% $.post_deploy %>"
