@@ -1,0 +1,24 @@
+---
+  name: "run_mistral_itests"
+  runner_type: "run-remote"
+  description: "Run mistral integration tests."
+  enabled: true
+  entry_point: ""
+  parameters:
+    repo:
+      type: "string"
+      required: true
+    status_file:
+      type: "string"
+      description: "Success file to create when tests pass."
+      required: true
+      default: "/tmp/MISTRAL-SUCCESS.lock"
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: false
+      default: "cd {{repo}} && make mistral-itests && touch {{status_file}}"
+    kwarg_op:
+      immutable: true
+      default: "--"

@@ -1,0 +1,71 @@
+---
+  name: "mistral_itests"
+  runner_type: "action-chain"
+  description: "Clones st2, st2mistral, python-mistralclient to a remote host and runs mistral integration tests"
+  enabled: true
+  entry_point: "workflows/mistral_itests.yaml"
+  parameters:
+    repos_base:
+      type: "string"
+      description: "Base for all repos to be cloned to"
+      default: "/home/stanley"
+    st2_repo:
+      type: "string"
+      description: "Url of the st2 repo to clone"
+      default: "https://github.com/StackStorm/st2.git"
+      required: true
+    st2_repo_branch:
+      type: "string"
+      description: "st2 branch to test"
+      default: "master"
+      required: true
+    st2_repo_target:
+      type: "string"
+      default: "{{repos_base}}/st2_{{st2_repo_branch}}"
+      description: "Prefix to dir to clone st2 to."
+    mistral_fork:
+      type: "string"
+      description: "Url of the mistral fork to clone"
+      default: "https://github.com/StackStorm/mistral.git"
+      required: true
+    mistral_fork_branch:
+      type: "string"
+      description: "Mistral (fork) branch to test"
+      default: "master"
+      required: true
+    mistral_fork_target:
+      type: "string"
+      default: "{{repos_base}}/mistral_{{mistral_fork_branch}}"
+      description: "Prefix to dir to clone mistral to."
+    st2mistral_repo:
+      type: "string"
+      description: "Url of the st2action repo to clone"
+      default: "https://github.com/StackStorm/st2mistral.git"
+      required: true
+    st2mistral_repo_branch:
+      type: "string"
+      description: "st2action branch to test"
+      default: "master"
+      required: true
+    st2mistral_repo_target:
+      type: "string"
+      default: "{{repos_base}}/st2mistral_{{st2mistral_repo_branch}}"
+      description: "Prefix to dir to clone st2action to."
+    mistral_client_repo:
+      type: "string"
+      description: "Url of the st2 repo to clone"
+      default: "https://github.com/stackforge/python-mistralclient.git"
+      required: true
+    mistral_client_repo_branch:
+      type: "string"
+      description: "python-mistralclient branch to test"
+      default: "master"
+      required: true
+    mistral_client_repo_target:
+      type: "string"
+      default: "mistralclient_{{mistral_client_repo_branch}}"
+      description: "Prefix to dir to clone python-mistralclient to."
+    itests_status_file:
+      type: "string"
+      default: "/tmp/MISTRAL-SUCCESS.lock"
+      description: "File to create when itests succeed."

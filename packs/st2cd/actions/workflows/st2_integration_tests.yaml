@@ -27,12 +27,12 @@
         params: "hosts={{hostname}} hostname"
         hosts: "{{hostname}}"
       on-success: "action_chain_load"
-    -
-      name: "action_chain_load"
-      ref: "st2cd.action_run"
-      params:
-        name: "linux_diag_loadavg"
-        action: "linux.diag_loadavg"
-        params: "hostname={{hostname}}"
-        hosts: "{{hostname}}"
+#    -
+#      name: "action_chain_load"
+#      ref: "st2cd.action_run"
+#      params:
+#        name: "linux_diag_loadavg"
+#        action: "linux.diag_loadavg"
+#        params: "hostname={{hostname}}"
+#        hosts: "{{hostname}}"
   default: "core_local_date"
