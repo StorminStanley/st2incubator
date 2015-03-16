@@ -1,0 +1,57 @@
+---
+  chain:
+    -
+      name: parse
+      ref: deploy.parse.pack.chatops
+      params:
+        message: "{{message}}"
+      publish:
+        pack: "{{parse.stdout.parameters.pack}}"
+        repo: "{{parse.stdout.parameters.repo}}"
+        subtree: "{{parse.stdout.parameters.subtree}}"
+        branch: "{{parse.stdout.parameters.branch}}"
+        role: "{{parse.stdout.parameters.role}}"
+        info: "{{parse.stdout.parameters.info}}"
+        debug: "{{parse.stdout.parameters.debug}}"
+        delete: "{{parse.stdout.parameters.delete}}"
+        force: "{{parse.stdout.parameters.force}}"
+      on-success: lookup_hosts_to_execute
+    -
+      name: lookup_hosts_to_execute
+      ref: core.local
+      params:
+        cmd: 'echo noop'
+      publish:
+        st2_servers: localhost
+      on-success: notify_deploy
+    -
+      name: notify_deploy
+      ref: slack.post_message
+      params:
+        message: "```Deploying pack {{pack}} branch={{branch}}```"
+        channel: "{{channel}}"
+      on-success:
+        kickoff_deploy
+    -
+      name: kickoff_deploy
+      ref: deploy.pack
+      params:
+        pack: "{{pack}}"
+        repo: "{{repo}}"
+        subtree: "{{subtree}}"
+        branch: "{{branch}}"
+        info: "{{info}}"
+        debug: "{{debug}}"
+        delete: "{{delete}}"
+        force: "{{force}}"
+        hosts: "{{st2_servers}}"
+      publish:
+        deploy_output: "{{kickoff_deploy.localhost.stdout}}"
+      on-success: post_results
+      on-error: post_results
+    -
+      name: post_results
+      ref: slack.post_message
+      params:
+        message: "```{{deploy_output}}```"
+        channel: "{{channel}}"
