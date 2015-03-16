@@ -37,6 +37,6 @@ workflows:
         on-success:
           - expand
       expand:
-        input: autoscale.asg.expand
+        action: autoscale.asg.expand
         input:
           asg: <% $.asg %>

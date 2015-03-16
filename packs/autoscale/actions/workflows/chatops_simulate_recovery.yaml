@@ -37,6 +37,6 @@ workflows:
         on-success:
           - deflate
       deflate:
-        input: autoscale.asg.deflate
+        action: autoscale.asg.deflate
         input:
           asg: <% $.asg %>
