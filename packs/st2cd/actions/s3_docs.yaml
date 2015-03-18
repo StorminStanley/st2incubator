@@ -9,32 +9,26 @@
       type: "string"
       required: true
       default: "st2_master"
+    branch:
+      type: "string"
+      required: true
+      default: "master"
     bucket:
       type: "string"
       required: true
-      default: "st2-doc-test"
+      default: "docs-staging.stackstorm.net"
       description: "The base path to the bucket"
     version:
       type: "string"
       required: true
       description: "St2 version"
-    latest:
-      type: "boolean"
-      description: "Boolean flag for latest docs"
-      required: true
-      default: false
-    stable:
-      type: "boolean"
-      description: "Boolean flag for latest stable docs"
-      required: true
-      default: false
     bucket_url:
       type: "string"
       immutable: true
       default: "s3://{{bucket}}"
     cmd: 
       immutable: false
-      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if latest == true %} && s3cmd put --recursive * {{bucket_url}}/latest/{% elif stable == true %} && s3cmd put --recursive * {{bucket_url}}/ &>> /tmp/s3_docs.log{% endif %}"
+      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if branch == 'master' %} && s3cmd put --recursive * {{bucket_url}}/latest/{% elif version == system.st2_stable_version %} && s3cmd put --recursive * {{bucket_url}}/{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"
