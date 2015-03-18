@@ -52,6 +52,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        timeout: 180
       on-success: "s3cmd_docs"
     - 
       name: "s3cmd_docs"
@@ -59,9 +60,7 @@
       params: 
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-        bucket: "st2-doc-test"
-        latest: "{{latest}}"
-        stable: "{{stable}}"
+        bucket: "{{system.s3_bucket_docs}}"
         version: "{{version[get_build_server.result[0]].stdout|truncate(3, True, '')}}"
       on-success: "clean_repo"
     - 
