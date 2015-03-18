@@ -26,7 +26,7 @@
         action: "core.remote"
         params: "hosts={{hostname}} hostname"
         hosts: "{{hostname}}"
-      on-success: "action_chain_load"
+#      on-success: "action_chain_load"
 #    -
 #      name: "action_chain_load"
 #      ref: "st2cd.action_run"

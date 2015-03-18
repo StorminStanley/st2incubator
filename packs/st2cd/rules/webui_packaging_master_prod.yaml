@@ -6,13 +6,10 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.st2_packaging"
+            pattern: "st2cd\\.st2_pytests"
             type: "matchregex"
         trigger.status:
             pattern: "succeeded"
-            type: "equals"
-        trigger.parameters.environment:
-            pattern: "production"
             type: "equals"
     action:
         ref: "st2cd.webui_packaging"
