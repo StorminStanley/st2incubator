@@ -1,9 +1,9 @@
 ---
-  name: "git_branch"
+  name: "git_branch_remove"
   runner_type: "run-remote-script"
-  description: "Branch st2 repo and push to remote."
+  description: "Remove branch from repo and push to remote."
   enabled: true
-  entry_point: "git_branch.sh"
+  entry_point: "git_branch_remove.sh"
   parameters:
     repo:
       type: "string"
@@ -11,23 +11,15 @@
       required: true
       position: 0
       default: "/home/stanley/st2/"
-    version:
-      type: "string"
-      description: "Version to use. Example: 0.7.0."
-      required: true
-      position: 1
-      default: "release"
     branch:
       type: "string"
       description: "Branch name to use. Example: v${version_number}."
       required: true
-      position: 2
-      default: "v{{version}}"
-    base_branch:
-      type: "string"
-      description: "Branch name to use as base."
-      position: 3
-      default: "master"
+      position: 1
+      default: "release"
+    dir:
+      immutable: true
+      default: "/home/stanley/"
     sudo:
       immutable: true
       default: false
