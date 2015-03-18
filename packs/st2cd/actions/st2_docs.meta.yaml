@@ -18,12 +18,6 @@
       type: "string"
       default: "st2_{{branch}}"
       description: "Target directory for repo to be cloned in to."
-    latest:
-      type: "boolean"
-      default: false
-    stable:
-      type: "boolean"
-      default: false
     revision: 
       type: "string"
       description: ""
