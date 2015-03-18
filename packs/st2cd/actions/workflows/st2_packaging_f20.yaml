@@ -98,14 +98,14 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{system.releases_server}}"
-        cmd: "cp -Rf /home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/* /var/yumrepos/f20/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+        cmd: "cp -Rf /home/stanley/st2cd/f20/{{version[get_build_server.result[0]].stdout}}/* /var/yumrepos/f20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "rebuild_repo"
     -
       name: "rebuild_repo"
       ref: "core.remote_sudo"
       params:
         hosts: "{{system.releases_server}}"
-        cmd: "createrepo /var/yumrepos/f20/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+        cmd: "createrepo /var/yumrepos/f20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "update_current"
     -
       name: "update_current"
