@@ -108,7 +108,7 @@
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/debbuild/*.deb"
         dest_server: "{{dl_server}}"
-        destination: "/home/stanley/packages/deb/"
+        destination: "/home/stanley/packages/deb/{% if branch == 'master' %}unstable/{% else %}stable/{% endif %}"
         timeout: 600
       on-success: "add_packages"
     - 
@@ -116,8 +116,8 @@
       ref: "freight.add_package"
       params: 
         hosts: "{{dl_server}}"
-        file: "/home/stanley/packages/deb/*.deb"
-        distribution: "trusty"
+        file: "/home/stanley/packages/deb/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/*.deb"
+        distribution: "trusty_{% if branch == 'master' %}unstable{% else %}stable{% endif %}"
         timeout: 300
       on-success: "update_cache"
     - 
