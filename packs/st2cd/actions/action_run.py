@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
-import os, sys, time, json, argparse
+import sys
+import time
+import json
+import argparse
 from st2client import models
 from st2client.client import Client
 
-END_STATES= ['succeeded','failed']
+END_STATES = ['succeeded', 'failed']
 ST2HOST = 'localhost'
 
 parser = argparse.ArgumentParser()
@@ -16,16 +19,16 @@ parser.add_argument('--params', action="store", dest="params")
 args = parser.parse_args()
 runner = None
 
-def runAction(action_ref,params):
+
+def runAction(action_ref, params):
     st2_endpoints = {
-      'action': "http://%s:9101" % ST2HOST,
-      'reactor': "http://%s:9102" % ST2HOST,
-      'datastore': "http://%s:9103" % ST2HOST
+        'action': "http://%s:9101" % ST2HOST,
+        'reactor': "http://%s:9102" % ST2HOST,
+        'datastore': "http://%s:9103" % ST2HOST
     }
 
     client = Client(st2_endpoints)
     action_exec_mgr = client.managers['LiveAction']
-    runner_mgr = client.managers['RunnerType']
 
     execution = models.LiveAction()
     execution.action = action_ref
@@ -33,10 +36,11 @@ def runAction(action_ref,params):
     actionexec = action_exec_mgr.create(execution)
 
     while actionexec.status not in END_STATES:
-      time.sleep(2)
-      actionexec = action_exec_mgr.get_by_id(actionexec.id)
+        time.sleep(2)
+        actionexec = action_exec_mgr.get_by_id(actionexec.id)
 
     return actionexec
+
 
 def param_parser(params):
     parameters = {}
@@ -44,17 +48,16 @@ def param_parser(params):
         param_list = params.split(' ')
         for p in param_list:
             if '=' in p:
-                k, v = p.split('=',1)
+                k, v = p.split('=', 1)
                 if ',' in v:
-                    v = filter(None,v.split(','))
-                    
+                    v = filter(None, v.split(','))
             else:
                 k = 'cmd'
                 v = p
             parameters[k] = v
     return parameters
 
-actionexec = runAction(action_ref=args.action,params=args.params)
+actionexec = runAction(action_ref=args.action, params=args.params)
 output = {args.name: actionexec.result}
 
 print json.dumps(output)
