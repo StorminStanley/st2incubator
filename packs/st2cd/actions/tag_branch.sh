@@ -11,7 +11,7 @@ OUT=`$GIT checkout ${BRANCH} -q && $GIT pull origin ${BRANCH} -q > ${OUTPUT}`
 if [[ $? == 0 ]]
 then
   # pick version from st2common and use that to generate tag value
-  BRANCHVERSION = `grep version st2common/st2common/__init__.py | awk '{print $3}' | tr -d "'"`
+  BRANCHVERSION=`grep version st2common/st2common/__init__.py | awk '{print $3}' | tr -d "'"`
   NEWTAG=v${BRANCHVERSION}
   if [[ $? == 0 ]]
   then

@@ -23,6 +23,11 @@
       required: true
       position: 2
       default: "v{{version}}"
+    base_branch:
+      type: "string"
+      description: "Branch name to use as base."
+      position: 3
+      default: "master"
     sudo:
       immutable: true
       default: false

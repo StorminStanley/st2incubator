@@ -7,20 +7,14 @@ BRANCH=$2
 OUTPUT=/tmp/git-output-$DATE
 
 cd ${REPO}
-OUT=`$GIT pull origin master -q > $OUTPUT && $GIT checkout ${BRANCH} -q`
+
+# There could be a tag with the same name so use complete path.
+OUT=`$GIT push origin :refs/heads/$BRANCH  > ${OUTPUT}`
 if [[ $? == 0 ]]
 then
-  OUT=`$GIT push origin -q :$BRANCH`
-  if [[ $? == 0 ]]
-  then
-    echo ${BRANCH}
-  else
-    cat ${OUTPUT}
-    rm ${OUTPUT}
-    exit 1
-  fi
+  echo ${BRANCH}
 else
   cat ${OUTPUT}
   rm ${OUTPUT}
-  exit 2
+  exit 1
 fi
