@@ -1,0 +1,98 @@
+---
+  chain:
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2build.service.consul"
+        rand: true
+        count: 1
+      publish:
+        build_server: "{{get_build_server.result[0]}}"
+      on-success: "clone_repo"
+      on-failure: "slack_failure"
+    -
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{st2_repo}}"
+        branch: "{{branch}}"
+        target: "{{st2_repo_target}}"
+      publish:
+        repo: "{{clone_repo[build_server].stdout}}"
+      on-success: "tag_st2_branch"
+      on-failure: "clean_repo_failure"
+    -
+      name: "tag_st2_branch"
+      ref: "st2cd.tag_branch"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+        branch: "{{branch}}"
+        timeout: 600
+      publish:
+        tagged_version: "{{tag_st2_branch[build_server].stdout | replace('v', '')}}"
+      on-success: "remove_patch_branch"
+      on-failure: "clean_repo_failure"
+    -
+      name: "remove_patch_branch"
+      ref: "st2cd.git_branch_remove"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+        branch: "v{{tagged_version}}"
+        timeout: 600
+      on-success: "get_next_version"
+      on-failure: "clean_repo_failure"
+    -
+      name: "get_next_version"
+      ref: "core.local"
+      params:
+        cmd: "echo {{tagged_version}} | awk -F '[ .]' '{print $1\".\"$2\".\"$3+1}'"
+      publish:
+        next_version: "{{get_next_version.stdout | replace('\n', '')}}"
+      on-success: "create_next_patch_branch"
+      on-failure: "clean_repo_failure"
+    -
+      name: "create_next_patch_branch"
+      ref: "st2cd.git_branch"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+        version: "{{next_version}}"
+        branch: "v{{next_version}}"
+        base_branch: "{{branch}}"
+        timeout: 600
+      on-success: "clean_repo_success"
+      on-failure: "clean_repo_failure"
+    -
+      name: "clean_repo_success"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+      on-success: "slack_success"
+      on-failure: "slack_failure"
+    -
+      name: "clean_repo_failure"
+      ref: "st2cd.git_clean"
+      params:
+        hosts: "{{build_server}}"
+        repo: "{{repo}}"
+      on-success: "slack_failure"
+      on-failure: "slack_failure"
+    -
+      name: "slack_success"
+      ref: "slack.post_message"
+      params:
+        channel: "#releasemgmt"
+        message: "```[FINALIZE_RELEASE]\n STATUS: SUCCESS\n VERSION: {{tagged_version}}```"
+    -
+      name: "slack_failure"
+      ref: "slack.post_message"
+      params:
+        channel: "#releasemgmt"
+        message: "```[FINALIZE_RELEASE]\n STATUS: FAILURE\n BRANCH: {{branch}}```"
+
+  default: "get_build_server"
