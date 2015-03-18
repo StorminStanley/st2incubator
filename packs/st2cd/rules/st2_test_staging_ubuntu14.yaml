@@ -1,12 +1,12 @@
 ---
-    name: "st2_upgrade_master_staging_f20"
-    description: "Upgrade StackStorm on staging hosts for each build"
+    name: "st2_test_staging_ubuntu14"
+    description: "Test Upgrade StackStorm on staging hosts for each build"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_packaging_f20"
+            pattern: "st2cd.st2_upgrade_ubuntu14"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
@@ -15,12 +15,11 @@
             pattern: "staging"
             type: "equals"
     action:
-        ref: "st2cd.st2_upgrade_f20"
+        ref: "st2cd.integration_tests"
         parameters:
-            action: "core.local"
-            action_params: "hostname"
-            hostname: "fedora-staging201"
+            hostname: "{{system.st2_ci_host}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
             environment: "{{trigger.parameters.environment}}"
+            build: "{{trigger.parameters.build}}"

@@ -1,5 +1,5 @@
 ---
-    name: "st2cd_post_to_slack_github_push_master"
+    name: "st2cd_slack_github_push_master"
     description: "Post to Slack on matching GitHub event"
     enabled: true
     trigger:

@@ -1,9 +1,9 @@
 ---
-  name: "st2_upgrade"
+  name: "st2_upgrade_ubuntu14"
   runner_type: "action-chain"
   description: "Upgrades an existing st2 installation"
   enabled: true
-  entry_point: "workflows/st2_upgrade.yaml"
+  entry_point: "workflows/st2_upgrade_ubuntu14.yaml"
   parameters: 
     hostname: 
       type: "string"
@@ -23,6 +23,10 @@
     branch:
       type: "string"
       description: ""
+    build:
+      type: "string"
+      description: "Build number"
+      required: true
     environment:
       type: "string"
       description: ""

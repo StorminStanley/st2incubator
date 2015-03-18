@@ -1,21 +1,28 @@
 ---
-    name: "st2_packaging_master_staging"
+    name: "st2_pkg_prod_ubuntu14"
     description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.pytests"
+            pattern: "st2cd.integration_tests"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.hostname:
+            pattern: "{{system.st2_ci_host}}"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
     action:
-        ref: "st2cd.st2_packaging"
+        ref: "st2cd.st2_pkg_ubuntu14"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_origin_staging}}"
-            environment: "staging"
             revision: "{{trigger.parameters.revision}}"
+            dl_server: "{{system.apt_origin_production}}"
+            environment: "production"
+            build: "{{trigger.parameters.build}}"

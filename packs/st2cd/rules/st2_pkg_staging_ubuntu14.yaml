@@ -1,5 +1,5 @@
 ---
-    name: "st2_packaging_master_staging_f20"
+    name: "st2_pkg_staging_ubuntu14"
     description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
@@ -12,10 +12,11 @@
             pattern: "succeeded"
             type: "equals"
     action:
-        ref: "st2cd.st2_packaging_f20"
+        ref: "st2cd.st2_pkg_ubuntu14"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_origin_staging}}"
             environment: "staging"
             revision: "{{trigger.parameters.revision}}"
+            build: "{{trigger.result.build_inc.result.value}}"

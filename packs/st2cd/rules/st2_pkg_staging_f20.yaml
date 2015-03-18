@@ -1,25 +1,22 @@
 ---
-    name: "st2_packaging_master_rhel6_ops"
+    name: "st2_pkg_staging_f20"
     description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_packaging"
+            pattern: "st2cd.pytests"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
-        trigger.parameters.environment:
-            pattern: "production"
-            type: "equals"
     action:
-        ref: "st2cd.st2_packaging_rhel6_ops"
+        ref: "st2cd.st2_pkg_f20"
         parameters:
-            build_server: "{{system.build_server_rhel6}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
+            dl_server: "{{system.apt_origin_staging}}"
+            environment: "staging"
             revision: "{{trigger.parameters.revision}}"
-            releases_server: "{{system.releases_server}}"
-            environment: "production"
+            build: "{{trigger.result.tasks[1].result.result.value}}"

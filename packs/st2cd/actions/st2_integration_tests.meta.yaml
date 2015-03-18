@@ -15,6 +15,10 @@
     branch:
       type: "string"
       description: ""
+    build:
+      type: "string"
+      description: "Build number"
+      required: true
     environment:
       type: "string"
       description: ""
