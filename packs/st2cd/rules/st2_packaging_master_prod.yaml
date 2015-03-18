@@ -17,6 +17,9 @@
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
+        trigger.paramters.branch:
+            pattern: "master"
+            type: "equals"
     action:
         ref: "st2cd.st2_packaging"
         parameters:
