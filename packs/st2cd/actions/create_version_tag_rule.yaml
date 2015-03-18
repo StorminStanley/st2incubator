@@ -1,0 +1,20 @@
+---
+  name: "create_version_tag_rule"
+  runner_type: "run-remote-script"
+  description: "Create a rule to listen for package builds on a release branch."
+  enabled: true
+  entry_point: "create_version_tag_rule.py"
+  parameters:
+    st2-base-url:
+      type: "string"
+      description: "St2 base url."
+      default: "http://localhost:9101/v1/"
+    branch:
+      type: "string"
+      description: "Github branch to setup the rule on."
+    kwarg_op:
+      immutable: true
+      default: "--"
+    sudo:
+      immutable: true
+      default: false
