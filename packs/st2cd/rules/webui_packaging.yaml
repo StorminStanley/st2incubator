@@ -15,6 +15,7 @@
         ref: "st2cd.webui_packaging"
         parameters:
             repo: "https://github.com/StackStorm/st2web.git"
-            branch: "{{trigger.parameters.branch}}"
+            branch: "master"
             dl_server: "{{system.releases_server}}"
             environment: "production"
+            build: "{{trigger.result.tasks[1].result.result.value}}"
