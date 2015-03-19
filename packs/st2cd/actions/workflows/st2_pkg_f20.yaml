@@ -75,7 +75,7 @@
         dest_server: "{{dl_server}}"
         destination: "{{version_dir}}/"
         timeout: 600
-      on-success: "create_build_dir"
+      on-success: "rsync_rpms"
     -
       name: "rsync_rpms"
       ref: "linux.rsync"
