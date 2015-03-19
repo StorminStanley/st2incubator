@@ -4,7 +4,6 @@
     description: 'Update the Freight cache and regenerate the repository'
     enabled: true
     entry_point: ''
-    sudo: true
     parameters:
       cmd:
         immutable: true
