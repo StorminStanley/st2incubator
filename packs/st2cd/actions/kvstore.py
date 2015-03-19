@@ -39,5 +39,4 @@ class KVPAction(Action):
             if action == 'delete':
                 return kvp
             else:
-                print value
                 return kvp.serialize()
