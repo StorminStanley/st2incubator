@@ -63,7 +63,7 @@
         cmd: "mkdir -p /home/stanley/st2cd/fedora/20/{{version}}/{{build}}"
       publish:
         version_dir: "/home/stanley/st2cd/fedora/20/{{version}}"
-        build_dir: "{{version_dir}}/{{build}}"
+        build_dir: "/home/stanley/st2cd/fedora/20/{{version}}/{{build}}"
       on-success: "rsync_st2_deploy"
     - 
       name: "rsync_st2_deploy"
