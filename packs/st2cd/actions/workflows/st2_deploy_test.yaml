@@ -39,6 +39,7 @@
       ref: "st2cd.integration_tests"
       params:
         hostname: "{{hostname}}"
+        build: "0"
       on-success: "destroy_vm"
     -
       name: "destroy_vm"
