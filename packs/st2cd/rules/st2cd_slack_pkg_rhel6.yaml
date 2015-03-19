@@ -1,13 +1,13 @@
 ---
-    name: "st2cd_post_to_slack_packaging_rhel6_ops"
+    name: "st2cd_slack_pkg_rhel6"
     description: "Post results of st2cd workflows to slack"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.st2_packaging_rhel6_ops"
-            type: "matchregex"
+            pattern: "st2cd.st2_pkg_rhel6"
+            type: "equals"
     action:
         ref: "slack.post_message"
         parameters:

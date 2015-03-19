@@ -1,13 +1,13 @@
 ---
-    name: "st2cd_post_to_slack_provision"
+    name: "st2cd_slack_provision"
     description: "Post to slack on provisioning"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.create_vm_role"
-            type: "matchregex"
+            pattern: "st2cd.create_vm_role"
+            type: "equals"
     action:
         ref: "slack.post_message"
         parameters:

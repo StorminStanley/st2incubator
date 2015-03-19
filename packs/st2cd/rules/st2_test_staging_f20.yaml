@@ -1,30 +1,25 @@
 ---
-    name: "st2_packaging_master_prod"
-    description: "Build st2 packages after tests succeed and push them to staging"
+    name: "st2_test_staging_f20"
+    description: "Test Upgrade StackStorm on staging hosts for each build"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.integration_tests"
+            pattern: "st2cd.st2_upgrade_f20"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
-        trigger.parameters.hostname:
-            pattern: "st2stage201.uswest2.stackstorm.net"
-            type: "equals"
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
-        trigger.paramters.branch:
-            pattern: "master"
-            type: "equals"
     action:
-        ref: "st2cd.st2_packaging"
+        ref: "st2cd.integration_tests"
         parameters:
+            hostname: "fedora-staging201"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
-            dl_server: "{{system.apt_origin_production}}"
-            environment: "production"
+            environment: "{{trigger.parameters.environment}}"
+            build: "{{trigger.parameters.build}}"

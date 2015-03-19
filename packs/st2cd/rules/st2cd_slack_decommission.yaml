@@ -1,5 +1,5 @@
 ---
-    name: "st2cd_post_to_slack_decommission"
+    name: "st2cd_slack_decommission"
     description: "Post to slack on decommission"
     enabled: true
     trigger:

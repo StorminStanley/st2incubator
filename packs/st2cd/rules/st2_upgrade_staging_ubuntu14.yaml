@@ -1,12 +1,12 @@
 ---
-    name: "st2_upgrade_master_staging"
+    name: "st2_upgrade_staging_ubuntu14"
     description: "Upgrade StackStorm on staging hosts for each build"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_packaging"
+            pattern: "st2cd.st2_pkg_ubuntu14"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
@@ -15,7 +15,7 @@
             pattern: "staging"
             type: "equals"
     action:
-        ref: "st2cd.st2_upgrade"
+        ref: "st2cd.st2_upgrade_ubuntu14"
         parameters:
             action: "core.local"
             action_params: "hostname"
@@ -24,3 +24,4 @@
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
             environment: "{{trigger.parameters.environment}}"
+            build: "{{trigger.parameters.build}}"

@@ -1,13 +1,13 @@
 ---
-    name: "st2cd_post_to_slack_webui_packaging"
+    name: "st2cd_slack_webui_pkg"
     description: "Post results of webui_packaging workflow to slack"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd\\.webui_packaging$"
-            type: "matchregex"
+            pattern: "st2cd.webui_pkg"
+            type: "equals"
     action:
         ref: "slack.post_message"
         parameters:
