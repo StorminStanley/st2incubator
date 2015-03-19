@@ -58,8 +58,11 @@
       name: "create_build_dir"
       ref: "core.remote"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "mkdir -p /home/stanley/st2cd/el6/{{version}}/{{build}}"
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /home/stanley/st2cd/el/6/{{version}}/{{build}}"
+      publish:
+        version_dir: "/home/stanley/st2cd/el/6/{{version}}"
+        build_dir: "/home/stanley/st2cd/el/6/{{version}}/{{build}}"
       on-success: "rsync_rpms"
     - 
       name: "rsync_rpms"
@@ -68,38 +71,38 @@
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/rpmbuild/RPMS/noarch/*"
-        dest_server: "{{system.releases_server}}"
-        destination: "/home/stanley/st2cd/el6/{{version}}/{{build}}/"
+        dest_server: "{{dl_server}}"
+        destination: "{{build_dir}}/"
         timeout: 600
       on-success: "cp_rpms"
     - 
       name: "cp_rpms"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/ && cp -Rf /home/stanley/st2cd/el6/{{version}}/* /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/"
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/el6/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/el6/"
         timeout: 1800
       on-success: "cp_rpms_repo"
     -
       name: "cp_rpms_repo"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "cp -Rf /home/stanley/st2cd/el6/{{version}}/*/* /var/yumrepos/el6/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+        hosts: "{{dl_server}}"
+        cmd: "cp -Rf {{version_dir}}/*/* /var/yumrepos/el/6/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
       on-success: "rebuild_repo"
     -
       name: "rebuild_repo"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "createrepo /var/yumrepos/el6/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
+        hosts: "{{dl_server}}"
+        cmd: "createrepo /var/yumrepos/el/6/{% if branch == 'master' %}latest{% else %}stable{% endif %}/"
       on-success: "update_current"
     -
       name: "update_current"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/current && ln -s /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/{{build}} /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/current && echo '{{build}}' > /var/www/sites/releases/html/releases/st2/{{version}}/rhel6/current/VERSION.txt"
+        hosts: "{{dl_server}}"
+        cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version}}/el6/current && ln -s /var/www/sites/releases/html/releases/st2/{{version}}/el6/{{build}} /var/www/sites/releases/html/releases/st2/{{version}}/el6/current && echo '{{build}}' > /var/www/sites/releases/html/releases/st2/{{version}}/el6/current/VERSION.txt"
       on-success: "clean_repo"
     -
       name: "clean_repo"
