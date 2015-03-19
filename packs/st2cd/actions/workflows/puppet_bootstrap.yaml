@@ -28,7 +28,7 @@
       params:
         hosts: "{{hosts}}"
         cmd: "bash /opt/puppet/script/bootstrap-linux"
-        timeout: 180
+        timeout: 1800
       on-success: "add_role"
     -
       name: "add_role"
