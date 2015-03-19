@@ -6,7 +6,7 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.pytests"
+            pattern: "st2cd.st2_pytests"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
