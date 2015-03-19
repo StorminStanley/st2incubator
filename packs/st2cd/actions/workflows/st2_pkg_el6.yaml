@@ -108,4 +108,4 @@
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
 
-  default: "get_current_build"
+  default: "get_build_server"
