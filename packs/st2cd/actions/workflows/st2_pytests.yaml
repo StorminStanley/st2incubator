@@ -6,6 +6,8 @@
       params:
         key: "st2_{{branch}}_build_number"
         action: "get"
+      publish:
+        build: "{{get_current_build.result}}"
       on-success: "build_inc"
     -
       name: "build_inc"
@@ -13,7 +15,7 @@
       params:
         action: "update"
         key: "st2_{{branch}}_build_number"
-        value: "{% set build = get_current_build.result|int +1 %}{{build}}"
+        value: "{% set build = build|int + 1 %}{{build}}"
       on-success: "get_build_server"
     -
       name: "get_build_server"
@@ -22,6 +24,8 @@
         hostname: "st2-build-slave-ubuntu.service.consul"
         rand: true
         count: 1
+      publish:
+        build_server: "{{get_build_server.result[0]}}"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -31,20 +35,22 @@
         repo: "{{repo}}"
         branch: "{{branch}}"
         target: "{{repo_target}}"
+      publish:
+        repodir: "{{clone_repo[build_server].stdout}}"
       on-success: "pytests"
     - 
       name: "pytests"
       ref: "st2cd.make_pytests"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
         timeout: 600
       on-success: "clean_repo"
     - 
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
 
   default: "get_current_build"
