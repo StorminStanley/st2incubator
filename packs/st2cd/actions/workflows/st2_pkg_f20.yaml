@@ -54,63 +54,66 @@
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
         timeout: 1800
-      on-success: "rsync_st2_deploy"
+      on-success: "create_build_dir"
     -
+      name: "create_build_dir"
+      ref: "core.remote"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /home/stanley/st2cd/fedora/20/{{version}}/{{build}}"
+      publish:
+        version_dir: "/home/stanley/st2cd/fedora/20/{{version}}"
+        build_dir: "{{version_dir}}/{{build}}"
+      on-success: "rsync_st2_deploy"
+    - 
       name: "rsync_st2_deploy"
       ref: "linux.rsync"
       params:
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/tmp/{{repodir}}/tools/st2_deploy.sh"
-        dest_server: "{{system.releases_server}}"
-        destination: "/home/stanley/st2cd/ubuntu14/{{version}}/"
+        dest_server: "{{dl_server}}"
+        destination: "{{version_dir}}/"
         timeout: 600
       on-success: "create_build_dir"
     -
-      name: "create_build_dir"
-      ref: "core.remote"
-      params:
-        hosts: "{{system.releases_server}}"
-        cmd: "mkdir -p /home/stanley/st2cd/f20/{{version}}/{{build}}"
-      on-success: "rsync_rpms"
-    - 
       name: "rsync_rpms"
       ref: "linux.rsync"
       params: 
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/rpmbuild/RPMS/noarch/*"
-        dest_server: "{{system.releases_server}}"
-        destination: "/home/stanley/st2cd/f20/{{version}}/{{build}}/"
+        dest_server: "{{dl_server}}"
+        destination: "{{build_dir}}/"
         timeout: 600
       on-success: "cp_rpms"
     - 
       name: "cp_rpms"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf /home/stanley/st2cd/f20/{{version}}/* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
         timeout: 1800
       on-success: "cp_rpms_repo"
     -
       name: "cp_rpms_repo"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "cp -Rf /home/stanley/st2cd/f20/{{version}}/* /var/yumrepos/f20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
+        hosts: "{{dl_server}}"
+        cmd: "cp -Rf {{version_dir}}/* /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "rebuild_repo"
     -
       name: "rebuild_repo"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
-        cmd: "createrepo /var/yumrepos/f20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
+        hosts: "{{dl_server}}"
+        cmd: "createrepo /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "update_current"
     -
       name: "update_current"
       ref: "core.remote_sudo"
       params:
-        hosts: "{{system.releases_server}}"
+        hosts: "{{dl_server}}"
         cmd: "rm -Rf /var/www/sites/releases/html/releases/st2/{{version}}/rpms/current && ln -s /var/www/sites/releases/html/releases/st2/{{version}}/rpms/{{build}} /var/www/sites/releases/html/releases/st2/{{version}}/rpms/current && echo '{{build}}' > /var/www/sites/releases/html/releases/st2/{{version}}/rpms/current/VERSION.txt"
       on-success: "clean_repo"
     - 
