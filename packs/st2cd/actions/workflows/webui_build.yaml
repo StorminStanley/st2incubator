@@ -1,96 +1,89 @@
 ---
   chain:
     -
-      name: "get_current_build"
-      ref: "st2cd.kvstore"
-      params:
-        key: "st2_{{branch}}_build_number"
-        action: "get"
-      on-success: "process_build_number"
-    -
-      name: "process_build_number"
-      ref: "core.local"
-      params:
-        cmd: "echo \"{{get_current_build.result}}\" | tr -d ' '"
-      on-success: "get_build_server"
-    -
       name: "get_build_server"
       ref: "linux.dig"
       params:
         hostname: "st2-build-slave-ubuntu.service.consul"
         rand: true
         count: 1
+      publish:
+        build_server: "{{get_build_server.result[0]}}"
       on-success: "clone_repo"
     -
       name: "clone_repo"
       ref: "st2cd.git_clone"
       params:
-        hosts: "{{get_build_server.result[0]}}"
+        hosts: "{{build_server}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+      publish:
+        repodir: "{{clone_repo[build_server].stdout}}"
       on-success: "retrieve_version"
     -
       name: "retrieve_version"
       ref: "st2cd.webui_version"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo_path: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo_path: "{{repodir}}"
+      publish:
+        web_version: "{{retrieve_version[build_server].stdout}}"
       on-success: "install_build_dependencies"
     -
       name: "install_build_dependencies"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install bower ; npm install gulp"
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && npm install bower ; npm install gulp"
         timeout: 600
       on-success: "install_npm_library_dependencies"
     -
       name: "install_npm_library_dependencies"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && npm install"
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && npm install"
         timeout: 600
       on-success: "install_bower_library_dependencies"
     -
       name: "install_bower_library_dependencies"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/bower install"
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && node_modules/.bin/bower install"
         timeout: 600
       on-success: "build_webui"
     -
       name: "build_webui"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && node_modules/.bin/gulp production"
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && node_modules/.bin/gulp production"
         timeout: 600
       on-success: "create_build_artifact"
     -
       name: "create_build_artifact"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && tar --transform='s/build/webui/' -cvzpf webui.tar.gz build/"
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && tar --transform='s/build/webui/' -cvzpf webui.tar.gz build/"
         timeout: 300
       on-success: "rename_build_artifact"
     -
       name: "rename_build_artifact"
       ref: "core.remote"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "cd {{clone_repo[get_build_server.result[0]].stdout}} && mv webui.tar.gz \"webui-{{retrieve_version[get_build_server.result[0]].stdout}}.tar.gz\""
+        hosts: "{{build_server}}"
+        cmd: "cd {{repodir}} && mv webui.tar.gz \"webui-{{web_version}}.tar.gz\""
       on-success: "publish_build_artifact"
     -
       name: "publish_build_artifact"
       ref: "linux.rsync"
       params:
-        hosts: "{{get_build_server.result[0]}}"
+        hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "{{clone_repo[get_build_server.result[0]].stdout}}/webui*.tar.gz"
+        source: "{{repodir}}/webui*.tar.gz"
         dest_server: "{{dl_server}}"
         destination: "/tmp"
         timeout: 600
@@ -100,7 +93,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/ ; cp \"/tmp/webui-{{retrieve_version[get_build_server.result[0]].stdout}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{retrieve_version[get_build_server.result[0]].stdout}}/webui/"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{web_version}}/webui/ ; cp \"/tmp/webui-{{web_version}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{web_version}}/webui/"
         timeout: 600
 
-  default: "get_current_build"
+  default: "get_build_server"
