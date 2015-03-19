@@ -60,7 +60,10 @@
       ref: "core.remote"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /home/stanley/st2cd/ubuntu14/{{version}}/{{build}}"
+        cmd: "mkdir -p /home/stanley/st2cd/ubuntu/14/{{version}}/{{build}}"
+      publish:
+        version_dir: "/home/stanley/st2cd/ubuntu/14/{{version}}"
+        build_dir: "{{version_dir}}/{{build}}"
       on-success: "rsync_st2_deploy"
     -
       name: "rsync_st2_deploy"
@@ -70,7 +73,7 @@
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/tmp/{{repodir}}/tools/st2_deploy.sh"
         dest_server: "{{dl_server}}"
-        destination: "/home/stanley/st2cd/ubuntu14/{{version}}/"
+        destination: "{{version_dir}}/"
         timeout: 600
       on-success: "rsync_debs"
     - 
@@ -81,7 +84,7 @@
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
         source: "/home/stanley/debbuild/*"
         dest_server: "{{dl_server}}"
-        destination: "/home/stanley/st2cd/ubuntu14/{{version}}/{{build}}/"
+        destination: "{{build_dir}}/"
         timeout: 600
       on-success: "cp_debs"
     - 
@@ -89,7 +92,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf /home/stanley/st2cd/ubuntu14/{{version}}/* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
         timeout: 1800
       on-success: "update_current"
     -
@@ -104,7 +107,7 @@
       ref: "freight.add_package"
       params: 
         hosts: "{{dl_server}}"
-        file: "/home/stanley/st2cd/ubuntu14/{{version}}/{{build}}/*.deb"
+        file: "{{build_dir}}/*.deb"
         distribution: "trusty_{% if branch == 'master' %}unstable{% else %}stable{% endif %}"
         timeout: 300
       on-success: "update_cache"
