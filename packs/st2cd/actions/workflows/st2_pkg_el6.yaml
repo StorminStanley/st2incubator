@@ -62,7 +62,7 @@
         cmd: "mkdir -p /home/stanley/st2cd/el/6/{{version}}/{{build}}"
       publish:
         version_dir: "/home/stanley/st2cd/el/6/{{version}}"
-        build_dir: "/home/stanley/st2cd/el/6/{{version}}/{{build}}"
+        build_dir: "{{version_dir}}/{{build}}"
       on-success: "rsync_rpms"
     - 
       name: "rsync_rpms"
