@@ -1,21 +1,24 @@
 ---
-    name: "webui_packaging"
+    name: "webui_pkg_prod"
     description: "Build WebUI packages after tests succeed and push them to staging"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.pytests"
+            pattern: "st2cd.st2_pkg_ubuntu14"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.environment:
+            pattern: "production"
+            type: "equals"
     action:
-        ref: "st2cd.webui_packaging"
+        ref: "st2cd.webui_pkg"
         parameters:
             repo: "https://github.com/StackStorm/st2web.git"
             branch: "master"
-            dl_server: "{{system.releases_server}}"
+            dl_server: "{{system.apt_origin_staging}}"
             environment: "production"
             build: "{{trigger.result.tasks[1].result.result.value}}"
