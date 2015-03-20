@@ -18,7 +18,7 @@
         ref: "st2cd.webui_pkg"
         parameters:
             repo: "https://github.com/StackStorm/st2web.git"
-            branch: "master"
-            dl_server: "{{system.apt_origin_staging}}"
+            branch: "{{trigger.parameters.branch}}"
+            dl_server: "{{system.apt_origin_production}}"
             environment: "production"
             build: "{{trigger.result.tasks[1].result.result.value}}"
