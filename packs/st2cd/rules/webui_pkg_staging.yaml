@@ -1,5 +1,5 @@
 ---
-    name: "webui_packaging_master_staging"
+    name: "webui_pkg_staging"
     description: "Build WebUI packages after tests succeed and push them to staging"
     enabled: true
     trigger:
@@ -12,9 +12,10 @@
             pattern: "succeeded"
             type: "equals"
     action:
-        ref: "st2cd.webui_packaging"
+        ref: "st2cd.webui_pkg"
         parameters:
             repo: "https://github.com/StackStorm/st2web.git"
             branch: "master"
             dl_server: "{{system.apt_origin_staging}}"
             environment: "staging"
+            build: "{{trigger.result.tasks[1].result.result.value}}"
