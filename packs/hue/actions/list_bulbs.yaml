@@ -1,0 +1,11 @@
+---
+name: list_bulbs
+runner_type: "run-python"
+description: List all registered bulbs
+enabled: true
+entry_point: "list_bulbs.py"
+parameters:
+  name:
+    type: string
+    description: Name of bulb to lookup ID
+    required: true
