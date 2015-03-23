@@ -19,7 +19,9 @@ then
   then
     VERSIONOUT=`sed -i -e "s/\(__version__ = \).*/\1'${VERSION}'/" ${ST2CLIENT_INIT}`
   else
-    echo ${OUTPUT}
+    echo "Failed setting version in ${ST2CLIENT_INIT}"
+    cat ${OUTPUT}
+    rm ${OUTPUT}
     exit 1
   fi
   if [[ $? == 0 ]]
@@ -34,6 +36,7 @@ then
       exit 2
     fi
   else
+    echo "Failed setting version in ${ST2COMMON_INIT}"
     cat ${OUTPUT}
     rm ${OUTPUT}
     exit 3
