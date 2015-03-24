@@ -19,7 +19,7 @@
         parameters:
             action: "core.local"
             action_params: "hostname"
-            hostname: "fedora-staging201"
+            hostname: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_F20']|join %}{{system[host_key]}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
