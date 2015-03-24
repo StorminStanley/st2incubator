@@ -1,5 +1,5 @@
 ---
-    name: "st2_pkg_prod_ubuntu14"
+    name: "st2_docs_prod"
     description: "Build st2 packages after tests succeed and push them to staging"
     enabled: true
     trigger:
