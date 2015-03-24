@@ -1,0 +1,21 @@
+---
+    name: "st2_pkg_prod_ubuntu14"
+    description: "Build st2 packages after tests succeed and push them to staging"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd.st2_deploy_test"
+            type: "equals"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_docs"
+        parameters:
+            repo: "{{trigger.parameters.repo}}"
+            branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
+            environment: "production"
+            build: "{{trigger.parameters.build}}"
