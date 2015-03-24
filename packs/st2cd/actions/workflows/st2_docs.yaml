@@ -11,7 +11,7 @@
       name: "get_build_server"
       ref: "linux.dig"
       params:
-        hostname: "st2-build-slave-ubuntu.service.consul"
+        hostname: "st2-build-slave-fedora.service.consul"
         rand: true
         count: 1
       publish:
