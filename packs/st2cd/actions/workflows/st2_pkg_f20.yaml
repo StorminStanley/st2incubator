@@ -9,14 +9,6 @@
         count: 1
       publish:
         build_server: "{{get_build_server.result[0]}}"
-      on-success: "clean_build_env"
-    -
-      name: "clean_build_env"
-      ref: "core.remote"
-      params:
-        hosts: "{{build_server}}"
-        cmd: "rm -Rf ~/st2* && rm -Rf rpmbuild/*"
-        timeout: 180
       on-success: "clone_repo"
     - 
       name: "clone_repo"
