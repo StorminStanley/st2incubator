@@ -33,4 +33,4 @@
       description: ""
     docs_url:
       type: "string"
-      default: "docs-staging.stackstorm.net"
+      default: "docs-staging.uswest2.stackstorm.net"
