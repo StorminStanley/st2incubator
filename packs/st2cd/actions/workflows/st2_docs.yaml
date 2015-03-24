@@ -51,13 +51,14 @@
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
         build: "{{get_current_build.result}}"
-      on-success: "make_docs"
+      on-success: "update_url"
     -
       name: "update_url"
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
         cmd: "{% if environment == 'production' %}echo 'Production URL is correct in code' {% else %}sed -e 's~docs\.stackstorm\.com~{{docs_url}}~g' docs/source/conf.py {% endif %}"
+      on-success: "make_docs"
     - 
       name: "make_docs"
       ref: "st2cd.make_docs"
