@@ -65,7 +65,7 @@
       params: 
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
-        timeout: 180
+        timeout: 600
       on-success: "s3cmd_docs"
     - 
       name: "s3cmd_docs"
