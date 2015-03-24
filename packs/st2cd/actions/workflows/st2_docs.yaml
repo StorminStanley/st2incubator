@@ -72,7 +72,7 @@
       params: 
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
-        bucket: "{% if environment == 'production' %}docs.stackstorm.com{% else %}{{repo_url}}{% endif %}"
+        bucket: "{% if environment == 'production' %}docs.stackstorm.com{% else %}{{docs_url}}{% endif %}"
         version: "{{version|truncate(3, True, '')}}"
       on-success: "clean_repo"
     - 
