@@ -33,7 +33,7 @@
         target: "{{repo_target}}"
         branch: "{{branch}}"
       publish:
-        repodir: "{{repodir}}"
+        repodir: "{{clone_repo[build_server].stdout}}"
       on-success: "version"
     -
       name: "version"
@@ -57,7 +57,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
-        cmd: "{% if environment == 'production' %}echo 'Production URL is correct in code' {% else %}sed -e 's~docs\.stackstorm\.com~{{docs_url}}~g' docs/source/conf.py {% endif %}"
+        cmd: "cd /tmp/{{repodir}} && {% if environment == 'production' %}echo 'Production URL is correct in code' {% else %}sed -e 's~docs\\.stackstorm\\.com~{{docs_url}}~g' docs/source/conf.py {% endif %}"
       on-success: "make_docs"
     - 
       name: "make_docs"
