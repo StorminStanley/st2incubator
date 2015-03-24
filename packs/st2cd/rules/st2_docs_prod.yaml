@@ -19,3 +19,4 @@
             revision: "{{trigger.parameters.revision}}"
             environment: "production"
             build: "{{trigger.parameters.build}}"
+            docs_url: "{{s3_bucket_docs_production}}"

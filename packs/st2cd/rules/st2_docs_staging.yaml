@@ -19,4 +19,4 @@
             environment: "staging"
             revision: "{{trigger.parameters.revision}}"
             build: "{{trigger.result.tasks[1].result.result.value}}"
-            docs_url: "docs-staging.stackstorm.net"
+            docs_url: "{{s3_bucket_docs_staging}}"
