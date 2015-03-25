@@ -15,6 +15,9 @@
       type: "string"
       description: "action ref"
       required: true
+    token:
+      type: "string"
+      description: ""
     params:
       type: "string"
       description: "Action parameters"
