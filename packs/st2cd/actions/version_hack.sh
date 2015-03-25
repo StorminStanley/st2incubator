@@ -7,7 +7,7 @@ REPO=$2
 
 cd $REPO
 ST2VER=`grep version st2common/st2common/__init__.py | awk '{print $3}' | tr -d "'"`
-CLIENTVER="${ST2VER}-${BUILD}"
+CLIENTVER="${ST2VER}-${BUILD_NUMBER}"
 sed -i "s/Release: [0-9]\+/Release: ${BUILD_NUMBER}/g" */packaging/rpm/*.spec
 sed -i "s/Version:.*/Version: ${ST2VER}/g" */packaging/rpm/*.spec
 sed -i "s/(.*)/(${ST2VER}-${BUILD_NUMBER})/g" */packaging/debian/changelog
