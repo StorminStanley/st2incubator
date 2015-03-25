@@ -20,8 +20,8 @@
       ref: "st2cd.get_st2_token"
       params:
         hosts: "{{hostname}}"
-        username: "{{st2_username}}"
-        password: "{{st2_password}}"
+        st2_username: "{{st2_username}}"
+        st2_password: "{{st2_password}}"
       publish:
         st2_token: "{{get_st2_token[hostname].stdout.token}}"
       on-success: "action_run"
