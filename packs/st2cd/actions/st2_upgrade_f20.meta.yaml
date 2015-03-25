@@ -17,6 +17,14 @@
       type: "string"
       description: "Parameters of action to be run"
       default: "date"
+    st2_username:
+      type: "string"
+      description: "Username to authenticate to the St2 server"
+      default: "testu"
+    st2_password:
+      type: "string"
+      description: "Password to authenticate to the St2 server"
+      default: "testp"
     repo:
       type: "string"
       description: "Git repository for this project"

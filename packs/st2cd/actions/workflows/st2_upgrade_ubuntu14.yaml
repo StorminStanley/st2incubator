@@ -31,6 +31,16 @@
         hosts: "{{hostname}}"
         cmd: "st2ctl reload &> /dev/null && nohup bg st2ctl restart &> /dev/null; sleep 20"
         # cmd: "st2ctl reload && nohup bg st2ctl restart; sleep 20" 
+      on-success: "get_st2_token"
+    -
+      name: "get_st2_token"
+      ref: "st2cd.get_st2_token"
+      params:
+        hosts: "{{hostname}}"
+        username: "{{st2_username}}"
+        password: "{{st2_password}}"
+      publish:
+        st2_token: "{{get_st2_token[hostname].stdout.token}}"
       on-success: "action_run"
     -
       name: "action_run"
@@ -38,6 +48,7 @@
       params:
         hosts: "{{hostname}}"
         name: "core.local-date"
+        token: "{{st2_token}}"
         action: "{{action}}"
         params: "{{action_params}}"
 

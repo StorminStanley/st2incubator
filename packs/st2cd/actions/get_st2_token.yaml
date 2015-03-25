@@ -1,0 +1,21 @@
+---
+  name: "get_st2_token"
+  runner_type: "run-remote"
+  description: "Authenticate to St2"
+  enabled: true
+  entry_point: ""
+  parameters: 
+    username:
+      type: "string"
+      default: ""
+      required: true
+    password:
+      type: "string"
+      default: ""
+      required: true
+    cmd: 
+      immutable: false
+      default: "st2 auth {{username}} -p {{password} -j"
+    kwarg_op: 
+      immutable: true
+      default: "--"

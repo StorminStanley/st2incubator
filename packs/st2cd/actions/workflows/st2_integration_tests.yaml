@@ -1,10 +1,21 @@
 ---
   chain:
     -
+      name: "get_st2_token"
+      ref: "st2cd.get_st2_token"
+      params:
+        hosts: "{{hostname}}"
+        username: "{{st2_username}}"
+        password: "{{st2_password}}"
+      publish:
+        st2_token: "{{get_st2_token[hostname].stdout.token}}"
+      on-success: "core_local_date"
+    -
       name: "core_local_date"
       ref: "st2cd.action_run"
       params:
         name: "core_local_date"
+        token: "{{st2_token}}"
         action: "core.local"
         params: "date"
         hosts: "{{hostname}}"
@@ -14,6 +25,7 @@
       ref: "st2cd.action_run"
       params:
         name: "core_http_google"
+        token: "{{st2_token}}"
         action: "core.http"
         params: "url=http://www.google.com"
         hosts: "{{hostname}}"
@@ -23,6 +35,7 @@
       ref: "st2cd.action_run"
       params:
         name: "core_remote_single_host"
+        token: "{{st2_token}}"
         action: "core.remote"
         params: "hosts={{hostname}} hostname"
         hosts: "{{hostname}}"
@@ -35,4 +48,4 @@
 #        action: "linux.diag_loadavg"
 #        params: "hostname={{hostname}}"
 #        hosts: "{{hostname}}"
-  default: "core_local_date"
+  default: "get_st2_token"

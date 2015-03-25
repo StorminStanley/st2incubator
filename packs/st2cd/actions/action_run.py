@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import time
 import json
@@ -15,16 +16,19 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--name', action="store", dest="name", required=True)
 parser.add_argument('--action', action="store", dest="action", required=True)
 parser.add_argument('--params', action="store", dest="params")
+parser.add_argument('--token', action="store", dest="token")
 
 args = parser.parse_args()
 runner = None
 
+os.environ['ST2_AUTH_TOKEN'] = args.token
+
 
 def runAction(action_ref, params):
     st2_endpoints = {
-        'action': "http://%s:9101" % ST2HOST,
-        'reactor': "http://%s:9102" % ST2HOST,
-        'datastore': "http://%s:9103" % ST2HOST
+        'base': "http://%s" % ST2HOST,
+        'auth': "http://%s:9100" % ST2HOST,
+        'api': "http://%s:9101/v1" % ST2HOST
     }
 
     client = Client(st2_endpoints)
