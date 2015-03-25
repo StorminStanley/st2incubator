@@ -25,13 +25,8 @@ os.environ['ST2_AUTH_TOKEN'] = args.token
 
 
 def runAction(action_ref, params):
-    st2_endpoints = {
-        'base': "http://%s" % ST2HOST,
-        'auth': "http://%s:9100" % ST2HOST,
-        'api': "http://%s:9101/v1" % ST2HOST
-    }
 
-    client = Client(st2_endpoints)
+    client = Client()
     action_exec_mgr = client.managers['LiveAction']
 
     execution = models.LiveAction()
