@@ -12,6 +12,7 @@ sed -i "s/Release: [0-9]\+/Release: ${BUILD_NUMBER}/g" */packaging/rpm/*.spec
 sed -i "s/Version:.*/Version: ${ST2VER}/g" */packaging/rpm/*.spec
 sed -i "s/(.*)/(${ST2VER}-${BUILD_NUMBER})/g" */packaging/debian/changelog
 sed -i "s/^VER=.*/VER=${ST2VER}/g" */Makefile
+sed -i "s/^VER :=.*/VER=${ST2VER}/g" */Makefile
 sed -i "s/RELEASE=[0-9]\+/RELEASE=${BUILD_NUMBER}/g" st2client/Makefile
 sed -i "s~version=.*~version=\"${ST2VER}\",~" *!(st2client)/setup.py
 sed -i "s~__version__ =.*~__version__ ='${CLIENTVER}',~" st2client/st2client/__init__.py
