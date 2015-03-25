@@ -23,6 +23,13 @@
         hosts: "{{hostname}}"
         act: "install -y"
         packages: "python-st2client"
+      on-success: "dont_hate_me"
+    -
+      name: "dont_hate_me"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cp -f /root/st2 /etc/st2/st2.conf"
       on-success: "restart_st2"
     -
       name: "restart_st2"
