@@ -14,4 +14,4 @@
     action:
         ref: "slack.post_message"
         parameters:
-            message: "```[GITHUB - {{trigger.body.repository.full_name}}: {{trigger.body.ref.split('/')[-1]}}]\n    PUSHER: {{trigger.body.pusher.name}}```"
+            message: "```[GITHUB - {{trigger.body.repository.full_name}}: {{trigger.body.ref.split('/')[-1]}}]\n    PUSHER: {{trigger.body.pusher.name}}\n    MSG: {{trigger.body.commits.head_commit.message}}```"
