@@ -19,7 +19,7 @@
             type: "equals"
         trigger.parameters.hostname:
             pattern: "fedora-staging201"
-            type: "matchregex"
+            type: "equals"
     action:
         ref: "st2cd.st2_pkg_f20"
         parameters:
