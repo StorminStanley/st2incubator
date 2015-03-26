@@ -27,7 +27,7 @@
       default: "s3://{{bucket}}"
     cmd: 
       immutable: false
-      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if branch == 'master' %} && s3cmd put --recursive * {{bucket_url}}/latest/{% if version == system.st2_stable_version %} && s3cmd put --recursive * {{bucket_url}}/{% endif %}"
+      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if branch == 'master' %} && s3cmd put --recursive * {{bucket_url}}/latest/{% endif %}{% if version == '0.8' %} && s3cmd put --recursive * {{bucket_url}}/{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"
