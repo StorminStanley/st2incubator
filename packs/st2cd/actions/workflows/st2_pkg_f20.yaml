@@ -84,7 +84,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
         timeout: 1800
       on-success: "cp_rpms_repo"
     -
@@ -92,7 +92,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "cp -Rf {{build_dir}}/* /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
+        cmd: "cp -Rf {{build_dir}}/*{{build}}* /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "rebuild_repo"
     -
       name: "rebuild_repo"
