@@ -1,6 +1,6 @@
 ---
-    name: "st2_pkg_prod_ubuntu14"
-    description: "Build st2 packages after tests succeed and push them to staging"
+    name: "st2_pkg_prod_master_f20"
+    description: "Build st2 packages after tests succeed and push them to production"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
@@ -11,18 +11,21 @@
         trigger.status:
             pattern: "succeeded"
             type: "equals"
-        trigger.parameters.hostname:
-            pattern: "{{system.st2_ci_host}}"
+        trigger.parameters.branch:
+            pattern: "master"
             type: "equals"
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
+        trigger.parameters.hostname:
+            pattern: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_F20']|join %}{{system[host_key]}}"
+            type: "equals"
     action:
-        ref: "st2cd.st2_pkg_ubuntu14"
+        ref: "st2cd.st2_pkg_f20"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            revision: "{{trigger.parameters.revision}}"
-            dl_server: "{{system.apt_origin_production}}"
+            dl_server: "{{system.yum_origin_production}}"
             environment: "production"
+            revision: "{{trigger.parameters.revision}}"
             build: "{{trigger.parameters.build}}"
