@@ -23,3 +23,7 @@
             hostname: "st2-{{trigger.parameters.branch}}-{{trigger.execution_id}}"
             build: "{{trigger.parameters.build}}"
             version: "{{system.st2_unstable_version}}"
+            environment: "sandbox"
+            branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
+            repo: "{{trigger.parameters.repo}}"
