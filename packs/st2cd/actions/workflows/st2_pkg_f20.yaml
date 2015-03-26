@@ -78,13 +78,21 @@
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
+      on-success: "cp_st2_deploy"
+    - 
+      name: "cp_st2_deploy"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/st2_deploy.sh /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        timeout: 1800
       on-success: "cp_rpms"
     - 
       name: "cp_rpms"
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        cmd: "cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
         timeout: 1800
       on-success: "cp_rpms_repo"
     -
