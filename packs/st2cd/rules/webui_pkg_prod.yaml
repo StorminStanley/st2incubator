@@ -21,4 +21,4 @@
             branch: "{{trigger.parameters.branch}}"
             dl_server: "{{system.apt_origin_production}}"
             environment: "production"
-            build: "{{trigger.result.tasks[1].result.result.value}}"
+            build: "{{trigger.parameters.build}}"
