@@ -18,8 +18,8 @@
             pattern: "staging"
             type: "equals"
         trigger.parameters.hostname:
-            pattern: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_F20']|join %}{{system[host_key]}}"
-            type: "equals"
+            pattern: "fedora-staging201"
+            type: "matchregex"
     action:
         ref: "st2cd.st2_pkg_f20"
         parameters:

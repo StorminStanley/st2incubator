@@ -17,7 +17,7 @@
     action:
         ref: "st2cd.integration_tests"
         parameters:
-            hostname: "{{system.st2_ci_host}}"
+            hostname: "{{trigger.parameters.hostname}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"

@@ -14,6 +14,9 @@
       description: "The branch to build the packages were built from."
       default: "master"
       required: true
+    revision: 
+      type: "string"
+      description: ""
     build:
       type: "string"
       description: "Build number"
