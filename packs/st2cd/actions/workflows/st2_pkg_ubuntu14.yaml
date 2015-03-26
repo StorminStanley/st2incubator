@@ -78,13 +78,21 @@
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
+      on-success: "cp_st2_deploy"
+    - 
+      name: "cp_st2_deploy"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf {{version_dir}}/st2_deploy.sh /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        timeout: 1800
       on-success: "mv_debs"
     - 
       name: "mv_debs"
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        cmd: "cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
         timeout: 1800
       on-success: "update_current"
     -
