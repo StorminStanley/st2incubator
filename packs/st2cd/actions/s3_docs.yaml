@@ -17,6 +17,10 @@
       required: true
       default: "docs-staging.stackstorm.net"
       description: "The base path to the bucket"
+    location:
+      type: "string"
+      description: "Extra subfolder to copy to - use leading /"
+      default: ""
     version:
       type: "string"
       required: true
@@ -27,7 +31,7 @@
       default: "s3://{{bucket}}"
     cmd: 
       immutable: false
-      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if branch == 'master' %} && s3cmd put --recursive * {{bucket_url}}/latest/{% endif %}{% if version == '0.8' %} && s3cmd put --recursive * {{bucket_url}}/{% endif %}"
+      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if locations != t'' %} && s3cmd put --recursive * {{bucket_url}}{{location}}{% endif %}"
     kwarg_op: 
       immutable: true
       default: "--"
