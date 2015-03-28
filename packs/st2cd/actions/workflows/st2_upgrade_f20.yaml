@@ -6,6 +6,7 @@
       params:
         hosts: "{{hostname}}"
         cmd: "yum install -y st2common st2reactor st2actions st2api st2auth st2client"
+        timeout: 180
       on-success: "dont_hate_me"
     -
       name: "dont_hate_me"
