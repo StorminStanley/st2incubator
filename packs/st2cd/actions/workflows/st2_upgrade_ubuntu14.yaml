@@ -7,6 +7,7 @@
         hosts: "{{hostname}}"
         act: "update"
         packages: ""
+        timeout: 240
       on-success: "upgrade_st2"
     -
       name: "upgrade_st2"
@@ -15,6 +16,7 @@
         hosts: "{{hostname}}"
         act: "install -y -o Dpkg::Options::=\"--force-confnew\""
         packages: "st2common st2reactor st2actions st2api st2auth st2debug"
+        timout: 300
       on-success: "upgrade_st2client"
     -
       name: "upgrade_st2client"
@@ -23,6 +25,7 @@
         hosts: "{{hostname}}"
         act: "install -y"
         packages: "python-st2client"
+        timeout: 600
       on-success: "dont_hate_me"
     -
       name: "dont_hate_me"
@@ -38,6 +41,7 @@
         hosts: "{{hostname}}"
         cmd: "st2ctl reload &> /dev/null && nohup bg st2ctl restart &> /dev/null; sleep 20"
         # cmd: "st2ctl reload && nohup bg st2ctl restart; sleep 20" 
+        timeout: 300
       on-success: "get_st2_token"
     -
       name: "get_st2_token"
