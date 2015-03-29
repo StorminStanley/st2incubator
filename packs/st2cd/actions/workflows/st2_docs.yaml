@@ -67,7 +67,7 @@
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
         branch: "{{branch}}"
-        location: "{% if branch == 'master' %}/latest{% elif version|truncate(3, True, '') == system.st2_stable_version %}/{% endif %}"
+        location: "{% if branch == 'master' %}/latest/{% elif version|truncate(3, True, '') == system.st2_stable_version %}/{% endif %}"
         bucket: "{% if environment == 'production' %}docs.stackstorm.com{% else %}{{docs_url}}{% endif %}"
         version: "{{version|truncate(3, True, '')}}"
       on-success: "clean_repo"
