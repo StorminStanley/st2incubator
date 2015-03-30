@@ -14,60 +14,68 @@
         hostname: "st2-build-slave-ubuntu.service.consul"
         rand: true
         count: 1
-      on-success: "clean_build_env"
-    -
-      name: "clean_build_env"
-      ref: "core.remote"
-      params:
-        hosts: "{{get_build_server.result[0]}}"
-        cmd: "rm -Rf /tmp/st2*"
+      publish:
+        build_server: "{{get_build_server.result[0]}}"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
       ref: "st2cd.git_clone"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
+        hosts: "{{build_server}}"
         repo: "{{repo}}"
         target: "{{repo_target}}"
         branch: "{{branch}}"
+      publish:
+        repodir: "{{clone_repo[build_server].stdout}}"
       on-success: "version"
     -
       name: "version"
       ref: "st2cd.st2_version"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
+      publish:
+        version: "{{version[build_server].stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
       ref: "st2cd.version_hack"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
         build: "{{get_current_build.result}}"
+      on-success: "update_url"
+    -
+      name: "update_url"
+      ref: "core.remote"
+      params:
+        hosts: "{{build_server}}"
+        cmd: "cd /tmp/{{repodir}} && {% if environment == 'production' %}echo 'Production URL is correct in code' {% else %}sed -e 's~docs\\.stackstorm\\.com~{{docs_url}}~g' docs/source/conf.py {% endif %}"
       on-success: "make_docs"
     - 
       name: "make_docs"
       ref: "st2cd.make_docs"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-        timeout: 180
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
+        timeout: 600
       on-success: "s3cmd_docs"
     - 
       name: "s3cmd_docs"
       ref: "st2cd.s3_docs"
       params: 
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
-        bucket: "{{system.s3_bucket_docs}}"
-        version: "{{version[get_build_server.result[0]].stdout|truncate(3, True, '')}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
+        branch: "{{branch}}"
+        location: "{% if branch == 'master' %}/latest/{% elif version|truncate(3, True, '') == system.st2_stable_version %}/{% endif %}"
+        bucket: "{% if environment == 'production' %}docs.stackstorm.com{% else %}{{docs_url}}{% endif %}"
+        version: "{{version|truncate(3, True, '')}}"
       on-success: "clean_repo"
     - 
       name: "clean_repo"
       ref: "st2cd.git_clean"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        hosts: "{{build_server}}"
+        repo: "{{repodir}}"
 
   default: "get_current_build"

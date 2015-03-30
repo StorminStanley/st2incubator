@@ -9,14 +9,6 @@
         count: 1
       publish:
         build_server: "{{get_build_server.result[0]}}"
-      on-success: "clean_build_env"
-    -
-      name: "clean_build_env"
-      ref: "core.remote"
-      params:
-        hosts: "{{build_server}}"
-        cmd: "rm -Rf ~/st2* && rm -Rf debbuild/*"
-        timeout: 180
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -86,13 +78,21 @@
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
-      on-success: "cp_debs"
+      on-success: "cp_st2_deploy"
     - 
-      name: "cp_debs"
+      name: "cp_st2_deploy"
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/debs/ && cp -Rf {{version_dir}}/st2_deploy.sh /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        timeout: 1800
+      on-success: "mv_debs"
+    - 
+      name: "mv_debs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
         timeout: 1800
       on-success: "update_current"
     -
@@ -107,7 +107,7 @@
       ref: "freight.add_package"
       params: 
         hosts: "{{dl_server}}"
-        file: "{{build_dir}}/*.deb"
+        file: "{{build_dir}}/*{{build}}*.deb"
         distribution: "trusty_{% if branch == 'master' %}unstable{% else %}stable{% endif %}"
         timeout: 300
       on-success: "update_cache"

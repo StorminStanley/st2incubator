@@ -16,7 +16,7 @@
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_origin_staging}}"
+            dl_server: "{{system.yum_origin_staging}}"
             environment: "staging"
             revision: "{{trigger.parameters.revision}}"
             build: "{{trigger.result.tasks[1].result.result.value}}"

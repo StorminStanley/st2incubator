@@ -9,14 +9,6 @@
         count: 1
       publish:
         build_server: "{{get_build_server.result[0]}}"
-      on-success: "clean_build_env"
-    -
-      name: "clean_build_env"
-      ref: "core.remote"
-      params:
-        hosts: "{{build_server}}"
-        cmd: "rm -Rf ~/st2* && rm -Rf rpmbuild/*"
-        timeout: 180
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -86,13 +78,21 @@
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
+      on-success: "cp_st2_deploy"
+    - 
+      name: "cp_st2_deploy"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{dl_server}}"
+        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/st2_deploy.sh /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        timeout: 1800
       on-success: "cp_rpms"
     - 
       name: "cp_rpms"
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{version}}/rpms/ && cp -Rf {{version_dir}}/* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
+        cmd: "cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/rpms/"
         timeout: 1800
       on-success: "cp_rpms_repo"
     -
@@ -100,7 +100,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "cp -Rf {{build_dir}}/* /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
+        cmd: "cp -Rf {{build_dir}}/*{{build}}* /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
       on-success: "rebuild_repo"
     -
       name: "rebuild_repo"

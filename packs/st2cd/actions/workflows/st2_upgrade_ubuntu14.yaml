@@ -7,6 +7,7 @@
         hosts: "{{hostname}}"
         act: "update"
         packages: ""
+        timeout: 240
       on-success: "upgrade_st2"
     -
       name: "upgrade_st2"
@@ -14,7 +15,8 @@
       params:
         hosts: "{{hostname}}"
         act: "install -y -o Dpkg::Options::=\"--force-confnew\""
-        packages: "st2common st2reactor st2actions st2api st2auth"
+        packages: "st2common st2reactor st2actions st2api st2auth st2debug"
+        timout: 300
       on-success: "upgrade_st2client"
     -
       name: "upgrade_st2client"
@@ -23,6 +25,14 @@
         hosts: "{{hostname}}"
         act: "install -y"
         packages: "python-st2client"
+        timeout: 600
+      on-success: "dont_hate_me"
+    -
+      name: "dont_hate_me"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "cp -f /root/st2.conf /etc/st2/st2.conf"
       on-success: "restart_st2"
     -
       name: "restart_st2"
@@ -31,6 +41,17 @@
         hosts: "{{hostname}}"
         cmd: "st2ctl reload &> /dev/null && nohup bg st2ctl restart &> /dev/null; sleep 20"
         # cmd: "st2ctl reload && nohup bg st2ctl restart; sleep 20" 
+        timeout: 300
+      on-success: "get_st2_token"
+    -
+      name: "get_st2_token"
+      ref: "st2cd.get_st2_token"
+      params:
+        hosts: "{{hostname}}"
+        st2_username: "{{st2_username}}"
+        st2_password: "{{st2_password}}"
+      publish:
+        st2_token: "{{get_st2_token[hostname].stdout.token}}"
       on-success: "action_run"
     -
       name: "action_run"
@@ -38,6 +59,7 @@
       params:
         hosts: "{{hostname}}"
         name: "core.local-date"
+        token: "{{st2_token}}"
         action: "{{action}}"
         params: "{{action_params}}"
 

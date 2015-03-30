@@ -24,3 +24,11 @@
       description: ""
     revision:
       type: "string"
+    st2_username:
+      type: "string"
+      description: "Username to authenticate to the St2 server"
+      default: "testu"
+    st2_password:
+      type: "string"
+      description: "Password to authenticate to the St2 server"
+      default: "testp"
