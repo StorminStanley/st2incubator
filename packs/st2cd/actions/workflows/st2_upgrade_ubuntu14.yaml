@@ -16,7 +16,7 @@
         hosts: "{{hostname}}"
         act: "install -y -o Dpkg::Options::=\"--force-confnew\""
         packages: "st2common st2reactor st2actions st2api st2auth st2debug"
-        timout: 300
+        timeout: 300
       on-success: "upgrade_st2client"
     -
       name: "upgrade_st2client"
