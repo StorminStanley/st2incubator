@@ -1,9 +1,9 @@
 ---
-  name: "integration_tests"
+  name: "e2e_tests"
   runner_type: "action-chain"
-  description: "Runs a series of integration tests on a StackStorm server"
+  description: "Runs a series of end to end tests on a StackStorm server"
   enabled: true
-  entry_point: "workflows/st2_integration_tests.yaml"
+  entry_point: "workflows/st2_e2e_tests.yaml"
   parameters: 
     hostname: 
       type: "string"
