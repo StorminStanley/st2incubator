@@ -36,7 +36,7 @@
       on-success: "run_tests"
     -
       name: "run_tests"
-      ref: "st2cd.integration_tests"
+      ref: "st2cd.e2e_tests"
       params:
         hostname: "{{hostname}}"
         build: "0"

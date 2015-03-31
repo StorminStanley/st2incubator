@@ -9,6 +9,13 @@
         st2_password: "{{st2_password}}"
       publish:
         st2_token: "{{get_st2_token[hostname].stdout.token}}"
+      on-success: "install_tests"
+    -
+      name: "install_tests"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "/usr/local/lib/python2.7/dist-packages/st2common/bin/st2-setup-tests"
       on-success: "core_local_date"
     -
       name: "core_local_date"
@@ -39,13 +46,14 @@
         action: "core.remote"
         params: "hosts={{hostname}} hostname"
         hosts: "{{hostname}}"
-#      on-success: "action_chain_load"
-#    -
-#      name: "action_chain_load"
-#      ref: "st2cd.action_run"
-#      params:
-#        name: "linux_diag_loadavg"
-#        action: "linux.diag_loadavg"
-#        params: "hostname={{hostname}}"
-#        hosts: "{{hostname}}"
+      on-success: "test_quickstart"
+    -
+      name: "test_quickstart"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_quickstart"
+        token: "{{st2_token}}"
+        action: "tests.test_quickstart"
+        hosts: "{{hostname}}"
+
   default: "get_st2_token"
