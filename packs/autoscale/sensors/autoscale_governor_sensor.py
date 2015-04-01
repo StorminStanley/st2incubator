@@ -23,8 +23,8 @@ class AutoscaleGovernorSensor(PollingSensor):
         self._kvp_get = self._sensor_service.get_value
 
         self._trigger = {
-            'expand': 'ScaleUpPulse',
-            'deflate': 'ScaleDownPulse'
+            'expand': 'autoscale.ScaleUpPulse',
+            'deflate': 'autoscale.ScaleDownPulse'
         }
         self._bound = {
             'expand': 'max',
