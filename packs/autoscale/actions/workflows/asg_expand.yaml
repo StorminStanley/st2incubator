@@ -16,7 +16,7 @@ workflows:
       update_start_group_status:
         action: st2.kv.set
         input:
-          key: 'asg.<% $.name %>.status'
+          key: 'asg.<% $.asg %>.status'
           value: 'expanding'
           ttl: 900
         on-success:
@@ -106,5 +106,5 @@ workflows:
       update_end_group_status:
         action: st2.kv.set
         input:
-          key: 'asg.<% $.name %>.status'
+          key: 'asg.<% $.asg %>.status'
           value: 'idle'
