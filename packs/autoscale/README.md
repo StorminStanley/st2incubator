@@ -1,5 +1,4 @@
-Cloud Autoscaling
-=========
+# Cloud Autoscaling
 
 This pack highligts the use of StackStorm in a generic, autoscaling pipeline. This pack comes in a mostly
 out-of-the-box setup and can be bootstrapped from https://github.com/StackStorm/showcase-autoscaling. Head
@@ -56,3 +55,42 @@ Depending on the received event (Alert/Recovery), things go into action. In the 
 
 All the while, another internal sensor that we call a TimerSensor is running, polling every 30 seconds. Each interval, the governor looks at the state of all AutoScale group alert statuses to decide whether or not additional nodes need to be created and added to the autoscale group. It does this by looking for any AutoScale groups that are in alert state, and attempts to add additional capacity if the right conditions are met. A sort of blunt sword throttling is in place for the first pass - the governor evaluates the time since the last scale event and responds accordingly. The same logic happens in reverse, but at a much slower rate (longer duration between deletions, fewer machines destroyed at a time).
 
+## Internals and Implementation Details
+
+### Datastore items
+
+This pack persists various configuration and temporary data in the internal StackStorm datastore. This
+section includes a list of the used datastore items along with their purpose.
+
+### Configuration Data
+
+* ``asg.<asg group name>.max_nodes`` (int) - A maximum number of nodes which can be active in this
+  group. When expanding the group, we will follow a best effort approach to not go over this number.
+* ``asg.<asg group name>.min_nodes`` (int) - A minimum number of nodes which can be active in this
+  group. When deflating the group, we will follow the best effort approach to not go under this number.
+
+* ``asg.<asg group name>.expand_by`` (int) - Number of nodes to expand-by at a time during auto-scaling.
+* ``asg.<asg group name>.expand_delay`` (int) - Length of time (in minutes) between autoscale expansion
+  events.
+* ``asg.<asg group name>.deflate_by`` (int) - Number of nodes to deflate-by at a time during auto-scaling.
+* ``asg.<asg group name>.deflate_delay`` (int) - Length of time (in minutes) between autoscale deflation
+  events.
+
+* ``asg.<asg group name>.vm_image_id`` (string) - ID of a Rackspace image which is used for new nodes.
+* ``asg.<asg group name>.vm_size_id`` (string) - ID of a Rackspace size which is used for new nodes.
+
+* ``asg.<asg group name>.application_name`` (string) - Name of the NewRelic application we are using as
+  an event source..
+
+### Temporary Data
+
+* ``asg.<asg group name>.total_nodes`` (int) - Current number of active nodes in this group.
+* ``asg.<asg group name>.last_expand_timestamp`` (int) - Timestamp when this group was last expanded.
+* ``asg.<asg group name>.last_deflate_timestamp`` (int) - Timestamp when this group was last deflated.
+
+* ``asg.<asg group name>.loadbalancer_id`` (str) - ID of the created and used loadbalancer.
+* ``asg.<asg group name>.dns_zone_id`` (str) - ID of the created and used DNS zone.
+* ``asg.<asg group name>.domain`` (str) - Name of the created and used domain.
+
+* ``asg.<asg group name>.active_incident`` (bool) - Flag indicating if we are currently in the middle of
+  an action new relic incident.
