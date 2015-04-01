@@ -103,8 +103,8 @@ workflows:
           metadata:
             asg: <% $.asg %>
         publish:
-          ipv4_address: '<% $.create_new_node.result.public_ips[1] %>'
-          ipv6_address: '<% $.create_new_node.result.public_ips[0] %>'
+          ipv4_address: '<% $.create_new_node.result.public_ipv4 %>'
+          ipv6_address: '<% $.create_new_node.result.public_ipv6 %>'
         on-success:
           - get_total_node_count
         on-error:

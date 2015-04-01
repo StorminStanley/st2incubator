@@ -56,7 +56,7 @@ workflows:
         input:
           vm_id: <% $.vm_id %>
         publish:
-          ipv4_address: <% $.get_node_ip.result.public_ips[1] %>
+          ipv4_address: <% $.get_node_ip.result.public_ipv4 %>
         on-success:
           - get_loadbalancer_id
         on-error:
