@@ -8,7 +8,7 @@
     trigger.alert.severity:
       type: eq
       pattern: 'critical'
-    trigger.alert_policy_name:
+    trigger.alert.alert_policy_name:
       type: eq
       pattern: "Default server alert policy"
     trigger.alert.long_description:
