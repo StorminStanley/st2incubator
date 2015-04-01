@@ -44,7 +44,7 @@ parameters:
   expand_delay:
     type: integer
     description: Length of time (in minutes) between autoscale expansion events
-    default: 10
+    default: 20
   deflate_by:
     type: integer
     description: Number of nodes to deflate-by at a time during auto-scaling
@@ -61,6 +61,11 @@ parameters:
     type: string
     description: VM Size ID (use rackspace.list_vm_sizes to discover)
     default: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
+  initial_status:
+    type: string
+    description: Initial auto scale group status
+    default: idle
+    immutable: true
   channel:
     type: string
     description: Slack channel to send ChatOps events

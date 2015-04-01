@@ -13,6 +13,14 @@ workflows:
       on-error:
         - fail
     tasks:
+      update_start_group_status:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.name %>.status'
+          value: 'deflating'
+          ttl: 900
+        on-success:
+          - get_chatops_room
       get_chatops_room:
         action: st2.kv.get
         input:
@@ -91,4 +99,10 @@ workflows:
         input:
           message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!```"
           channel: <% $.channel %>
-
+        on-success:
+          - update_end_group_status
+      update_end_group_status:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.name %>.status'
+          value: 'idle'

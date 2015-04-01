@@ -84,6 +84,10 @@ section includes a list of the used datastore items along with their purpose.
 
 ### Temporary Data
 
+* ``asg.<asg group name>.status`` (string) - Current status of the group (``idle/expanding/deflating``).
+  Internally this variable is used to prevent race conditions which can occur if the time between the
+  group creation and the initial expansion / deflation event is greater than ``delay`` minutes or if the
+  actual expansion / deflation process takes more than ``delay`` minutes.
 * ``asg.<asg group name>.total_nodes`` (int) - Current number of active nodes in this group.
 * ``asg.<asg group name>.last_expand_timestamp`` (int) - Timestamp when this group was last expanded.
 * ``asg.<asg group name>.last_deflate_timestamp`` (int) - Timestamp when this group was last deflated.
