@@ -21,7 +21,7 @@ GROUP_ACTIVE_STATUS = [
 
 
 class AutoscaleGovernorSensor(PollingSensor):
-    def __init__(self, sensor_service, config=None, poll_interval=30):
+    def __init__(self, sensor_service, config=None, poll_interval=60):
         super(AutoscaleGovernorSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
