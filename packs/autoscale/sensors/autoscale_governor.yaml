@@ -2,6 +2,7 @@
 class_name: "AutoscaleGovernorSensor"
 entry_point: "autoscale_governor_sensor.py"
 description: Autoscale Pulse manager to automatically deflate non-troubled ASGs
+poll_interval: 60
 trigger_types:
   -
     name: 'ScaleDownPulse'
