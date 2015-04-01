@@ -17,4 +17,4 @@
   action:
     ref: autoscale.crit_alert
     parameters:
-      application_name: "Default Application"
+      application: "Default Application"
