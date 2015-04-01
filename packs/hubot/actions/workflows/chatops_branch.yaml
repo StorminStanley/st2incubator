@@ -23,17 +23,17 @@
       ref: "slack.post_message"
       params:
         message: "```[hubot] {{branch}}```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
     -
       name: "failure_get_branch"
       ref: "slack.post_message"
       params:
         message: "```[hubot] Unable to get branch for hubot```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
     -
       name: "failure_get_node"
       ref: "slack.post_message"
       params:
         message: "```[hubot] Unable to get node where hubot lives. Try setting the key 'hubot.node' in the datastore```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
 

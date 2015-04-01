@@ -24,14 +24,14 @@
       ref: "slack.post_message"
       params:
         message: "```[hubot] Deploying hubot on branch {{parameters.branch}}...```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
       on-success: "deploy_hubot"
     -
       name: "failure_parse_chatops"
       ref: "slack.post_message"
       params:
         message: "```[hubot] Unable to parse ChatOps for deploy...```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
     -
       name: "deploy_hubot"
       ref: hubot.deploy
@@ -44,5 +44,5 @@
       ref: "slack.post_message"
       params:
         message: "```[hubot] Unable to get node where hubot lives. Try setting the key 'hubot.node' in the datastore```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
 

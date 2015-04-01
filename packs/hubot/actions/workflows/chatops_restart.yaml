@@ -14,7 +14,7 @@
       ref: "slack.post_message"
       publish:
         message: "```[hubot] Restarting...```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
       on-success: "restart_hubot"
     -
       name: "restart_hubot"
@@ -28,11 +28,11 @@
       ref: "slack.post_message"
       params:
         message: "```[hubot] Successfully restarted.```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
     -
       name: "failure_get_node"
       ref: "slack.post_message"
       params:
         message: "```[hubot] Unable to get node where hubot lives. Try setting the key 'hubot.node' in the datastore```"
-        channel: "{{channel}}"
+        channel: "#{{channel}}"
 
