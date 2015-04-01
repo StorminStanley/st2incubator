@@ -13,7 +13,7 @@ workflows:
       on-error:
         - fail
     tasks:
-      update_start_group_status:
+      update_group_start_status:
         action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.status'
@@ -100,8 +100,8 @@ workflows:
           message: "```ASG[<% %.asg %>] ASG is slimmer now. Looking good!```"
           channel: <% $.channel %>
         on-success:
-          - update_end_group_status
-      update_end_group_status:
+          - update_group_end_status
+      update_group_end_status:
         action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.status'
