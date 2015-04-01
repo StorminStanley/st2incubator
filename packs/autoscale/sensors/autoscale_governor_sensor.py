@@ -96,10 +96,20 @@ class AutoscaleGovernorSensor(PollingSensor):
         return check
 
     def _max_bound_check(self, max_nodes, total_nodes):
-        check = True if total_nodes > max_nodes else False
+        """
+        Make sure we have not reached the threshold and are not above max_nodes.
+
+        We only want to send scale up pulse if we are not above max_nodes threshold.
+        """
+        check = True if total_nodes < max_nodes else False
         return check
 
     def _min_bound_check(self, min_nodes, total_nodes):
+        """
+        Make sure we have not reached the min_nodes threshold.
+
+        We only want to scale down if current number of nodes is greater than min_nodes.
+        """
         check = True if total_nodes > min_nodes else False
         return check
 
