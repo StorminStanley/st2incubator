@@ -1,0 +1,15 @@
+---
+  name: 'chatops.hubot.deploy'
+  description: 'ChatOps to branch deploy'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!bot deploy'
+  action:
+    ref: hubot.chatops.deploy
+    params:
+      message: "{{trigger.text}}"
+      channel: "{{trigger.channel.name}}"

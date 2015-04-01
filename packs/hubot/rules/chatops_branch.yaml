@@ -1,0 +1,15 @@
+---
+  name: 'chatops.hubot.branch'
+  description: 'ChatOps to determine current running branch'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!bot branch'
+  action:
+    ref: hubot.chatops.branch
+    params:
+      channel: "{{trigger.channel.name}}"
+

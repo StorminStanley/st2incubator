@@ -1,0 +1,15 @@
+---
+  name: 'chatops.hubot.restart'
+  description: 'ChatOps to restart hubot'
+  enabled: true
+  trigger:
+    type: 'slack.message'
+  criteria:
+    trigger.text:
+      type: startswith
+      pattern: '!bot restart'
+  action:
+    ref: hubot.chatops.restart
+    params:
+      channel: "{{trigger.channel.name}}"
+
