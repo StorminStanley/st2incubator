@@ -11,7 +11,7 @@
     trigger.alert_policy_name:
       type: eq
       pattern: "Default server alert policy"
-    trigger.long_description:
+    trigger.alert.long_description:
       type: startswith
       pattern: 'Alert opened'
   action:
