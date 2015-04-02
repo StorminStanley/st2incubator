@@ -12,7 +12,7 @@ class ParseChatops(Action):
                  }
         """
         command = []
-        parameters = {}
+        parameters = { 'branch': 'master' }
         search = re.compile('((\w+=[\'"][-\.\w\s]+[\'"])|(\w+=[-\.\w]+)|([-\.\w]+))')
         matches = re.findall(search, message)
         for match in matches:
