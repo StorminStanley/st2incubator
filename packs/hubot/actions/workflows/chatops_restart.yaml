@@ -12,7 +12,7 @@
     -
       name: "notify_restart"
       ref: "slack.post_message"
-      publish:
+      params:
         message: "```[hubot] Restarting...```"
         channel: "#{{channel}}"
       on-success: "restart_hubot"
