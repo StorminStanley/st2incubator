@@ -14,7 +14,6 @@
       ref: "hubot.parse_chatops"
       params:
         message: "{{message}}"
-        hosts: "{{bot_host}}"
       publish:
         parameters: "{{parse_chatops.result.parameters}}"
       on-success: "notify_chatops"
