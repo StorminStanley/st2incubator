@@ -35,7 +35,7 @@
       name: "deploy_hubot"
       ref: hubot.deploy
       params:
-        branch: "{{parameters.branch}}"
+        branch: "{{branch}}"
         hosts: "{{bot_host}}"
       on-success: "restart_hubot"
     -
