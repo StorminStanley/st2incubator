@@ -13,7 +13,7 @@
       name: "get_branch"
       ref: "hubot.branch"
       params:
-        hosts: "{{hosts}}"
+        hosts: "{{bot_host}}"
       publish:
         branch: "{{get_branch.result}}"
       on-success: "notify_chatops"

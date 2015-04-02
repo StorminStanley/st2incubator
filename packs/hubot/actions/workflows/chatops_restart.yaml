@@ -20,7 +20,7 @@
       name: "restart_hubot"
       ref: "hubot.restart"
       params:
-        hosts: "{{hosts}}"
+        hosts: "{{bot_host}}"
       on-success: "chatops_success"
       on-failure: "chatops_failure"
     -
