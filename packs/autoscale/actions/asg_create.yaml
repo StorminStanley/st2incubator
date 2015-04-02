@@ -44,7 +44,7 @@ parameters:
   expand_delay:
     type: integer
     description: Length of time (in minutes) between autoscale expansion events
-    default: 20
+    default: 10
   deflate_by:
     type: integer
     description: Number of nodes to deflate-by at a time during auto-scaling
