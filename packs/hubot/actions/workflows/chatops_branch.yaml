@@ -15,7 +15,7 @@
       params:
         hosts: "{{bot_host}}"
       publish:
-        branch: "{{get_branch.stdout}}"
+        branch: "{{get_branch[bot_host].stdout}}"
       on-success: "notify_chatops"
       on-failure: "failure_get_branch"
     -
