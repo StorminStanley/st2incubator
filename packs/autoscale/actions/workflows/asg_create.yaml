@@ -20,6 +20,7 @@ workflows:
       - expand_delay
       - deflate_by
       - deflate_delay
+      - initial_status
       - channel
       - application_name
     task-defaults:
@@ -167,6 +168,15 @@ workflows:
         input:
           key: 'asg.<% $.name %>.vm_image_id'
           value: <% str($.vm_image_id) %>
+        on-success:
+          - store_initial_status
+      store_initial_status:
+        action: st2.kv.set
+        policies:
+          wait-before: 1
+        input:
+          key: 'asg.<% $.name %>.status'
+          value: <% str($.initial_status) %>
         on-success:
           - store_expand_by_nodes
       store_expand_by_nodes:

@@ -8,13 +8,13 @@
     trigger.alert.severity:
       type: eq
       pattern: 'critical'
-    trigger.alert_policy_name:
+    trigger.alert.alert_policy_name:
       type: eq
       pattern: "Default server alert policy"
-    trigger.long_description:
+    trigger.alert.long_description:
       type: startswith
       pattern: "Alert ended"
   action:
     ref: autoscale.recovery_alert
     parameters:
-      application_name: "Default Application"
+      application: "Default Application"

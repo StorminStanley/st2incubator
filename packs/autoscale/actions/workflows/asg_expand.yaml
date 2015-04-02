@@ -13,6 +13,14 @@ workflows:
       on-error:
         - fail
     tasks:
+      update_group_start_status:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.asg %>.status'
+          value: 'expanding'
+          ttl: 900
+        on-success:
+          - get_chatops_channel
       get_chatops_channel:
         action: st2.kv.get
         input:
@@ -93,3 +101,10 @@ workflows:
         input:
           message: "```ASG[<% $.asg %>] ASG Successfully Expanded!```"
           channel: <% $.channel %>
+        on-success:
+          - update_group_end_status
+      update_group_end_status:
+        action: st2.kv.set
+        input:
+          key: 'asg.<% $.asg %>.status'
+          value: 'idle'

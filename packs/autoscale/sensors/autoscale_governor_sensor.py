@@ -14,8 +14,14 @@ eventlet.monkey_patch(
     thread=True,
     time=True)
 
+GROUP_ACTIVE_STATUS = [
+    'expanding',
+    'deflating'
+]
+
+
 class AutoscaleGovernorSensor(PollingSensor):
-    def __init__(self, sensor_service, config=None, poll_interval=30):
+    def __init__(self, sensor_service, config=None, poll_interval=60):
         super(AutoscaleGovernorSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
@@ -23,8 +29,8 @@ class AutoscaleGovernorSensor(PollingSensor):
         self._kvp_get = self._sensor_service.get_value
 
         self._trigger = {
-            'expand': 'ScaleUpPulse',
-            'deflate': 'ScaleDownPulse'
+            'expand': 'autoscale.ScaleUpPulse',
+            'deflate': 'autoscale.ScaleDownPulse'
         }
         self._bound = {
             'expand': 'max',
@@ -75,11 +81,17 @@ class AutoscaleGovernorSensor(PollingSensor):
         trigger_type         = self._trigger[action]
         bound                = self._bound[action]
 
+        group_status         = self._kvp_get('asg.%s.status' % (asg), local=False)
         last_event_timestamp = self._kvp_get('asg.%s.last_%s_timestamp' % (asg, action), local=False)
         event_delay          = self._kvp_get('asg.%s.%s_delay' % (asg, action), local=False)
         current_node_count   = self._kvp_get('asg.%s.total_nodes' % (asg), local=False)
         node_bound           = self._kvp_get('asg.%s.%s_nodes' % (asg, bound), local=False)
         total_nodes          = self._kvp_get('asg.%s.total_nodes' % (asg), local=False)
+
+        if group_status in GROUP_ACTIVE_STATUS:
+            self._logger.info("AutoScaleGovernor: Autoscale group is currently %s. Skipping..." %
+                              (group_status))
+            return
 
         # ensure we have all the required variables
         if last_event_timestamp and event_delay and current_node_count and node_bound and total_nodes:
@@ -96,10 +108,20 @@ class AutoscaleGovernorSensor(PollingSensor):
         return check
 
     def _max_bound_check(self, max_nodes, total_nodes):
-        check = True if total_nodes > max_nodes else False
+        """
+        Make sure we have not reached the threshold and are not above max_nodes.
+
+        We only want to send scale up pulse if we are not above max_nodes threshold.
+        """
+        check = True if total_nodes < max_nodes else False
         return check
 
     def _min_bound_check(self, min_nodes, total_nodes):
+        """
+        Make sure we have not reached the min_nodes threshold.
+
+        We only want to scale down if current number of nodes is greater than min_nodes.
+        """
         check = True if total_nodes > min_nodes else False
         return check
 
