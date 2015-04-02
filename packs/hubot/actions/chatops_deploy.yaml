@@ -3,7 +3,7 @@ name: "chatops.deploy"
 runner_type: "action-chain"
 description: "ChatOps entry point for hubot.deploy"
 enabled: true
-entry_point: "workflows/chatops_branch.yaml"
+entry_point: "workflows/chatops_deploy.yaml"
 parameters:
   message:
     type: string

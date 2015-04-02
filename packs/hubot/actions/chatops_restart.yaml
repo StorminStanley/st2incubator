@@ -3,7 +3,7 @@ name: "chatops.restart"
 runner_type: "action-chain"
 description: "ChatOps entry point for hubot.restart"
 enabled: true
-entry_point: "workflows/chatops_branch.yaml"
+entry_point: "workflows/chatops_restart.yaml"
 parameters:
   channel:
     type: string
