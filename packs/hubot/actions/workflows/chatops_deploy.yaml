@@ -15,7 +15,7 @@
       params:
         message: "{{message}}"
       publish:
-        branch: "{{parse_chatops.parameters.branch}}"
+        branch: "{{parse_chatops.result.parameters.branch}}"
       on-success: "notify_chatops"
       on-failure: "failure_parse_chatops"
     -
