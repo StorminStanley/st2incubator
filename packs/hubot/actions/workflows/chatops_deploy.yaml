@@ -15,14 +15,14 @@
       params:
         message: "{{message}}"
       publish:
-        parameters: "{{parse_chatops.result.parameters}}"
+        branch: "{{parse_chatops.parameters.branch}}"
       on-success: "notify_chatops"
       on-failure: "failure_parse_chatops"
     -
       name: "notify_chatops"
       ref: "slack.post_message"
       params:
-        message: "```[hubot] Deploying hubot on branch {{parameters.branch}}...```"
+        message: "```[hubot] Deploying hubot on branch {{branch}}...```"
         channel: "#{{channel}}"
       on-success: "deploy_hubot"
     -
@@ -37,7 +37,18 @@
       params:
         branch: "{{parameters.branch}}"
         hosts: "{{bot_host}}"
-      on-success: "get_branch"
+      on-success: "restart_hubot"
+    -
+      name: restart_hubot
+      ref: hubot.chatops.restart
+      params:
+        channel: "{{channel}}"
+      on-success: get_branch
+    -
+      name: get_branch
+      ref: hubot.chatops.branch
+      params:
+        channel: "{{channel}}"
     -
       name: "failure_get_node"
       ref: "slack.post_message"
