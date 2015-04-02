@@ -10,6 +10,6 @@
       pattern: '!bot deploy'
   action:
     ref: hubot.chatops.deploy
-    params:
+    paramaters:
       message: "{{trigger.text}}"
       channel: "{{trigger.channel.name}}"

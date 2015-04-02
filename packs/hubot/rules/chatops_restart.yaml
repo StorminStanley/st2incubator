@@ -10,6 +10,6 @@
       pattern: '!bot restart'
   action:
     ref: hubot.chatops.restart
-    params:
+    parameters:
       channel: "{{trigger.channel.name}}"
 
