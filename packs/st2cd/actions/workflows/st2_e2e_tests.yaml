@@ -34,7 +34,7 @@
         name: "core_http_google"
         token: "{{st2_token}}"
         action: "core.http"
-        params: "url=http://www.google.com"
+        params: "url=http://www.marshmallowkittens.org"
         hosts: "{{hostname}}"
       on-success: "core_remote_single_host"
     -
