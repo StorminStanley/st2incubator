@@ -27,7 +27,7 @@ class PostMessageAction(Action):
             body['whisper'] = whisper
 
         data = json.dumps(body)
-        response = requests.post(url=endpoint, headers=headers, data=data)
+        response = requests.post(url=url, headers=headers, data=data)
 
         if response.status_code == httplib.OK:
             self.logger.info('Message successfully posted')
