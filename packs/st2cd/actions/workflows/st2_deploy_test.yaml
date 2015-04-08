@@ -24,7 +24,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "curl -o /tmp/st2_deploy.sh https://ops.stackstorm.net/releases/st2/scripts/st2_deploy.sh"
+        cmd: "curl -o /tmp/st2_deploy.sh https://downloads.stackstorm.net/releases/st2/scripts/st2_deploy.sh"
       on-success: "run_st2_deploy"
     -
       name: "run_st2_deploy"
