@@ -55,5 +55,23 @@
         token: "{{st2_token}}"
         action: "tests.test_quickstart"
         hosts: "{{hostname}}"
+      on-success: "test_quickstart_key"
+    -
+      name: "test_quickstart_key"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_quickstart"
+        token: "{{st2_token}}"
+        action: "tests.test_quickstart"
+        hosts: "{{hostname}}"
+      on-success: "test_quickstart_rule"
+    -
+      name: "test_quickstart_rule"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_quickstart"
+        token: "{{st2_token}}"
+        action: "tests.test_quickstart"
+        hosts: "{{hostname}}"
 
   default: "get_st2_token"
