@@ -8,6 +8,9 @@
     build_server:
       type: "string"
       required: true
+     dl_server:
+       type: "string"
+       required: true
     repo:
       type: "string"
       description: "Url of the repo to clone"
