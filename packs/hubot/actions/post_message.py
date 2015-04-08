@@ -11,6 +11,7 @@ __all__ = [
 class PostMessageAction(Action):
     def run(self, message, channel, user=None, whisper=False):
         endpoint = self.config['endpoint']
+        url = endpoint + "/hubot/st2"
 
         headers = {}
         headers['Content-Type'] = 'application/json'
