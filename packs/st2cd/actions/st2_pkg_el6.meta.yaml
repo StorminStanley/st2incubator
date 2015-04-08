@@ -8,7 +8,7 @@
     build_server:
       type: "string"
       required: true
-     dl_server:
+    dl_server:
        type: "string"
        required: true
     repo:
