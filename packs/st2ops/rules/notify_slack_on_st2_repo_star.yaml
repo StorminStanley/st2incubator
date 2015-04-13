@@ -1,0 +1,19 @@
+---
+name: notify_slack_on_st2_repo_star
+description: Send a message to Slack when a user stars st2 repository.
+enabled: true
+trigger:
+  type: github.repository_event
+  parameters: {}
+criteria:
+  trigger.repository:
+    pattern: st2
+    type: equals
+  trigger.type:
+    pattern: WatchEvent
+    type: equals
+action:
+  ref: slack.post_message
+  parameters:
+    message: "User <{{trigger.actor.url}}|{{trigger.actor.login}}> has starred <https://github.com/StackStorm/st2|st2> repository on {{trigger.created_at}}"
+    channel: "#github"
