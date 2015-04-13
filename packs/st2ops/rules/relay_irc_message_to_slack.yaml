@@ -1,0 +1,13 @@
+---
+name: relay_irc_message_to_slack
+description: "Relay IRC messages from #stackstorm to Slack."
+enabled: true
+trigger:
+  type: irc.pubmsg
+  parameters: {}
+criteria: {}
+action:
+  ref: slack.post_message
+  parameters:
+    message: "{{trigger.source.nick}} on {{trigger.channel}}: {{trigger.message}}"
+    channel: "#irc-relay"

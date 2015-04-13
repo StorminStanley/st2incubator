@@ -1,0 +1,19 @@
+---
+name: relay_matching_tweet_to_slack
+description: "Relay Tweets which mention StackStorm to the Slack channel."
+enabled: true
+trigger:
+  type: twitter.matched_tweet
+  parameters: {}
+criteria:
+  trigger.text:
+    pattern: "^((?i)(?!@stackstorm).)*$"
+    type: matchregex
+  trigger.user.screen_name:
+    pattern: "^((?i)(?!stackstorm).)*$"
+    type: matchregex
+action:
+  ref: slack.post_message
+  parameters:
+    message: "@{{trigger.user.screen_name}} tweeted on {{trigger.created_at}}: {{trigger.text}} - {{trigger.url}}"
+    channel: "#twitter-relay"
