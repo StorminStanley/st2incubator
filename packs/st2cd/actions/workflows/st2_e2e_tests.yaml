@@ -54,7 +54,7 @@
         name: "test_quickstart"
         token: "{{st2_token}}"
         action: "tests.test_quickstart"
-        params: ""
+        params: "token={{st2_token}}"
         hosts: "{{hostname}}"
       on-success: "test_quickstart_key"
     -
@@ -64,7 +64,7 @@
         name: "test_quickstart"
         token: "{{st2_token}}"
         action: "tests.test_quickstart_key"
-        params: ""
+        params: "token={{st2_token}}"
         hosts: "{{hostname}}"
       on-success: "test_quickstart_rules"
     -
@@ -74,7 +74,7 @@
         name: "test_quickstart"
         token: "{{st2_token}}"
         action: "tests.test_quickstart_rules"
-        params: ""
+        params: "token={{st2_token}}"
         hosts: "{{hostname}}"
 
   default: "get_st2_token"
