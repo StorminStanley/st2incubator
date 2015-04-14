@@ -15,7 +15,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "/usr/local/lib/python2.7/dist-packages/st2common/bin/st2-setup-tests"
+        cmd: "/usr/lib/python2.7/dist-packages/st2common/bin/st2-setup-tests"
       on-success: "core_local_date"
     -
       name: "core_local_date"
@@ -54,6 +54,7 @@
         name: "test_quickstart"
         token: "{{st2_token}}"
         action: "tests.test_quickstart"
+        params: ""
         hosts: "{{hostname}}"
       on-success: "test_quickstart_key"
     -
@@ -62,16 +63,18 @@
       params:
         name: "test_quickstart"
         token: "{{st2_token}}"
-        action: "tests.test_quickstart"
+        action: "tests.test_quickstart_key"
+        params: ""
         hosts: "{{hostname}}"
-      on-success: "test_quickstart_rule"
+      on-success: "test_quickstart_rules"
     -
-      name: "test_quickstart_rule"
+      name: "test_quickstart_rules"
       ref: "st2cd.action_run"
       params:
         name: "test_quickstart"
         token: "{{st2_token}}"
-        action: "tests.test_quickstart"
+        action: "tests.test_quickstart_rules"
+        params: ""
         hosts: "{{hostname}}"
 
   default: "get_st2_token"
