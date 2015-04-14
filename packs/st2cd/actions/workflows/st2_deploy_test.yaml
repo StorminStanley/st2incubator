@@ -33,6 +33,21 @@
         hosts: "{{hostname}}"
         cmd: "bash /tmp/st2_deploy.sh {{version}}"
         timeout: 3600
+      on-success: "auth_hack"
+    -
+      name: "auth_hack"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: 'sed -i -e "s~\(COMPONENTS=.*st2resultstracker\)\"$~\1 st2auth\"~g" /usr/bin/st2ctl'
+      on-success: "restart_st2"
+    -
+      name: "restart_st2"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "/usr/bin/st2ctl restart && sleep 20"
+        timeout: 3600
       on-success: "run_tests"
     -
       name: "run_tests"
