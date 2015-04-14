@@ -23,3 +23,5 @@
             revision: "{{trigger.parameters.revision}}"
             environment: "{{trigger.parameters.environment}}"
             build: "{{trigger.parameters.build}}"
+            st2_username: "testu"
+            st2_password: "testp"
