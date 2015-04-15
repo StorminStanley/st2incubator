@@ -39,7 +39,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: 'sed -i -e "s~\(COMPONENTS=.*st2resultstracker\)\\"$~\1 st2auth\\"~g" /usr/bin/st2ctl'
+        cmd: 'sed -i -e "s~\(COMPONENTS=.*st2resultstracker\)\\"$~\\1 st2auth\\"~g" /usr/bin/st2ctl'
       on-success: "restart_st2"
     -
       name: "restart_st2"
