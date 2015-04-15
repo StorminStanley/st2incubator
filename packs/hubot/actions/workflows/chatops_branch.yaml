@@ -1,0 +1,39 @@
+---
+  chain:
+    -
+      name: "get_hubot_node"
+      ref: "st2.kv.get"
+      params:
+        key: "hubot.node"
+      publish:
+        bot_host: "{{get_hubot_node.result}}"
+      on-success: "get_branch"
+      on-failure: "failure_get_node"
+    -
+      name: "get_branch"
+      ref: "hubot.branch"
+      params:
+        hosts: "{{bot_host}}"
+      publish:
+        branch: "{{get_branch[bot_host].stdout}}"
+      on-success: "notify_chatops"
+      on-failure: "failure_get_branch"
+    -
+      name: "notify_chatops"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] {{branch}}```"
+        channel: "#{{channel}}"
+    -
+      name: "failure_get_branch"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] Unable to get branch for hubot```"
+        channel: "#{{channel}}"
+    -
+      name: "failure_get_node"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] Unable to get node where hubot lives. Try setting the key 'hubot.node' in the datastore```"
+        channel: "#{{channel}}"
+

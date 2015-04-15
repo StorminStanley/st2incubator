@@ -1,0 +1,16 @@
+---
+name: "chatops.notify_hubot"
+description: "Sample rule firing on action completion."
+enabled: true
+trigger:
+  pack: "core"
+  type: "core.st2.generic.notifytrigger"
+criteria:
+  trigger.channel:
+    pattern: hubot
+    type: equals
+action:
+  parameters:
+    channel: "{{trigger.channel}}"
+    message: "{{trigger.message}}"
+

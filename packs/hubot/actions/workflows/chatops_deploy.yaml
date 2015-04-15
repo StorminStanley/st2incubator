@@ -1,0 +1,58 @@
+---
+  chain:
+    -
+      name: "get_hubot_node"
+      ref: "st2.kv.get"
+      params:
+        key: "hubot.node"
+      publish:
+        bot_host: "{{get_hubot_node.result}}"
+      on-success: "parse_chatops"
+      on-failure: "failure_get_node"
+    -
+      name: "parse_chatops"
+      ref: "hubot.parse_chatops"
+      params:
+        message: "{{message}}"
+      publish:
+        branch: "{{parse_chatops.result.parameters.branch}}"
+      on-success: "notify_chatops"
+      on-failure: "failure_parse_chatops"
+    -
+      name: "notify_chatops"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] Deploying hubot on branch {{branch}}...```"
+        channel: "#{{channel}}"
+      on-success: "deploy_hubot"
+    -
+      name: "failure_parse_chatops"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] Unable to parse ChatOps for deploy...```"
+        channel: "#{{channel}}"
+    -
+      name: "deploy_hubot"
+      ref: hubot.deploy
+      params:
+        branch: "{{branch}}"
+        hosts: "{{bot_host}}"
+      on-success: "restart_hubot"
+    -
+      name: restart_hubot
+      ref: hubot.chatops.restart
+      params:
+        channel: "{{channel}}"
+      on-success: get_branch
+    -
+      name: get_branch
+      ref: hubot.chatops.branch
+      params:
+        channel: "{{channel}}"
+    -
+      name: "failure_get_node"
+      ref: "slack.post_message"
+      params:
+        message: "```[hubot] Unable to get node where hubot lives. Try setting the key 'hubot.node' in the datastore```"
+        channel: "#{{channel}}"
+
