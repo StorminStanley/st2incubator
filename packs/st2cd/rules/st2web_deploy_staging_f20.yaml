@@ -12,6 +12,6 @@
             pattern: "StackStorm/st2web"
             type: "equals"
     action:
-        ref: "st2cd.web_deploy"
+        ref: "st2cd.st2_web_deploy"
         parameters:
             hostname: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_F20']|join %}{{system[host_key]}}"
