@@ -9,21 +9,3 @@
       type: "string"
       description: "Hostname to deploy st2web on"
       required: true
-    branch:
-      type: "string"
-      description: "The branch to clone"
-      default: "master"
-    revision:
-      type: "string"
-      description: ""
-    author:
-      type: "string"
-      description: ""
-      required: false
-    build:
-      type: "string"
-      description: "Build number"
-      required: true
-    environment:
-      type: "string"
-      description: ""
