@@ -1,0 +1,12 @@
+---
+  name: "st2_update_web_cfg"
+  runner_type: "run-remote-script"
+  description: "Update web config"
+  enabled: true
+  entry_point: "st2_update_web_cfg.sh"
+  parameters: 
+    repo: 
+      type: "string"
+      description: "config file path"
+      position: 0
+      default: null

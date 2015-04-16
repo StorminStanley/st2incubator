@@ -27,6 +27,12 @@
       params:
         hosts: "{{hostname}}"
         cmd: "tar -xvf /tmp/webui.tar.gz -C /opt/stackstorm/static/webui --strip-components=1"
+      on-success: "update_config"
+    -
+      name: "update_config"
+      ref: "st2cd.st2_update_web_cfg"
+      params:
+        hosts: "{{hostname}}"
       on-success: "restart_st2"
     -
       name: "restart_st2"
