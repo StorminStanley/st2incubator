@@ -7,7 +7,7 @@
   parameters:
     sudo:
       immutable: true
-      default: false
+      default: true
     cmd:
       immutable: true
       default: ""
