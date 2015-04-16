@@ -1,0 +1,16 @@
+---
+  name: "install_tests"
+  runner_type: "run-remote-script"
+  description: "Install St2 tests"
+  enabled: true
+  entry_point: "install_tests.sh"
+  parameters:
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
