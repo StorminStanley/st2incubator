@@ -38,7 +38,7 @@
       name: "deploy_webui"
       ref: "st2cd.st2_web_deploy"
       params:
-        hosts: "{{hostname}}"
+        hostname: "{{hostname}}"
       on-success: "get_st2_token"
     -
       name: "get_st2_token"
