@@ -12,10 +12,9 @@
       on-success: "install_tests"
     -
       name: "install_tests"
-      ref: "core.remote_sudo"
+      ref: "st2cd.install_tests"
       params:
         hosts: "{{hostname}}"
-        cmd: "/usr/lib/python2.7/dist-packages/st2common/bin/st2-setup-tests"
       on-success: "core_local_date"
     -
       name: "core_local_date"
