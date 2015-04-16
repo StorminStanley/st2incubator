@@ -1,0 +1,17 @@
+---
+    name: "st2web_deploy_staging_ubuntu14"
+    description: "Run pytests on each commit to master"
+    enabled: true
+    trigger:
+        type: "webhooks.github_event"
+    criteria:
+        trigger.body.ref:
+            pattern: "refs/heads/master"
+            type: "equals"
+        trigger.body.repository.full_name:
+            pattern: "StackStorm/st2web"
+            type: "equals"
+    action:
+        ref: "st2cd.web_deploy"
+        parameters:
+            hostname: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_UBUNTU14']|join %}{{system[host_key]}}"
