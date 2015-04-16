@@ -1,16 +1,17 @@
+# notify_hubot.yaml
 ---
 name: "chatops.notify_hubot"
-description: "Sample rule firing on action completion."
 enabled: true
+description: "Notification rule to send messages to Hubot"
 trigger:
-  pack: "core"
+  pack: "chatops"
   type: "core.st2.generic.notifytrigger"
 criteria:
   trigger.channel:
-    pattern: hubot
-    type: equals
+    pattern: "hubot"
+    type: "equals"
 action:
+  ref: hubot.post_message
   parameters:
-    channel: "{{trigger.channel}}"
-    message: "{{trigger.message}}"
-
+    channel: "#chatops"
+    message: "{{trigger.data.result}}"
