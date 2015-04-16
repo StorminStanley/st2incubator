@@ -14,4 +14,4 @@
     action:
         ref: "st2cd.st2_web_deploy"
         parameters:
-            hostname: "{% set host_key = ['st2_stage_', trigger.parameters.branch, '_F20']|join %}{{system[host_key]}}"
+            hostname: "{{system.st2_stage_master_F20}}"
