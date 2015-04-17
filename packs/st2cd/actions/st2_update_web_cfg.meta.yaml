@@ -9,6 +9,5 @@
       type: "string"
       description: "config file path"
       position: 0
-      default: null
     sudo:
       default: true
