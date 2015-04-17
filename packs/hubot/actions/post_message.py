@@ -1,6 +1,7 @@
 import json
 import httplib
 import requests
+from six.moves.urllib.parse import urljoin
 
 from st2actions.runners.pythonrunner import Action
 
@@ -11,7 +12,7 @@ __all__ = [
 class PostMessageAction(Action):
     def run(self, message, channel, user=None, whisper=False):
         endpoint = self.config['endpoint']
-        url = endpoint + "/hubot/st2"
+        url = urljoin(endpoint, "/hubot/st2")
 
         headers = {}
         headers['Content-Type'] = 'application/json'
