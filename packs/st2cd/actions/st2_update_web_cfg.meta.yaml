@@ -9,5 +9,6 @@
       type: "string"
       description: "config file path"
       position: 0
+      default: "/opt/stackstorm/static/webui/config.js"
     sudo:
       default: true
