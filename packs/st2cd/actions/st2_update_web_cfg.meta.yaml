@@ -5,8 +5,10 @@
   enabled: true
   entry_point: "st2_update_web_cfg.sh"
   parameters: 
-    repo: 
+    config_file: 
       type: "string"
       description: "config file path"
       position: 0
       default: null
+    sudo:
+      default: true

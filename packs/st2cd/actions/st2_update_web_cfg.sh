@@ -6,6 +6,7 @@ else
 	WEBUI_CONFIG_PATH=$1
 fi
 
+echo "Updating ${WEBUI_CONFIG_PATH}..."
 echo -e "'use strict';
 angular.module('main')
 .constant('st2Config', {
