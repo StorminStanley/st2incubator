@@ -13,5 +13,6 @@ criteria:
 action:
   ref: hubot.post_message
   parameters:
-    channel: "#chatops"
+    channel: "{{trigger.data.source_channel}}"
+    user: "{{trigger.data.user}}"
     message: "{{trigger.data.result}}"
