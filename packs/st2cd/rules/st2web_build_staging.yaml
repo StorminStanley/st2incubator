@@ -1,0 +1,20 @@
+---
+    name: "st2web_build_staging"
+    description: "Build and deploy WebUI on commit to st2web"
+    enabled: true
+    trigger:
+        type: "webhooks.github_event"
+    criteria:
+        trigger.body.ref:
+            pattern: "refs/heads/master"
+            type: "equals"
+        trigger.body.repository.full_name:
+            pattern: "StackStorm/st2web"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_webui_pkg"
+        parameters:
+            repo: "{{trigger.body.repository.clone_url}}"
+            branch: "master"
+            environment: "staging"
+            dl_server: "dl-staging201"
