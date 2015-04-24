@@ -1,15 +1,18 @@
 ---
     name: "st2web_deploy_staging_f20"
-    description: "Run pytests on each commit to master"
+    description: "Build and deploy WebUI on commit to st2web"
     enabled: true
     trigger:
         type: "webhooks.github_event"
     criteria:
-        trigger.body.ref:
-            pattern: "refs/heads/master"
+        trigger.action_name:
+            pattern: "st2cd.st2_webui_pkg"
             type: "equals"
-        trigger.body.repository.full_name:
-            pattern: "StackStorm/st2web"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
             type: "equals"
     action:
         ref: "st2cd.st2_web_deploy"
