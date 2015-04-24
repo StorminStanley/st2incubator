@@ -60,7 +60,7 @@
       name: "test_quickstart_key"
       ref: "st2cd.action_run"
       params:
-        name: "test_quickstart"
+        name: "test_quickstart_key"
         token: "{{st2_token}}"
         action: "tests.test_quickstart_key"
         params: "token={{st2_token}}"
@@ -70,9 +70,19 @@
       name: "test_quickstart_rules"
       ref: "st2cd.action_run"
       params:
-        name: "test_quickstart"
+        name: "test_quickstart_rules"
         token: "{{st2_token}}"
         action: "tests.test_quickstart_rules"
+        params: "token={{st2_token}}"
+        hosts: "{{hostname}}"
+      on-success: "test_quickstart_packs"
+    -
+      name: "test_quickstart_packs"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_quickstart_packs"
+        token: "{{st2_token}}"
+        action: "tests.test_quickstart_packs"
         params: "token={{st2_token}}"
         hosts: "{{hostname}}"
 
