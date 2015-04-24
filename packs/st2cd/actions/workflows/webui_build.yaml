@@ -95,5 +95,12 @@
         hosts: "{{dl_server}}"
         cmd: "mkdir -p /var/www/sites/releases/html/releases/st2/{{web_version}}/webui/ ; cp \"/tmp/webui-{{web_version}}.tar.gz\" /var/www/sites/releases/html/releases/st2/{{web_version}}/webui/"
         timeout: 600
+      on-success: "clean_repo"
+    -
+      name: "clean_repo"
+      ref: "core.remote"
+      params:
+        hosts: "{{build_server}}"
+        cmd: "rm -Rf {{repodir}}"
 
   default: "get_build_server"
