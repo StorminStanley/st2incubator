@@ -15,7 +15,7 @@
       required: true
     cmd: 
       immutable: false
-      default: "st2 --auth-url http://localhost:9100 auth {{st2_username}} -p {{st2_password}} -j"
+      default: "st2 auth {{st2_username}} -p {{st2_password}} -j"
     kwarg_op: 
       immutable: true
       default: "--"
