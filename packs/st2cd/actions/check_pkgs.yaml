@@ -1,0 +1,16 @@
+---
+  name: "check_pkgs"
+  runner_type: "run-remote-script"
+  description: "Check the packages"
+  enabled: true
+  entry_point: "check_pkgs.sh"
+  parameters: 
+    builddir:
+      type: "string"
+      required: true
+      description: "Location on disk for the packages"
+      position: 0
+    packages:
+      type: "string"
+      default: "st2common st2reactor st2actions st2api st2auth st2debug"
+      position: 1
