@@ -46,6 +46,14 @@
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
         timeout: 1800
+      on-success: "check_pkgs"
+    -
+      name: "check_pkgs"
+      ref: "st2cd.check_pkgs"
+      params:
+        hosts: "{{build_server}}"
+        builddir: "/home/stanley/rpmbuild/RPMS/noarch"
+        packages: "st2common st2reactor st2actions st2api st2auth st2debug"
       on-success: "create_build_dir"
     -
       name: "create_build_dir"
