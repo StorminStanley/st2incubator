@@ -20,4 +20,4 @@ sed -i "s/^VER :=.*/VER=${ST2VER}/g" */Makefile
 sed -i "s/RELEASE=[0-9]\+/RELEASE=${BUILD_NUMBER}/g" st2client/Makefile
 sed -i "s~version=.*~version=\"${ST2VER}\",~" *!(st2client)/setup.py
 sed -i "s~version=.*~version=\"${CLIENTVER}\",~" st2client/setup.py
-sed -i "s~__version__ =.*~__version__ ='${CLIENTVER}',~" st2client/st2client/__init__.py
+sed -i "s~__version__ =.*~__version__ = '${CLIENTVER}',~" st2client/st2client/__init__.py
