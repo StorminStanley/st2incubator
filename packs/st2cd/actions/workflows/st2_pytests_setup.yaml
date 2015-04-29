@@ -55,6 +55,14 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_repo}}"
         target: "{{st2_repo_target}}"
+      on-success: "clone_st2_web_repo"
+    -
+      name: "clone_st2_web_repo"
+      ref: "st2cd.git_simple_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_web_repo}}"
+        target: "{{st2_web_repo_target}}"
       on-success: "clone_st2_contrib_repo"
     -
       name: "clone_st2_contrib_repo"
@@ -86,6 +94,14 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo_target}}"
+        branch: "v{{st2_release_version}}"
+      on-success: "branch_st2_web"
+    -
+      name: "branch_st2_web"
+      ref: "st2cd.git_simple_branch"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_web_repo_target}}"
         branch: "v{{st2_release_version}}"
       on-success: "branch_st2"
     -
