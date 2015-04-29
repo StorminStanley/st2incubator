@@ -52,6 +52,10 @@
     hostname:
       type: "string"
       required: true
+    repo_target: 
+      type: "string"
+      default: "st2_{{branch}}"
+      description: ""
     dl_server:
       type: "string"
       default: "dl-staging201"
