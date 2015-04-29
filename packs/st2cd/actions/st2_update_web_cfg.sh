@@ -12,7 +12,7 @@ angular.module('main')
 .constant('st2Config', {
 hosts: [{
   name: 'StackStorm',
-  url: '',
-  auth: true
+  url: '//:9101',
+  auth: '//:9100'
 }]
 });" > ${WEBUI_CONFIG_PATH}
