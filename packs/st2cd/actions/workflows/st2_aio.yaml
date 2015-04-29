@@ -61,7 +61,7 @@
       ref: "core.remote"
       params: 
         hosts: "{{hostname}}"
-        cmd: "cd {{repodir}} && make rpms"
+        cmd: "cd /tmp/{{repodir}} && make rpms"
         timeout: 1800
       on-success: "check_pkgs"
     -
