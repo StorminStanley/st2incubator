@@ -1,0 +1,60 @@
+---
+  name: "st2_aio"
+  runner_type: "action-chain"
+  description: "Unit test, pkg, deploy st2"
+  enabled: true
+  entry_point: "workflows/st2_aio.yaml"
+  parameters:
+    repo: 
+      type: "string"
+      description: "Url of the repo to clone"
+      default: "https://github.com/StackStorm/st2.git"
+    branch:
+      type: "string"
+      description: "The branch to build the packages were built from."
+      default: "master"
+      required: true
+    revision: 
+      type: "string"
+      description: ""
+    build:
+      type: "string"
+      description: "Build number"
+      required: true
+    version: 
+      type: "string"
+      description: "Version of StackStorm to deploy"
+      default: "0.8.3"
+    distro:
+      type: "string"
+      description: "Linux distro to test against"
+      default: "UBUNTU14"
+    instance_type:
+      type: "string"
+      description: "Flavor of to use for instance creation"
+      default: "m3.medium"
+    environment:
+      type: "string"
+      description: "Environment to deploy host to"
+      default: "sandbox"
+    key_name:
+      type: "string"
+      description: "SSH key to use during intial instance creation"
+      default: "st2_deploy"
+    base_user:
+      type: "string"
+      description: "Username for initial ssh test"
+      default: "ubuntu"
+    keyfile:
+      type: "string"
+      description: "Path to local private key that corresponds to {{key_name}}"
+      default: "/home/stanley/.ssh/stanley_rsa"
+    hostname:
+      type: "string"
+      required: true
+    dl_server:
+      type: "string"
+      default: "dl-staging201"
+    role:
+      type: "string"
+      default: "st2staging"
