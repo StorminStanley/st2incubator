@@ -9,6 +9,10 @@
       type: "string"
       description: "Url of the st2 repo to clone"
       default: "https://github.com/StackStorm/st2.git"
+    st2_web_repo:
+      type: "string"
+      description: "Url of the st2web repo to clone"
+      default: "https://github.com/StackStorm/st2web.git"
     st2_contrib_repo:
       type: "string"
       description: "Url of the st2contrib repo to clone"
@@ -21,6 +25,10 @@
       type: "string"
       default: "/home/stanley/st2"
       description: "Path to clone st2 repo to."
+    st2_web_repo_target:
+      type: "string"
+      default: "/home/stanley/st2web"
+      description: "Path to clone st2web repo to."
     st2_contrib_repo_target:
       type: "string"
       default: "/home/stanley/st2contrib"
