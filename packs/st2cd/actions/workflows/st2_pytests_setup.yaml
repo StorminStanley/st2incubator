@@ -1,10 +1,12 @@
 ---
+  var:
+    st2_release_base_ver: {{st2_release_version|truncate(3,True,'')}}
   chain:
     -
       name: "get_current_build"
       ref: "st2cd.kvstore"
       params:
-        key: "st2_v{{st2_release_version}}_build_number"
+        key: "st2_v{{st2_release_base_ver}}_build_number"
         action: "get"
       on-failure: "build_set"
       on-success: "build_inc"
@@ -13,7 +15,7 @@
       ref: "st2cd.kvstore"
       params:
         action: "create"
-        key: "st2_v{{st2_release_version}}_build_number"
+        key: "st2_v{{st2_release_base_ver}}_build_number"
         value: "1"
       on-success: "get_build_server"
     -
@@ -21,7 +23,7 @@
       ref: "st2cd.kvstore"
       params:
         action: "update"
-        key: "st2_v{{st2_release_version}}_build_number"
+        key: "st2_v{{st2_release_base_ver}}_build_number"
         value: "{% set build = get_current_build.result|int +1 %} {{build}}"
       on-success: "get_build_server"
     -
@@ -38,7 +40,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         st2-base-url: "{{st2_base_url}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "setup_tag_rule_for_branch"
     -
       name: "setup_tag_rule_for_branch"
@@ -46,7 +48,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         st2-base-url: "{{st2_base_url}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "clone_st2_repo"
     -
       name: "clone_st2_repo"
@@ -86,7 +88,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_contrib_repo_target}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "branch_st2_express"
     -
       name: "branch_st2_express"
@@ -94,7 +96,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo_target}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "branch_st2_web"
     -
       name: "branch_st2_web"
@@ -102,7 +104,7 @@
       params:
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_web_repo_target}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "branch_st2"
     -
       name: "branch_st2"
@@ -111,7 +113,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_repo_target}}"
         version: "{{st2_release_version}}"
-        branch: "v{{st2_release_version}}"
+        branch: "v{{st2_release_base_ver}}"
       on-success: "slack_success"
       on-failure: "slack_failure"
     -
@@ -119,12 +121,12 @@
       ref: "slack.post_message"
       params:
         channel: "#releasemgmt"
-        message: "```[RELEASE_SETUP]\n STATUS: SUCCESS\n VERSION: {{st2_release_version}}```"
+        message: "```[RELEASE_SETUP]\n STATUS: SUCCESS\n VERSION: {{st2_release_base_ver}}```"
     -
       name: "slack_failure"
       ref: "slack.post_message"
       params:
         channel: "#releasemgmt"
-        message: "```[RELEASE_SETUP]\n STATUS: FAILURE\n VERSION: {{st2_release_version}}```"
+        message: "```[RELEASE_SETUP]\n STATUS: FAILURE\n VERSION: {{st2_release_base_ver}}```"
 
   default: "get_current_build"

@@ -39,7 +39,7 @@
       description: "Path to clone st2express repo to."
     st2_release_version:
       type: "string"
-      description: "Version to use for the release."
+      description: "Version to use for the release. Should include the patch e.g. 0.1.0"
       required: true
     st2_base_url:
       type: "string"
