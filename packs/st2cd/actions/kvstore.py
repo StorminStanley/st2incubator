@@ -25,16 +25,12 @@ class KVPAction(Action):
 
             return kvp.value
         else:
-            instance = KeyValuePair()
-            instance.id = client.keys.get_by_name(key).name
+            instance = client.keys.get_by_name(key) or KeyValuePair()
+            instance.id = key
             instance.name = key
             instance.value = value
 
-            try:
-                kvstore = getattr(client.keys, action)
-                kvp = kvstore(instance)
-            except Exception as e:
-                raise
+            kvp = client.keys.update(instance) if action in ['create', 'update'] else None
 
             if action == 'delete':
                 return kvp
