@@ -29,7 +29,7 @@
         branch: "{{branch}}"
         timeout: 300
       publish:
-        repodir: "{{clone_repo[build_server].stdout}}"
+        repodir: "{{clone_repo[hostname].stdout}}"
       on-success: "version"
     -
       name: "version"
@@ -38,7 +38,7 @@
         hosts: "{{hostname}}"
         repo: "{{repodir}}"
       publish:
-        version: "{{version[build_server].stdout}}"
+        version: "{{version[hostname].stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
