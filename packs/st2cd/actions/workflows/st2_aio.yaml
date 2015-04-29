@@ -1,0 +1,97 @@
+---
+  chain:
+    -
+      name: "create_vm_role"
+      ref: "st2cd.create_vm_role"
+      params:
+        hostname: "{{hostname}}"
+        instance_type: "{{instance_type}}"
+        environment: "{{environment}}"
+        key_name: "{{key_name}}"
+        keyfile: "{{keyfile}}"
+        distro: "{{distro}}"
+        role: "{{role}}"
+      on-success: "generate_ssh_key"
+    -
+      name: "generate_ssh_key"
+      ref: "core.remote"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "ssh-keygen -f /home/stanley/.ssh/stanley_rsa -P '' && cat /home/stanley/.ssh/stanley_rsa.pub >> /home/stanley/.ssh/authorized_keys && chmod 0600 /home/stanley/.ssh/authorized_keys"
+      on-success: "clone_repo"
+    - 
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params: 
+        hosts: "{{hostname}}"
+        repo: "{{repo}}"
+        target: "{{repo_target}}"
+        branch: "{{branch}}"
+        timeout: 300
+      publish:
+        repodir: "{{clone_repo[build_server].stdout}}"
+      on-success: "version"
+    -
+      name: "version"
+      ref: "st2cd.st2_version"
+      params:
+        hosts: "{{hostname}}"
+        repo: "{{repodir}}"
+      publish:
+        version: "{{version[build_server].stdout}}"
+      on-success: "version_hack"
+    - 
+      name: "version_hack"
+      ref: "st2cd.version_hack"
+      params: 
+        hosts: "{{hostname}}"
+        repo: "{{repodir}}"
+        build: "{{build}}"
+      on-success: "pytests"
+    -
+      name: "pytests"
+      ref: "st2cd.make_pytests"
+      params: 
+        hosts: "{{hostname}}"
+        repo: "{{repodir}}"
+        timeout: 600
+      on-success: "make_rpms"
+    - 
+      name: "make_rpms"
+      ref: "core.remote"
+      params: 
+        hosts: "{{hostname}}"
+        cmd: "cd {{repodir}} && make rpms"
+        timeout: 1800
+      on-success: "check_pkgs"
+    -
+      name: "check_pkgs"
+      ref: "st2cd.check_pkgs"
+      params:
+        hosts: "{{hostname}}"
+        builddir: "/home/stanley/rpmbuild/RPMS/noarch"
+        packages: "st2common st2reactor st2actions st2api st2auth st2debug"
+      on-success: "install_pkgs"
+    -
+      name: "install_pkgs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "yum localinstall -y /home/stanley/rpmbuild/RPMS/noarch/*.rpm"
+      on-success: "restart_st2"
+    -
+      name: "restart_st2"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "/usr/bin/st2ctl restart && sleep 20"
+        timeout: 3600
+      on-success: "run_tests"
+    -
+      name: "run_tests"
+      ref: "st2cd.e2e_tests"
+      params:
+        hostname: "{{hostname}}"
+        build: "{{build}}"
+
+  default: "create_vm_role"
