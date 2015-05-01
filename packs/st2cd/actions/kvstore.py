@@ -6,14 +6,9 @@ from st2client.models.datastore import KeyValuePair
 class KVPAction(Action):
 
     def run(self, key, action, st2host='localhost', value=""):
-        st2_endpoints = {
-            'action': "http://%s:9101" % st2host,
-            'reactor': "http://%s:9102" % st2host,
-            'datastore': "http://%s:9103" % st2host
-        }
 
         try:
-            client = Client(st2_endpoints)
+            client = Client()
         except Exception as e:
             return e
 
