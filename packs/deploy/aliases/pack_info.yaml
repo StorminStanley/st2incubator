@@ -1,0 +1,6 @@
+---
+name: "info"
+action_ref: "deploy.info"
+formats:
+  # This is where a regex would really help me.
+  - "pack {{pack}}"

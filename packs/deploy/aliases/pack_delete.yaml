@@ -1,0 +1,18 @@
+---
+# How do I have commands I want to group from different packs into a single namespace?
+# I can no longer leverage the deploy name for other similarly named activities,
+# like deploying an application.
+#
+# Likewise, if I flip this to 'pack', then it prohibits me from being able to have
+# multiple actions belong under the 'pack' command tree, which I need in this case.
+# I'd actually prefer it being !pack deploy XXX and !pack delete XXX
+#
+# Both are desired.
+name: "delete"
+action_ref: "deploy.delete"
+
+# Having this as the !help text would be stellar
+description: "Delete StackStorm packs from system"
+
+formats:
+  - "pack {{pack}}"

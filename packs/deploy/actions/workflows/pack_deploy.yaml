@@ -1,0 +1,20 @@
+---
+  chain:
+    -
+      name: "lookup_hosts"
+      ref: "st2.kv.get"
+      params:
+        key: "st2.servers"
+      publish:
+        st2_servers: "{{lookup_hosts.result}}"
+      on-success: "deploy_pack"
+    -
+      name: "deploy_pack"
+      ref: "deploy.command"
+      params:
+        pack: "{{pack}}"
+        repo: "{{repo}}"
+        subtree: "{{subtree}}"
+        branch: "{{branch}}"
+        force: "{{force}}"
+        hosts: "{{st2_servers}}"

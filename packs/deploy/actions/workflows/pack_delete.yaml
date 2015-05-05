@@ -1,0 +1,18 @@
+---
+  chain:
+    -
+      name: "lookup_hosts"
+      ref: "st2.kv.get"
+      params:
+        key: "st2.servers"
+      publish:
+        st2_servers: "{{lookup_hosts.result}}"
+      on-success: "delete_pack"
+    -
+      name: "delete_pack"
+      ref: "deploy.command"
+      params:
+        pack: "{{pack}}"
+        delete: true
+        force: "{{force}}"
+        hosts: "{{st2_servers}}"
