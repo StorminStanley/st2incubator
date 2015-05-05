@@ -1,0 +1,35 @@
+---
+name: "command"
+runner_type: "run-remote-script"
+description: "Action to perform pack deployments via Git branch deploys"
+enabled: true
+entry_point: "command.rb"
+parameters:
+  pack:
+    type: "string"
+    description: "Name of the pack to be deployed"
+    required: true
+  repo:
+    type: "string"
+    description: "Location where to retrieve remote pack from"
+  subtree:
+    type: "boolean"
+    description: "Flag to determine whether pack is nested within a repository, or is stand-alone"
+  branch:
+    type: "string"
+    description: "git branch to deploy"
+    default: "origin/master"
+  info:
+    type: "boolean"
+    description: "Get information about deployed pack"
+  debug:
+    type: "boolean"
+    description: "Provide additional debug informat"
+  delete:
+    type: "boolean"
+    description: "Delete a pack"
+  force:
+    type: "boolean"
+    description: "Force a destructive action"
+  sudo:
+    default: true

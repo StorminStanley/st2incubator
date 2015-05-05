@@ -1,0 +1,15 @@
+---
+name: delete
+runner_type: action-chain
+description: Delete pack from StackStorm host
+enabled: true
+entry_point: 'workflows/pack_delete.yaml'
+parameters:
+  pack:
+    type: string
+    description: Name of the pack to be deployed
+    required: true
+  force:
+    type: boolean
+    description: Force a destructive action
+    default: false

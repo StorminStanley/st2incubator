@@ -13,7 +13,7 @@ require 'socket'
 module Deploy
   class Pack
     E_GENERICERROR=127
-    attr_reader :repo, :pack, :branch, :subtree, :basedir, :options, :command, :first_run
+    attr_reader :pack, :branch, :subtree, :basedir, :options, :command, :first_run
 
     def initialize(options)
       @repo = options[:repo]
@@ -28,6 +28,10 @@ module Deploy
       eval_subtree(options)
 
       debug "[#initialize] Repo: #{repo}, Pack: #{pack}, Ref: #{branch}, Subtree: #{subtree}"
+    end
+
+    def repo
+      @repo.split('/').size.eql?(2) ? "https://github.com/#{@repo}" : @repo
     end
 
     def eval_command(options)
@@ -47,7 +51,7 @@ module Deploy
         # Try and do the user a favor, and automatically compute subtree if it wasn't
         # explicitly set. This is to account for the packs that are in a monolithic repo
         # and need to be pulled out. Specifically, st2contrib and st2incubator
-        match = repo.index(/[sS]tack[sS]torm\/st2/) ? true : false
+        match = repo.index(/[sS]tack[sS]torm\/st2(contrib|incubator)/) ? true : false
 
         # XOR match to user input and match parameters
         @subtree = match ^ options[:subtree]

@@ -1,0 +1,8 @@
+---
+name: "deploy"
+action_ref: "deploy.deploy"
+formats:
+  # This is where a regex would really help me.
+  - "pack {{pack}}"
+  - "pack {{pack}} from {{repo}}"
+  - "pack {{pack}} {{repo}}"
