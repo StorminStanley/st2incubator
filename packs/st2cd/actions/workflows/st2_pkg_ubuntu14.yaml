@@ -9,6 +9,13 @@
         count: 1
       publish:
         build_server: "{{get_build_server.result[0]}}"
+      on-success: "purge_old_pkgs"
+    -
+      name: "purge_old_pkgs"
+      ref: "core.remote"
+      params:
+        hosts: "{{build_server}"
+        cmd: "find /home/stanley/debbuild/ -name *.deb -type d -mmin +5 -delete"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
