@@ -133,7 +133,6 @@ workflows:
           - setup_ipv4_dns
       setup_ipv4_dns:
         action: rackspace.create_dns_record
-        wait-before: 1
         input:
           name: '<% $.hostname %>.<% $.asg %>.<% $.domain %>'
           zone_id: <% $.dns_zone_id %>
@@ -155,7 +154,6 @@ workflows:
         input:
           hosts: <% $.ipv4_address %>
           username: root
-        wait-before: 5
         on-success:
           - notify_begin_chef_install
         on-error:
@@ -171,7 +169,6 @@ workflows:
           - failure_chef_install
       provision_node:
         action: chef.solo
-        wait-before: 1
         input:
           username: root
           hosts: <% $.ipv4_address %>
@@ -191,7 +188,6 @@ workflows:
           - add_ipv4_loadbalancer
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
-        wait-before: 10
         input:
           loadbalancer_id: '<% $.loadbalancer_id %>'
           ip: <% $.ipv4_address %>
