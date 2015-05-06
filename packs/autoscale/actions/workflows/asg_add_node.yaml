@@ -164,6 +164,13 @@ workflows:
           message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.```"
           channel: <% $.channel %>
         on-success:
+          - chef_install
+      chef_install:
+        action: chef.install
+        input:
+          hosts: <% $.ipv4_address %>
+          username: root
+        on-success:
           - provision_node
         on-error:
           - failure_chef_install
