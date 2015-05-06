@@ -133,8 +133,6 @@ workflows:
           - setup_ipv4_dns
       setup_ipv4_dns:
         action: rackspace.create_dns_record
-        policies:
-          wait-before: 1
         input:
           name: '<% $.hostname %>.<% $.asg %>.<% $.domain %>'
           zone_id: <% $.dns_zone_id %>
@@ -156,8 +154,6 @@ workflows:
         input:
           hosts: <% $.ipv4_address %>
           username: root
-        policies:
-          wait-before: 5
         on-success:
           - notify_begin_chef_install
         on-error:
@@ -168,13 +164,18 @@ workflows:
           message: "```ASG[<% $.asg %>] Starting Chef Provisioner for <% $.hostname %>.```"
           channel: <% $.channel %>
         on-success:
+          - chef_install
+      chef_install:
+        action: chef.install
+        input:
+          hosts: <% $.ipv4_address %>
+          username: root
+        on-success:
           - provision_node
         on-error:
           - failure_chef_install
       provision_node:
         action: chef.solo
-        policies:
-          wait-before: 1
         input:
           username: root
           hosts: <% $.ipv4_address %>
@@ -194,8 +195,6 @@ workflows:
           - add_ipv4_loadbalancer
       add_ipv4_loadbalancer:
         action: rackspace.add_node_to_loadbalancer
-        policies:
-          wait-before: 10
         input:
           loadbalancer_id: '<% $.loadbalancer_id %>'
           ip: <% $.ipv4_address %>

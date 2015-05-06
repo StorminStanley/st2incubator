@@ -83,17 +83,17 @@ workflows:
         on-success:
           - record_updated_expand_timestamp
       record_updated_expand_timestamp:
-        action: st2.kv.put
+        action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.last_expand_timestamp'
-          value: <% $.current_epoch %>
+          value: <% str($.current_epoch) %>
         on-success:
           - record_updated_deflate_timestamp
       record_updated_deflate_timestamp:
-        action: st2.kv.put
+        action: st2.kv.set
         input:
           key: 'asg.<% $.asg %>.last_deflate_timestamp'
-          value: <% $.current_epoch %>
+          value: <% str($.current_epoch) %>
         on-success:
           - notify_end_wf
       notify_end_wf:

@@ -77,8 +77,6 @@ workflows:
           - create_dns_zone
       create_dns_zone:
         action: rackspace.create_dns_zone
-        policies:
-          wait-before: 1
         input:
           name: '<% $.name %>.<% $.domain %>'
           email_address: <% $.admin_contact %>
@@ -105,8 +103,6 @@ workflows:
           - set_lb_ipv4_dns
       set_lb_ipv4_dns:
         action: rackspace.create_dns_record
-        policies:
-          wait-before: 1
         input:
           zone_id: <% str($.dns_zone_id) %>
           type: 'A'
@@ -127,8 +123,6 @@ workflows:
           - store_min_nodes
       store_min_nodes:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.min_nodes'
           value: <% str($.min_nodes) %>
@@ -136,8 +130,6 @@ workflows:
           - store_max_nodes
       store_max_nodes:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.max_nodes'
           value: <% str($.max_nodes) %>
@@ -145,8 +137,6 @@ workflows:
           - store_domain
       store_domain:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.domain'
           value: <% $.domain %>
@@ -154,8 +144,6 @@ workflows:
           - store_vm_size_id
       store_vm_size_id:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.vm_size_id'
           value: <% str($.vm_size_id) %>
@@ -163,8 +151,6 @@ workflows:
           - store_vm_image_id
       store_vm_image_id:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.vm_image_id'
           value: <% str($.vm_image_id) %>
@@ -172,8 +158,6 @@ workflows:
           - store_initial_status
       store_initial_status:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.status'
           value: <% str($.initial_status) %>
@@ -181,8 +165,6 @@ workflows:
           - store_expand_by_nodes
       store_expand_by_nodes:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.expand_by'
           value: <% str($.expand_by) %>
@@ -190,8 +172,6 @@ workflows:
           - store_expand_delay
       store_expand_delay:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.expand_delay'
           value: <% str($.expand_delay) %>
@@ -199,8 +179,6 @@ workflows:
           - store_last_expand_timestamp
       store_last_expand_timestamp:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.last_expand_timestamp'
           value: <% str($.current_epoch) %>
@@ -208,8 +186,6 @@ workflows:
           - store_deflate_by_nodes
       store_deflate_by_nodes:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.deflate_by'
           value: <% str($.deflate_by) %>
@@ -217,8 +193,6 @@ workflows:
           - store_deflate_delay
       store_deflate_delay:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.deflate_delay'
           value: <% str($.deflate_delay) %>
@@ -226,8 +200,6 @@ workflows:
           - store_last_deflate_timestamp
       store_last_deflate_timestamp:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.last_deflate_timestamp'
           value: <% str($.current_epoch) %>
@@ -235,8 +207,6 @@ workflows:
           - store_application_name
       store_application_name:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.application_name'
           value: <% $.application_name %>
@@ -244,8 +214,6 @@ workflows:
           - store_incident_state
       store_incident_state:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.active_incident'
           value: "False"
@@ -253,8 +221,6 @@ workflows:
           - store_total_nodes
       store_total_nodes:
         action: st2.kv.set
-        policies:
-          wait-before: 1
         input:
           key: 'asg.<% $.name %>.total_nodes'
           value: "0"
@@ -262,8 +228,6 @@ workflows:
           - create_servers
       create_servers:
         action: autoscale.asg.add_node
-        policies:
-          wait-before: 1
         with-items: i in <% range(0,$.min_nodes).list() %>
         input:
           asg: <% $.name %>
