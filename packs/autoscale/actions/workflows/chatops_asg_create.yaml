@@ -56,15 +56,15 @@ workflows:
           name: <% $.asg_params.name %>
           domain: <% $.asg_params.domain %>
           application_name: <% $.asg_params.application_name %>
-          port: <% $.asg_params.port %>
+          port: <% int($.asg_params.port) %>
           protocol: <% $.asg_params.protocol %>
           admin_contact: <% $.asg_params.admin_contact %>
-          min_nodes: <% $.asg_params.min_nodes %>
-          max_nodes: <% $.asg_params.max_nodes %>
-          expand_by: <% $.asg_params.expand_by %>
-          expand_delay: <% $.asg_params.expand_delay %>
-          deflate_by: <% $.asg_params.deflate_by %>
-          deflate_delay: <% $.asg_params.deflate_delay %>
+          min_nodes: <% int($.asg_params.min_nodes) %>
+          max_nodes: <% int($.asg_params.max_nodes) %>
+          expand_by: <% int($.asg_params.expand_by) %>
+          expand_delay: <% int($.asg_params.expand_delay) %>
+          deflate_by: <% int($.asg_params.deflate_by) %>
+          deflate_delay: <% int($.asg_params.deflate_delay) %>
           vm_size_id: <% $.asg_params.vm_size_id %>
           vm_image_id: <% $.asg_params.vm_image_id %>
           channel: <% $.asg_params.channel %>
