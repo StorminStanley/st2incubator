@@ -29,11 +29,11 @@ workflows:
             port: 80
             protocol: 'HTTP'
             admin_contact: 'support@stackstorm.net'
-            min_nodes: 3
+            min_nodes: 1
             max_nodes: 20
-            expand_by: 5
+            expand_by: 1
             expand_delay: 10
-            deflate_by: 2
+            deflate_by: 1
             deflate_delay: 30
             vm_size_id: '2'
             vm_image_id: '00a5dffd-1f9a-47a8-9ccc-7267a362a9da'
