@@ -16,6 +16,9 @@ in a portable way
 * Deployments
 * Variable Hubot Location
 
+## Configuration
+
+* ``endpoint`` - Base URL to the hubot HTTP listener (e.g. http://localhost:8080/)
 
 ## Actions
 
