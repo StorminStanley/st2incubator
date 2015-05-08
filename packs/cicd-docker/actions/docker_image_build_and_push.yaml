@@ -1,0 +1,35 @@
+---
+name: docker_image_build_and_push
+runner_type: action-chain
+description: Workflow to build docker image from repo and push it to registry
+enabled: true
+entry_point: 'workflows/ac/docker_image_build_and_push.yaml'
+parameters:
+  project:
+    type: string
+    description: Git repo of the project to be built.
+    required: true
+  git_repo:
+    type: string
+    description: Name of the project.
+    required: true
+  branch:
+    type: string
+    description: Branch of the Project to build.
+    required: true
+  docker_registry_repo:
+    type: string
+    description: Repository in registry to push image to.
+    required: true
+  target:
+    type: string
+    description: Directory to clone git repo to.
+    default: /home/stanley/{{project}}
+  docker_image_tag:
+    type: string
+    description: Tag to use for docker image when built.
+    default: latest
+  docker_registry_image_tag:
+    type: string
+    description: Tag to use for docker image in registry.
+    default: latest
