@@ -10,6 +10,10 @@ parameters:
     description: Repository to push the image to.
     required: true
     position: 1
+  tag:
+    type: string
+    description: Tag to use for this image (optional).
+    position: 2
   sudo:
     default: false
   cmd:
