@@ -1,0 +1,22 @@
+---
+name: push_image
+runner_type: local-shell-script
+description: Push docker image action. Equivalent to docker push.
+enabled: true
+entry_point: push_image.sh
+parameters:
+  repo:
+    type: string
+    description: Repository to push the image to.
+    required: true
+    position: 1
+  sudo:
+    default: false
+  cmd:
+    immutable: true
+    default: ""
+  kwarg_op:
+    immutable: true
+    default: "--"
+  timeout:
+    default: 3600
