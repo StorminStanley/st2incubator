@@ -11,17 +11,16 @@
       on-failure: "notify_clone_error_slack"
     -
       name: "build_docker_image"
-      ref: "docker.build_image"
+      ref: "cicd-docker.build_image"
       params:
-        dockerfile_path: "{{target}}/Dockerfile"
+        dockerfile_path: "{{target}}/"
         tag: "{{docker_image_tag}}"
       on-success: "push_docker_image"
     -
       name: "push_docker_image"
-      ref: "docker.push_image"
+      ref: "cicd-docker.push_image"
       params:
         repo: "{{docker_registry_repo}}"
-        tag: "{{docker_registry_image_tag}}"
       on-success: "notify_image_pushed_slack"
       # clean repo.
     -
