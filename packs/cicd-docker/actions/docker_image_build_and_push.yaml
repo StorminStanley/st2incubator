@@ -7,29 +7,29 @@ entry_point: 'workflows/ac/docker_image_build_and_push.yaml'
 parameters:
   project:
     type: string
-    description: Git repo of the project to be built.
+    description: Name of the project to be built.
     required: true
   git_repo:
     type: string
-    description: Name of the project.
+    description: Git repo of the project.
     required: true
   branch:
     type: string
     description: Branch of the Project to build.
-    required: true
-  docker_registry_repo:
-    type: string
-    description: Repository in registry to push image to.
-    required: true
+    default: master
   target:
     type: string
     description: Directory to clone git repo to.
     default: /home/stanley/{{project}}
+  dockerfile_path:
+    type: string
+    description: Directory containing Dockerfile.
+    default: "{{target}/"
+  docker_registry_repo:
+    type: string
+    description: Repository in registry to push image to.
+    required: true
   docker_image_tag:
     type: string
     description: Tag to use for docker image when built.
-    default: latest
-  docker_registry_image_tag:
-    type: string
-    description: Tag to use for docker image in registry.
     default: latest
