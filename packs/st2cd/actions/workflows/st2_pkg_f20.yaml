@@ -71,8 +71,8 @@
       params:
         hosts: "{{build_server}}"
         deploy_path: "/tmp/{{repodir}}/tools/st2_deploy.sh"
-        download_server: "{% if environment = 'production' %}downloads.stackstorm.net{% else %}dl-staging201.uswest2.stackstorm.net{% endif %}"
-        protocol: "{% if environment = 'production' %}https{% else %}http{% endif %}"
+        download_server: "{% if environment == 'production' %}downloads.stackstorm.net{% else %}dl-staging201.uswest2.stackstorm.net{% endif %}"
+        protocol: "{% if environment == 'production' %}https{% else %}http{% endif %}"
       on-success: "rsync_st2_deploy"
     - 
       name: "rsync_st2_deploy"
