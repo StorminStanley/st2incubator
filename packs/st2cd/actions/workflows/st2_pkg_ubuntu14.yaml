@@ -15,7 +15,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}"
-        cmd: "find /home/stanley/debbuild/ -name *.deb -type d -mmin +5 -delete"
+        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
