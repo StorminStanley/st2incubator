@@ -75,15 +75,5 @@
         action: "tests.test_quickstart_rules"
         params: "token={{st2_token}}"
         hosts: "{{hostname}}"
-      on-success: "test_quickstart_packs"
-    -
-      name: "test_quickstart_packs"
-      ref: "st2cd.action_run"
-      params:
-        name: "test_packs_pack"
-        token: "{{st2_token}}"
-        action: "tests.test_packs_pack"
-        params: "token={{st2_token}}"
-        hosts: "{{hostname}}"
 
   default: "get_st2_token"

@@ -17,7 +17,7 @@
     action:
         ref: "st2cd.e2e_tests"
         parameters:
-            hostname: "fedora-staging201"
+            hostname: "{{trigger.parameters.hostname}}"
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
