@@ -54,7 +54,7 @@
       required: true
     dl_server:
       type: "string"
-      default: "dl-staging201"
+      default: "http://dl-staging201"
     role:
       type: "string"
       default: ""
