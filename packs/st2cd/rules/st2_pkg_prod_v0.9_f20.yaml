@@ -14,11 +14,8 @@
         trigger.parameters.branch:
             pattern: "v0.9"
             type: "equals"
-        trigger.parameters.environment:
-            pattern: "staging"
-            type: "equals"
         trigger.parameters.hostname:
-            pattern: "fedora-staging201"
+            pattern: "fedora-staging202"
             type: "equals"
     action:
         ref: "st2cd.st2_pkg_f20"

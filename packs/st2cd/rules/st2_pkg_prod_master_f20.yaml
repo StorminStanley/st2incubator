@@ -6,19 +6,13 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_e2e_tests"
+            pattern: "st2cd.st2_deploy_test"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
             type: "equals"
         trigger.parameters.branch:
             pattern: "master"
-            type: "equals"
-        trigger.parameters.environment:
-            pattern: "staging"
-            type: "equals"
-        trigger.parameters.hostname:
-            pattern: "fedora-staging201"
             type: "equals"
     action:
         ref: "st2cd.st2_pkg_f20"
