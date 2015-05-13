@@ -6,7 +6,7 @@
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_deploy_test"
+            pattern: "st2cd.st2_e2e_tests"
             type: "equals"
         trigger.status:
             pattern: "succeeded"

@@ -1,5 +1,5 @@
 ---
-    name: "st2_pkg_prod_master_ubuntu14"
+    name: "st2_pkg_prod_v0.9_f20"
     description: "Build st2 packages after tests succeed and push them to production"
     enabled: true
     trigger:
@@ -12,20 +12,20 @@
             pattern: "succeeded"
             type: "equals"
         trigger.parameters.branch:
-            pattern: "master"
+            pattern: "v0.9"
             type: "equals"
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
         trigger.parameters.hostname:
-            pattern: "st2stage201"
+            pattern: "fedora-staging201"
             type: "equals"
     action:
-        ref: "st2cd.st2_pkg_ubuntu14"
+        ref: "st2cd.st2_pkg_f20"
         parameters:
             repo: "{{trigger.parameters.repo}}"
             branch: "{{trigger.parameters.branch}}"
-            dl_server: "{{system.apt_origin_production}}"
+            dl_server: "{{system.yum_origin_production}}"
             environment: "production"
             revision: "{{trigger.parameters.revision}}"
             build: "{{trigger.parameters.build}}"

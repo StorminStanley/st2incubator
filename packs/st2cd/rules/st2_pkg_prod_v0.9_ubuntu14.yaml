@@ -1,5 +1,5 @@
 ---
-    name: "st2_pkg_prod_master_ubuntu14"
+    name: "st2_pkg_prod_v0.9_ubuntu14"
     description: "Build st2 packages after tests succeed and push them to production"
     enabled: true
     trigger:
@@ -12,13 +12,13 @@
             pattern: "succeeded"
             type: "equals"
         trigger.parameters.branch:
-            pattern: "master"
+            pattern: "v0.9"
             type: "equals"
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
         trigger.parameters.hostname:
-            pattern: "st2stage201"
+            pattern: "ubuntu-staging202"
             type: "equals"
     action:
         ref: "st2cd.st2_pkg_ubuntu14"
