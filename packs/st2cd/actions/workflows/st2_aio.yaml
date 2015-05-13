@@ -86,6 +86,7 @@
       params:
         hosts: "{{hostname}}"
         cmd: "curl -o /tmp/st2_requirements.txt https://raw.githubusercontent.com/StackStorm/st2/master/requirements.txt && pip install -r /tmp/st2_requirements.txt"
+        timeout: 600
       on-success: "st2client_prereqs"
     -
       name: "st2client_prereqs"
@@ -93,6 +94,7 @@
       params:
         hosts: "{{hostname}}"
         cmd: "curl -o /tmp/st2client_requirements.txt https://raw.githubusercontent.com/StackStorm/st2/master/st2client/requirements.txt && pip install -r /tmp/st2client_requirements.txt"
+        timeout: 600
       on-success: "install_pkgs"
     -
       name: "install_pkgs"
@@ -100,6 +102,7 @@
       params:
         hosts: "{{hostname}}"
         cmd: "dpkg -i /home/stanley/debbuild/*.deb"
+        timeout: 600
       on-success: "restart_st2"
     -
       name: "restart_st2"
