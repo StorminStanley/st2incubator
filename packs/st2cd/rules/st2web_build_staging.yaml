@@ -12,7 +12,7 @@
             pattern: "StackStorm/st2web"
             type: "equals"
     action:
-        ref: "st2cd.st2_webui_pkg"
+        ref: "st2cd.webui_pkg"
         parameters:
             repo: "{{trigger.body.repository.clone_url}}"
             branch: "master"

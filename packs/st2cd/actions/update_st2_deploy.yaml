@@ -1,0 +1,27 @@
+---
+  name: "update_st2_deploy"
+  runner_type: "run-remote-script"
+  description: "Update Downloads URL in st2_deploy"
+  enabled: true
+  entry_point: "update_st2_deploy.sh"
+  parameters:
+    sudo:
+      default: false
+    deploy_path:
+      type: "string"
+      description: "path to st2_deploy"
+      position: 1
+      required: true
+    download_server:
+      type: "string"
+      description: "hostname of downloads server"
+      position: 2
+      required: true
+    protocol:
+      type: "string"
+      description: "http/https"
+      position: 3
+      required: true
+    kwarg_op:
+      immutable: true
+      default: "--"
