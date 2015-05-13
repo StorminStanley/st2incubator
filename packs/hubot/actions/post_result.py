@@ -135,6 +135,10 @@ FORMATTERS = {
 class PostResultAction(Action):
     def run(self, result, channel, user=None, whisper=False):
         endpoint = self.config['endpoint']
+
+        if not endpoint:
+            raise valueError('Missing "endpoint" config option')
+
         url = urljoin(endpoint, "/hubot/st2")
 
         headers = {}
