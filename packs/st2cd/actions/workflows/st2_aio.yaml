@@ -55,13 +55,21 @@
         hosts: "{{hostname}}"
         repo: "{{repodir}}"
         timeout: 600
-      on-success: "make_rpms"
+      on-success: "packaging_prereqs"
     - 
-      name: "make_rpms"
+      name: "packaging_prereqs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "pip install stdeb && apt-get install -y build-essential debhelper python-all"
+        timeout: 1800
+      on-success: "make_debs"
+    - 
+      name: "make_debs"
       ref: "core.remote"
       params: 
         hosts: "{{hostname}}"
-        cmd: "cd /tmp/{{repodir}} && make rpms"
+        cmd: "cd /tmp/{{repodir}} && make debs"
         timeout: 1800
       on-success: "check_pkgs"
     -
@@ -69,15 +77,29 @@
       ref: "st2cd.check_pkgs"
       params:
         hosts: "{{hostname}}"
-        builddir: "/home/stanley/rpmbuild/RPMS/noarch"
+        builddir: "/home/stanley/debbuild/"
         packages: "st2common st2reactor st2actions st2api st2auth st2debug"
+      on-success: "st2_prereqs"
+    -
+      name: "st2_prereqs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "curl -o /tmp/st2_requirements.txt https://raw.githubusercontent.com/StackStorm/st2/master/requirements.txt && pip install -r /tmp/st2_requirements.txt"
+      on-success: "st2client_prereqs"
+    -
+      name: "st2client_prereqs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{hostname}}"
+        cmd: "curl -o /tmp/st2client_requirements.txt https://raw.githubusercontent.com/StackStorm/st2/master/st2client/requirements.txt && pip install -r /tmp/st2client_requirements.txt"
       on-success: "install_pkgs"
     -
       name: "install_pkgs"
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "yum localinstall -y /home/stanley/rpmbuild/RPMS/noarch/*.rpm"
+        cmd: "dpkg -i /home/stanley/debbuild/*.deb"
       on-success: "restart_st2"
     -
       name: "restart_st2"
