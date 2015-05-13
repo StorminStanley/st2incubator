@@ -14,7 +14,7 @@
       name: "purge_old_pkgs"
       ref: "core.remote"
       params:
-        hosts: "{{build_server}"
+        hosts: "{{build_server}}"
         cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete"
       on-success: "clone_repo"
     - 
