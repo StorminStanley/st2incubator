@@ -11,8 +11,8 @@ criteria:
     pattern: "hubot"
     type: "equals"
 action:
-  ref: hubot.post_message
+  ref: hubot.post_result
   parameters:
     channel: "{{trigger.data.source_channel}}"
     user: "{{trigger.data.user}}"
-    message: "{{trigger.data.result}}"
+    result: "{{trigger}}"
