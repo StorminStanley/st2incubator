@@ -1,6 +1,5 @@
 ---
     name: "cicd-docker.github_incoming"
-    pack: "cicd-docker"
     enabled: true
     description: "Webhook listening for pushes to our CI/CD Pipeline from GitHub"
     trigger:

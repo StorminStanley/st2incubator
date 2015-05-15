@@ -24,12 +24,12 @@ parameters:
   dockerfile_path:
     type: string
     description: Directory containing Dockerfile.
-    default: "{{target}/"
-  docker_registry_repo:
-    type: string
-    description: Repository in registry to push image to.
-    required: true
-  docker_image_tag:
+    default: "{{target}}/"
+  docker_tag:
     type: string
     description: Tag to use for docker image when built.
+    default: latest
+  docker_repo:
+    type: string
+    description: Repo to use for docker image (registry repo).
     default: latest

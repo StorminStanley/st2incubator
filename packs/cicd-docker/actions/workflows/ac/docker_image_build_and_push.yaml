@@ -23,14 +23,15 @@
       ref: "cicd-docker.build_image"
       params:
         dockerfile_path: "{{dockerfile_path}}/"
-        tag: "{{docker_image_tag}}"
+        tag: "{{docker_repo}}:{{docker_tag}}"
       on-success: "push_docker_image"
       on-failure: "notify_build_image_failed_slack"
     -
       name: "push_docker_image"
       ref: "cicd-docker.push_image"
       params:
-        repo: "{{docker_registry_repo}}"
+        repo: "{{docker_repo}}"
+        tag: "{{docker_tag}}"
       on-success: "notify_image_pushed_slack"
       on_failure: "notify_image_push_failed_slack"
     -
@@ -75,7 +76,7 @@
       name: "cleanup_repo"
       ref: "core.remote"
       params:
-        cmd: "rm -rf {{target}"
+        cmd: "rm -rf {{target}}"
         hosts: "localhost"
 
   default: git_clone

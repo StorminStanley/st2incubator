@@ -1,5 +1,5 @@
 ---
-  name: "git_checkout"
+  name: "git_checkout_branch"
   runner_type: "run-remote-script"
   description: "Clone a git repo"
   enabled: true
