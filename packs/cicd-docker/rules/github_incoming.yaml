@@ -1,0 +1,20 @@
+---
+    name: "cicd-docker.github_incoming"
+    enabled: true
+    description: "Webhook listening for pushes to our CI/CD Pipeline from GitHub"
+    trigger:
+        type: "core.st2.webhook"
+        parameters:
+            url: "cicd-docker/github"
+    criteria:
+        trigger.headers['X-Github-Event']:
+            pattern: "push"
+            type: "eq"
+    action:
+        ref: "cicd-docker.docker_image_build_and_push"
+        parameters:
+            project: "{{trigger.body.repository.name}}"
+            branch: "{{trigger.body.ref}}"
+            user: "{{trigger.body.pusher.name}}"
+            commit: "{{trigger.body.after}}"
+            detail_url: "{{trigger.body.compare}}"

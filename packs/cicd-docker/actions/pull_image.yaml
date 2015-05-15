@@ -1,0 +1,27 @@
+---
+name: pull_image
+runner_type: local-shell-script
+description: Pull docker image action. Equivalent to docker pull.
+enabled: true
+entry_point: pull_image.sh
+parameters:
+  repo:
+    type: string
+    description: Repository to pull the image from.
+    required: true
+    position: 1
+  tag:
+    type: string
+    description: Tag of image to be pulled (optional).
+    position: 2
+  sudo:
+    default: false
+  cmd:
+    immutable: true
+    default: ""
+  kwarg_op:
+    immutable: true
+    default: "--"
+  timeout:
+    default: 3600
+

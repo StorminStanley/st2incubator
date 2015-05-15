@@ -1,0 +1,82 @@
+---
+  chain:
+    -
+      name: "git_clone"
+      ref: "cicd-docker.git_simple_clone"
+      params:
+        repo: "{{git_repo}}"
+        target: "{{target}}"
+        hosts: "localhost"
+      on-success: "git_checkout_branch"
+      on-failure: "notify_clone_error_slack"
+    -
+      name: "git_checkout_branch"
+      ref: "cicd-docker.git_checkout_branch"
+      params:
+        target: "{{target}}"
+        branch: "{{branch}}"
+        hosts: "localhost"
+      on-success: "build_docker_image"
+      on-failure: "notify_co_error_slack"
+    -
+      name: "build_docker_image"
+      ref: "cicd-docker.build_image"
+      params:
+        dockerfile_path: "{{dockerfile_path}}/"
+        tag: "{{docker_repo}}:{{docker_tag}}"
+      on-success: "push_docker_image"
+      on-failure: "notify_build_image_failed_slack"
+    -
+      name: "push_docker_image"
+      ref: "cicd-docker.push_image"
+      params:
+        repo: "{{docker_repo}}"
+        tag: "{{docker_tag}}"
+      on-success: "notify_image_pushed_slack"
+      on_failure: "notify_image_push_failed_slack"
+    -
+      name: "notify_image_pushed_slack"
+      ref: "slack.post_message"
+      params:
+        message: "Docker image pushed for `{{project}}/{{branch}}`..."
+        channel: "#lakshmi"
+      on-success: "cleanup_repo"
+      on-failure: "cleanup_repo"
+    -
+      name: "notify_build_image_failed_slack"
+      ref: "slack.post_message"
+      params:
+        message: "Docker build image failed for `{{project}}/{{branch}}`..."
+        channel: "#lakshmi"
+      on-success: "cleanup_repo"
+      on-failure: "cleanup_repo"
+    -
+      name: "notify_image_push_failed_slack"
+      ref: "slack.post_message"
+      params:
+        message: "Docker image push failed for `{{project}}/{{branch}}`..."
+        channel: "#lakshmi"
+      on-success: "cleanup_repo"
+      on-failure: "cleanup_repo"
+    -
+      name: "notify_clone_error_slack"
+      ref: "slack.post_message"
+      params:
+        message: "Clone failed  for `{{project}}/{{branch}}`..."
+        channel: "#lakshmi"
+    -
+      name: "notify_co_error_slack"
+      ref: "slack.post_message"
+      params:
+        message: "Checkout failed  for `{{project}}/{{branch}}`..."
+        channel: "#lakshmi"
+      on-success: "cleanup_repo"
+      on-failure: "cleanup_repo"
+    -
+      name: "cleanup_repo"
+      ref: "core.remote"
+      params:
+        cmd: "rm -rf {{target}}"
+        hosts: "localhost"
+
+  default: git_clone
