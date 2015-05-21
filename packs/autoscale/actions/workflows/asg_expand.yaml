@@ -76,7 +76,7 @@ workflows:
         on-success:
           - provision_new_nodes: <% $.should_provision %> # cannot 'or' here... failure
       provision_new_nodes:
-        action: autoscale.asg.add_node # This does not work, fails
+        action: autoscale.asg.add_node
         with-items: i in <% $.nodes_to_provision %>
         input:
           asg: <% $.asg %>
