@@ -15,7 +15,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
-        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete"
+        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete && find /home/stanley/ -iname *.deb -type f -mmin +5 -delete"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -98,7 +98,7 @@
       params: 
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "/home/stanley/debbuild/*"
+        source: "/home/stanley/debbuild/*{{version}}*"
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
