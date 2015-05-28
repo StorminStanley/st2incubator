@@ -9,3 +9,8 @@
       type: "string"
       description: "Hostname to deploy st2web on"
       required: true
+    version:
+      type: "string"
+      description: "Version of webui to deploy"
+      required: true
+
