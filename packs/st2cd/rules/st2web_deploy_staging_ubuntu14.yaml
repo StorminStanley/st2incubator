@@ -3,10 +3,10 @@
     description: "Build and deploy WebUI on commit to st2web"
     enabled: true
     trigger:
-        type: "webhooks.github_event"
+        type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_webui_pkg"
+            pattern: "st2cd.webui_pkg"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
@@ -14,7 +14,11 @@
         trigger.parameters.environment:
             pattern: "staging"
             type: "equals"
+        trigger.parameters.branch:
+            pattern: "master"
+            type: "equals"
     action:
         ref: "st2cd.st2_web_deploy"
         parameters:
             hostname: "{{system.st2_stage_master_UBUNTU14}}"
+            version: "0.10dev"
