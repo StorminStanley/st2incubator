@@ -15,7 +15,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
-        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete && find /home/stanley/ -iname *.deb -type f -mmin +5 -delete"
+        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -35,6 +35,12 @@
       params:
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
+      on-success: "echo_version"
+    -
+      name: "echo_version"
+      ref: "core.local"
+      params:
+        cmd: "echo '{{version[build_server].stdout}}'"
       on-success: "version_hack"
     - 
       name: "version_hack"
