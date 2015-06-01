@@ -1,38 +1,32 @@
 ---
   name: "s3_docs"
-  runner_type: "run-remote"
+  runner_type: "run-remote-script"
   description: "s3 docs"
   enabled: true
-  entry_point: ""
+  entry_point: "s3_docs.sh"
   parameters: 
     repo:
       type: "string"
       required: true
       default: "st2_master"
-    branch:
-      type: "string"
-      required: true
+      position: 0
     bucket:
       type: "string"
       required: true
       default: "docs-staging.stackstorm.net"
       description: "The base path to the bucket"
+      position: 1
     location:
       type: "string"
       description: "Extra subfolder to copy to - use leading /"
       default: ""
+      position: 3
     version:
       type: "string"
       required: true
       description: "St2 version"
-    bucket_url:
-      type: "string"
+      position: 2
+    kwarg_op:
       immutable: true
-      default: "s3://{{bucket}}"
-    cmd: 
-      immutable: false
-      default: "cd /tmp/{{repo}}/docs/build/html && s3cmd put --recursive * {{bucket_url}}/{{version}}/{% if location != '' %} && s3cmd put --recursive * {{bucket_url}}{{location}}{% endif %}"
-    kwarg_op: 
-      immutable: true
-      default: "--"
+      default: ""
 
