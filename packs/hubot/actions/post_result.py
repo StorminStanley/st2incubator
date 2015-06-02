@@ -47,7 +47,13 @@ def format_localrunner_result(result, do_serialize=True):
     # Add in various properties if they have values
     stdout = result.get('stdout', None)
     if stdout:
-        output['stdout'] = stdout.strip()
+        try:
+            if isinstance(stdout, six.string_types):
+                output['stdout'] = stdout
+            else:
+                output['stdout'] = stdout.strip()
+        except AttributeError:
+            output['stdout'] = stdout
     stderr = result.get('stderr', None)
     if stderr:
         output['stderr'] = stderr.strip()
@@ -85,7 +91,13 @@ def format_pythonrunner_result(result):
         output['result'] = result_
     stdout = result.get('stdout', None)
     if stdout:
-        output['stdout'] = stdout.strip()
+        try:
+            if isinstance(stdout, six.string_types):
+                output['stdout'] = stdout
+            else:
+                output['stdout'] = stdout.strip()
+        except AttributeError:
+            output['stdout'] = stdout
     stderr = result.get('stderr', None)
     if stderr:
         output['stderr'] = stderr.strip()
