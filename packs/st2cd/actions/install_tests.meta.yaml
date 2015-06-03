@@ -11,6 +11,10 @@
     cmd:
       immutable: true
       default: ""
+    pack:
+      type: "string"
+      required: true
+      position: 1
     kwarg_op:
       immutable: true
       default: "--"

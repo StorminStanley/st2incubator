@@ -15,6 +15,7 @@
       ref: "st2cd.install_tests"
       params:
         hosts: "{{hostname}}"
+        pack: "tests"
       on-success: "install_examples"
     -
       name: "install_examples"
