@@ -1,0 +1,16 @@
+---
+  name: "install_examples"
+  runner_type: "run-remote-script"
+  description: "Install St2 examples"
+  enabled: true
+  entry_point: "install_examples.sh"
+  parameters:
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

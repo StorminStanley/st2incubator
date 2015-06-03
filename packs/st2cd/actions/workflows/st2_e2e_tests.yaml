@@ -15,6 +15,12 @@
       ref: "st2cd.install_tests"
       params:
         hosts: "{{hostname}}"
+      on-success: "install_examples"
+    -
+      name: "install_examples"
+      ref: "st2cd.install_examples"
+      params:
+        hosts: "{{hostname}}"
       on-success: "core_local_date"
     -
       name: "core_local_date"
@@ -83,6 +89,17 @@
         name: "test_packs_pack"
         token: "{{st2_token}}"
         action: "tests.test_packs_pack"
+        params: "token={{st2_token}}"
+        hosts: "{{hostname}}"
+        timeout: 600
+      on-success: "test_mistral_examples"
+    -
+      name: "test_mistral_examples"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_mistral_examples"
+        token: "{{st2_token}}"
+        action: "examples.mistral_examples"
         params: "token={{st2_token}}"
         hosts: "{{hostname}}"
         timeout: 600
