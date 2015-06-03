@@ -33,12 +33,13 @@
       params:
         hosts: "{{hostname}}"
         cmd: "cp -f /root/st2.conf /etc/st2/st2.conf"
-      on-success: "deploy_webui"
+      on-success: "restart_st2"
     -
-      name: "deploy_webui"
-      ref: "st2cd.st2_web_deploy"
+      name: "restart_st2"
+      ref: "core.remote_sudo"
       params:
-        hostname: "{{hostname}}"
+        hosts: "{{hostname}}"
+        cmd: "st2ctl restart && sleep 20"
       on-success: "get_st2_token"
     -
       name: "get_st2_token"

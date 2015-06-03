@@ -15,7 +15,7 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
-        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete && find /home/stanley/ -iname *.deb -type f -mmin +5 -delete"
+        cmd: "find /home/stanley/debbuild/ -type f -mmin +5 -delete"
       on-success: "clone_repo"
     - 
       name: "clone_repo"
@@ -35,6 +35,12 @@
       params:
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
+      on-success: "echo_version"
+    -
+      name: "echo_version"
+      ref: "core.local"
+      params:
+        cmd: "echo '{{version[build_server].stdout}}'"
       on-success: "version_hack"
     - 
       name: "version_hack"
@@ -98,7 +104,7 @@
       params: 
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "/home/stanley/debbuild/*{{version}}*"
+        source: "/home/stanley/debbuild/*{{version}}-{{build}}*"
         dest_server: "{{dl_server}}"
         destination: "{{build_dir}}/"
         timeout: 600
@@ -116,7 +122,7 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{dl_server}}"
-        cmd: "cp -Rf {{version_dir}}/*{{build}}* /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
+        cmd: "cp -Rf {{version_dir}}/{{build}} /var/www/sites/releases/html/releases/st2/{{version}}/debs/"
         timeout: 1800
       on-success: "update_current"
     -
@@ -148,5 +154,12 @@
       params:
         hosts: "{{build_server}}"
         repo: "{{repodir}}"
+      on-success: "clean_pkgs"
+    -
+      name: "clean_pkgs"
+      ref: "core.remote_sudo"
+      params:
+        hosts: "{{build_server}}"
+        cmd: "rm -f /home/stanley/*{{version}}-{{build}}*.deb"
 
   default: "get_build_server"

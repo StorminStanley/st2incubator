@@ -20,7 +20,6 @@
     build:
       type: "string"
       description: "Build number"
-      required: true
     version: 
       type: "string"
       description: "Version of StackStorm to deploy"

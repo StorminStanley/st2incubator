@@ -30,6 +30,12 @@
         repo: "{{repodir}}"
       publish:
         version: "{{version[build_server].stdout}}"
+      on-success: "echo_version"
+    -
+      name: "echo_version"
+      ref: "core.local"
+      params:
+        cmd: "echo '{{version}}'"
       on-success: "version_hack"
     - 
       name: "version_hack"
@@ -125,6 +131,7 @@
       params:
         hosts: "{{dl_server}}"
         cmd: "createrepo /var/yumrepos/fedora/20/{% if branch == 'master' %}unstable{% else %}stable{% endif %}/"
+        timeout: 600
       on-success: "update_current"
     -
       name: "update_current"
