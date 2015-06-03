@@ -100,8 +100,8 @@
       params:
         name: "test_mistral_examples"
         token: "{{st2_token}}"
+        params: ""
         action: "examples.mistral_examples"
-        params: "token={{st2_token}}"
         hosts: "{{hostname}}"
         timeout: 600
 
