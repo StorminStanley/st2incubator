@@ -25,3 +25,4 @@
             revision: "{{trigger.parameters.revision}}"
             environment: "{{trigger.parameters.environment}}"
             build: "{{trigger.parameters.build}}"
+            version: "{{trigger.result.tasks[4].result.stdout}}"
