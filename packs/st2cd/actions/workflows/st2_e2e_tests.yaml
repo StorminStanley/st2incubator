@@ -9,6 +9,20 @@
         st2_password: "{{st2_password}}"
       publish:
         st2_token: "{{get_st2_token[hostname].stdout.token}}"
+      on-success: "install_fixtures"
+    -
+      name: "install_fixtures"
+      ref: "st2cd.install_tests"
+      params:
+        hosts: "{{hostname}}"
+        pack: "fixtures"
+      on-success: "install_asserts"
+    -
+      name: "install_asserts"
+      ref: "st2cd.install_tests"
+      params:
+        hosts: "{{hostname}}"
+        pack: "asserts"
       on-success: "install_tests"
     -
       name: "install_tests"
