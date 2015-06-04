@@ -1,0 +1,17 @@
+---
+    name: "st2_add_librato_annotation_for_release"
+    description: "Creates librato annotation when a release is created."
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.body.ref:
+            pattern: "^refs/heads/v(\\d+\\.)(\\d+)$"
+            type: "matchregex"
+        trigger.body.repository.full_name:
+            pattern: "StackStorm/st2"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_add_annotation_for_release"
+        parameters:
+            branch: "{{trigger.body.ref | replace("refs/heads/", "")}}"
