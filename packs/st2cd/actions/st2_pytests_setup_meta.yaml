@@ -8,19 +8,19 @@
     st2_repo:
       type: "string"
       description: "Url of the st2 repo to clone"
-      default: "https://github.com/StackStorm/st2.git"
+      default: "git@github.com:StackStorm/st2.git"
     st2_web_repo:
       type: "string"
       description: "Url of the st2web repo to clone"
-      default: "https://github.com/StackStorm/st2web.git"
+      default: "git@github.com:StackStorm/st2web.git"
     st2_contrib_repo:
       type: "string"
       description: "Url of the st2contrib repo to clone"
-      default: "https://github.com/StackStorm/st2contrib.git"
+      default: "git@github.com:StackStorm/st2contrib.git"
     st2_express_repo:
       type: "string"
       description: "Url of the st2express repo to clone"
-      default: "https://github.com/StackStorm/st2express.git"
+      default: "git@github.com:StackStorm/st2express.git"
     st2_repo_target:
       type: "string"
       default: "/home/stanley/st2"
@@ -39,7 +39,7 @@
       description: "Path to clone st2express repo to."
     st2_release_version:
       type: "string"
-      description: "Version to use for the release."
+      description: "Version to use for the release. Should include the patch e.g. 0.1.0"
       required: true
     st2_base_url:
       type: "string"
