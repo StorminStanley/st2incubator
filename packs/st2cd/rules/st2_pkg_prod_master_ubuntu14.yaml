@@ -14,6 +14,9 @@
         trigger.parameters.branch:
             pattern: "master"
             type: "equals"
+        trigger.parameters.distro:
+            patterm: "UBUNTU14"
+            type: "equals"
     action:
         ref: "st2cd.st2_pkg_ubuntu14"
         parameters:

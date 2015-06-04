@@ -1,12 +1,12 @@
 ---
-    name: "st2_deploy_test_master"
+    name: "st2_deploy_test_master_f20"
     description: "Test st2_deploy.sh on each build"
     enabled: true
     trigger:
         type: "core.st2.generic.actiontrigger"
     criteria:
         trigger.action_name:
-            pattern: "st2cd.st2_pkg_ubuntu14"
+            pattern: "st2cd.st2_pkg_f20"
             type: "equals"
         trigger.status:
             pattern: "succeeded"
@@ -27,3 +27,4 @@
             branch: "{{trigger.parameters.branch}}"
             revision: "{{trigger.parameters.revision}}"
             repo: "{{trigger.parameters.repo}}"
+            distro: "F20"
