@@ -11,6 +11,9 @@
         trigger.status:
             pattern: "succeeded"
             type: "equals"
+        trigger.parameters.distro:
+            pattern: "UBUNTU14"
+            type: "equals"
     action:
         ref: "st2cd.docs"
         parameters:
