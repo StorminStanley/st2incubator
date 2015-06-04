@@ -5,8 +5,8 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "sleep 120; yum clean all && yum install -y st2common st2reactor st2actions st2api st2auth st2client"
-        timeout: 300
+        cmd: "sleep 180; yum clean all && yum install -y st2common st2reactor st2actions st2api st2auth st2client"
+        timeout: 600
       on-success: "dont_hate_me"
     -
       name: "dont_hate_me"
