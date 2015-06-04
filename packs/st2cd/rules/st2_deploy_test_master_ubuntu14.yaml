@@ -1,0 +1,30 @@
+---
+    name: "st2_deploy_test_master_ubuntu14"
+    description: "Test st2_deploy.sh on each build"
+    enabled: true
+    trigger:
+        type: "core.st2.generic.actiontrigger"
+    criteria:
+        trigger.action_name:
+            pattern: "st2cd.st2_pkg_ubuntu14"
+            type: "equals"
+        trigger.status:
+            pattern: "succeeded"
+            type: "equals"
+        trigger.parameters.environment:
+            pattern: "staging"
+            type: "equals"
+        trigger.parameters.branch:
+            pattern: "master"
+            type: "equals"
+    action:
+        ref: "st2cd.st2_deploy_test"
+        parameters:
+            hostname: "st2-{{trigger.parameters.branch}}-{{trigger.execution_id}}"
+            build: "{{trigger.parameters.build}}"
+            version: "{{system.st2_unstable_version}}"
+            environment: "sandbox"
+            branch: "{{trigger.parameters.branch}}"
+            revision: "{{trigger.parameters.revision}}"
+            repo: "{{trigger.parameters.repo}}"
+            distro: "UBUNTU14"

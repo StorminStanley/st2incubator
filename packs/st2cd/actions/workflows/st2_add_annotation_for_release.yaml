@@ -1,0 +1,45 @@
+---
+  chain:
+    -
+      name: "get_current_build"
+      ref: "st2cd.kvstore"
+      params:
+        key: "st2_{{branch}}_build_number"
+        action: "get"
+      on-success: "get_build_server"
+    -
+      name: "get_build_server"
+      ref: "linux.dig"
+      params:
+        hostname: "st2build.service.consul"
+        rand: true
+        count: 1
+      on-success: "clone_repo"
+    -
+      name: "clone_repo"
+      ref: "st2cd.git_clone"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{st2_repo}}"
+        branch: "{{branch}}"
+        target: "{{st2_repo_target}}"
+      on-success: "retrieve_st2_version"
+    -
+      name: "retrieve_st2_version"
+      ref: "st2cd.version_hack"
+      params:
+        hosts: "{{get_build_server.result[0]}}"
+        repo: "{{clone_repo[get_build_server.result[0]].stdout}}"
+        build: "{{get_current_build.result}}"
+      publish:
+        st2_version: "{{ retrieve_st2_version[build_server].stdout }}"
+      on-success: "add_librato_annotation"
+    -
+      name: "add_librato_annotation"
+      ref: "librato.add_annotation"
+      params:
+        stream: "st2-releases"
+        title: "Released v{{ st2_version }}"
+        description: "Released StackStorm version {{ st2_version }}"
+
+  default: "get_current_build"
