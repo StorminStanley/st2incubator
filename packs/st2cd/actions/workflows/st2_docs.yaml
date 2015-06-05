@@ -36,6 +36,13 @@
         repo: "{{repodir}}"
       publish:
         version: "{{version[build_server].stdout}}"
+      on-success: "short_version"
+    -
+      name: "short_version"
+      ref: "core.local"
+        cmd: "echo {{version}} | cut -d "." -f1-2"
+      publish:
+        short_version: "{{short_version.stdout}}"
       on-success: "version_hack"
     - 
       name: "version_hack"
@@ -66,9 +73,9 @@
       params: 
         hosts: "{{build_server}}"
         repo: "/tmp/{{repodir}}/docs/build/html"
-        location: "{% if branch == 'master' %}/latest/{% elif version|truncate(3, True, '')|string() == system.st2_stable_version|string() %}/{% endif %}"
+        location: "{% if branch == 'master' %}/latest/{% elif short_version|string() == system.st2_stable_version|string() %}/{% endif %}"
         bucket: "{% if environment == 'production' %}docs.stackstorm.com{% else %}{{docs_url}}{% endif %}"
-        version: "/{% if branch == 'master' %}{{version}}{% else %}{{version|truncate(3, True, '')}}{% endif %}/"
+        version: "/{% if branch == 'master' %}{{version}}{% else %}{{short_version}}{% endif %}/"
       on-success: "clean_repo"
     - 
       name: "clean_repo"
