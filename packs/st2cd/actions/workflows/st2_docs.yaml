@@ -40,7 +40,8 @@
     -
       name: "short_version"
       ref: "core.local"
-        cmd: "echo {{version}} | cut -d "." -f1-2"
+      params:
+        cmd: "echo {{version}} | cut -d '.' -f1-2"
       publish:
         short_version: "{{short_version.stdout}}"
       on-success: "version_hack"
