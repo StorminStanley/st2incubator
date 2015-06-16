@@ -3,6 +3,14 @@
     st2_release_base_ver: {{st2_release_version|truncate(3,True,'')}}
   chain:
     -
+      name: "short_version"
+      ref: "core.local"
+      params:
+        cmd: "echo {{st2_release_version}} | cut -d \".\" -f1-2"
+      publish:
+        st2_release_base_ver: "{{short_version.stdout}}"
+      on-success: "get_current_build"
+    -
       name: "get_current_build"
       ref: "st2cd.kvstore"
       params:
@@ -129,4 +137,4 @@
         channel: "#releasemgmt"
         message: "```[RELEASE_SETUP]\n STATUS: FAILURE\n VERSION: {{st2_release_base_ver}}```"
 
-  default: "get_current_build"
+  default: "short_version"
