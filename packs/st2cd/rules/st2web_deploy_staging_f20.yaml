@@ -21,4 +21,4 @@
         ref: "st2cd.st2_web_deploy"
         parameters:
             hostname: "{{system.st2_stage_master_F20}}"
-            version: "0.10dev"
+            version: "0.12dev"
