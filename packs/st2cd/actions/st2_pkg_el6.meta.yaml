@@ -5,12 +5,6 @@
   enabled: true
   entry_point: "workflows/st2_pkg_el6.yaml"
   parameters:
-    build_server:
-      type: "string"
-      required: true
-    dl_server:
-       type: "string"
-       required: true
     repo:
       type: "string"
       description: "Url of the repo to clone"
@@ -28,16 +22,12 @@
       type: "string"
       description: "Build number"
       required: true
-    releases_server:
+    dl_server:
       type: "string"
       description: ""
-      default: "ops001.stackstorm.net"
+      required: true
     environment:
       type: "string"
       description: ""
     revision:
       type: "string"
-    destination_base:
-      type: "string"
-      description: "Destination directory on releases_server"
-      default: "/home/stanley/st2cd/el6/"
