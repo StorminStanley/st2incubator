@@ -79,6 +79,17 @@
         deploy_path: "/tmp/{{repodir}}/tools/st2_deploy.sh"
         download_server: "{% if environment == 'production' %}downloads.stackstorm.net{% else %}dl-staging201.uswest2.stackstorm.net{% endif %}"
         protocol: "{% if environment == 'production' %}https{% else %}http{% endif %}"
+      on-success: "rsync_st2_deploy"
+    - 
+      name: "rsync_st2_deploy"
+      ref: "linux.rsync"
+      params:
+        hosts: "{{build_server}}"
+        args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+        source: "/tmp/{{repodir}}/tools/st2_deploy.sh"
+        dest_server: "{{dl_server}}"
+        destination: "{{version_dir}}/"
+        timeout: 600
       on-success: "rsync_rpms"
     - 
       name: "rsync_rpms"
