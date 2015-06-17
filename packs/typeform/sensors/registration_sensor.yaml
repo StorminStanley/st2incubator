@@ -20,3 +20,9 @@
             type: "string"
           newsletter:
             type: "string"
+          referer:
+            type: "string"
+          date_land:
+            type: "string"
+          date_submit:
+            type: "string"

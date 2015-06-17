@@ -15,6 +15,9 @@ FIRST_NAME_FIELD = "textfield_7723291"
 LAST_NAME_FIELD = "textfield_7723236"
 SOURCE_FIELD = "textarea_7723206"
 NEWSLETTER_FIELD = "yesno_7723486"
+REFERER_FIELD = "referer"
+DATE_LAND_FIELD = "date_land"
+DATE_SUBMIT_FIELD = "date_submit"
 
 
 class TypeformRegistrationSensor(PollingSensor):
@@ -23,6 +26,7 @@ class TypeformRegistrationSensor(PollingSensor):
             sensor_service=sensor_service,
             config=config,
             poll_interval=poll_interval)
+
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
@@ -42,14 +46,18 @@ class TypeformRegistrationSensor(PollingSensor):
         registration = {}
         api_registration_list = self._get_api_registrations()
 
-        for registration in api_registration_list['responses']:
-            user = registration['answers']
+        for r in api_registration_list['responses']:
+            user = r['answers']
+            meta = r['metadata']
             if self._check_db_registrations(user[EMAIL_FIELD]) is False:
                 registration['email'] = user[EMAIL_FIELD]
                 registration['first_name'] = user[FIRST_NAME_FIELD]
                 registration['last_name'] = user[LAST_NAME_FIELD]
                 registration['source'] = user[SOURCE_FIELD]
                 registration['newsletter'] = user[NEWSLETTER_FIELD]
+                registration['referer'] = meta[REFERER_FIELD]
+                registration['date_land'] = meta[DATE_LAND_FIELD]
+                registration['date_submit'] = meta[DATE_SUBMIT_FIELD]
 
                 self._dispatch_trigger(self._trigger_ref, data=registration)
 
@@ -63,8 +71,7 @@ class TypeformRegistrationSensor(PollingSensor):
             return response.json()
         else:
             failure_reason = ('Failed to retrieve registrations: %s \
-                (status code: %s)' %
-                              (response.text, response.status_code))
+                (status code: %s)' % (response.text, response.status_code))
             self.logger.exception(failure_reason)
             raise Exception(failure_reason)
 
