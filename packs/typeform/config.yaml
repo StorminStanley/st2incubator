@@ -1,2 +1,9 @@
 ---
 api_key: ""
+form_id: ""
+completed: ""
+# MySQL database information for locally stored form data
+db_host: ""
+db_user: ""
+db_pass: ""
+db_name: ""
