@@ -2,11 +2,10 @@
 # See ../requirements.txt
 
 import httplib
-import requests
-import urlparse
-import urllib
 import MySQLdb
 import MySQLdb.cursors
+import requests
+import urlparse
 
 from st2reactor.sensor.base import PollingSensor
 

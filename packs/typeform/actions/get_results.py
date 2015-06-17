@@ -1,6 +1,6 @@
-import urllib
 import httplib
 import requests
+import urllib
 
 from st2actions.runners.pythonrunner import Action
 
