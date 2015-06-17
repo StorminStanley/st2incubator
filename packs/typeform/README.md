@@ -6,7 +6,8 @@ This integration pack provides a sensor to query a Typeform form for new submiss
 ### Prerequisites
 In order to track state, it depends on a MySQL database.
 
-```CREATE DATABASE community;
+```
+CREATE DATABASE community;
 
 USE community;
 
@@ -22,4 +23,20 @@ CREATE TABLE user_registration(
 			date_submit TIMESTAMP,
 			date_invited TIMESTAMP);
 
-ALTER TABLE user_registration ADD UNIQUE(email);```
+ALTER TABLE user_registration ADD UNIQUE(email);
+GRANT ALL PRIVILEGES ON community.* to 'CHANGEME'@'localhost' IDENTIFIED BY 'CHANGEME';
+```
+
+### Sensors
+This pack ships with a sensor that checks the Typeform API for submissions to a given form, then compares that list against a MySQL database.  If the submission is not yet in the database, it submits a trigger with the information from the submission.  Currently the sensor is limited to a specific format of the form.  Required fields in the config file are:
+
+* api_key - You can find this from the admin page on the Typeform site:
+    * https://admin.typeform.com/account
+* form_id - This ID is displayed when you go to the URL for your form.  The format looks like this:
+    * https://[USERNAME].typeform.com/to/[FORM_ID]
+
+### Actions
+In case you are interested in getting the list of submissions on demand, instead of running them from the sensor, you can use this action.
+
+* typeform.get_results - This will read the api_key from the config file, but it can also be passed in at the time of execution as a parameter.
+    * form_id - This is the only required parameter for this action.
