@@ -29,14 +29,15 @@ class TypeformRegistrationSensor(PollingSensor):
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
-        self.db = self._conn_db(host=self._config['db_host'],
-                                user=self._config['db_user'],
-                                passwd=self._config['db_pass'],
-                                db=self._config['db_name'])
+        db_config = self._config.get('mysql', False)
+        self.db = self._conn_db(host=db_config.get('host', None),
+                                user=db_config.get('db_user', None),
+                                passwd=db_config.get('db_pass', None),
+                                db=db_config.get('db_name', None))
 
-        self.url = self._get_url(self._config['form_id'],
-                                 self._config['api_key'],
-                                 self._config['completed'])
+        self.url = self._get_url(self._config.get('form_id', None),
+                                 self._config.get('api_key', None),
+                                 self._config.get('completed', None))
 
     def setup(self):
         pass
@@ -45,18 +46,18 @@ class TypeformRegistrationSensor(PollingSensor):
         registration = {}
         api_registration_list = self._get_api_registrations()
 
-        for r in api_registration_list['responses']:
-            user = r['answers']
-            meta = r['metadata']
-            if self._check_db_registrations(user[EMAIL_FIELD]) is False:
-                registration['email'] = user[EMAIL_FIELD]
-                registration['first_name'] = user[FIRST_NAME_FIELD]
-                registration['last_name'] = user[LAST_NAME_FIELD]
-                registration['source'] = user[SOURCE_FIELD]
-                registration['newsletter'] = user[NEWSLETTER_FIELD]
-                registration['referer'] = meta[REFERER_FIELD]
-                registration['date_land'] = meta[DATE_LAND_FIELD]
-                registration['date_submit'] = meta[DATE_SUBMIT_FIELD]
+        for r in api_registration_list.get('responses', None):
+            user = r.get('answers', None)
+            meta = r.get('metadata', None)
+            if not self._check_db_registrations(user.get(EMAIL_FIELD, False)):
+                registration['email'] = user.get(EMAIL_FIELD, None)
+                registration['first_name'] = user.get(FIRST_NAME_FIELD, None)
+                registration['last_name'] = user.get(LAST_NAME_FIELD, None)
+                registration['source'] = user.get(SOURCE_FIELD, None)
+                registration['newsletter'] = user.get(NEWSLETTER_FIELD, None)
+                registration['referer'] = meta.get(REFERER_FIELD, None)
+                registration['date_land'] = meta.get(DATE_LAND_FIELD, None)
+                registration['date_submit'] = meta.get(DATE_SUBMIT_FIELD, None)
 
                 self._dispatch_trigger(self._trigger_ref, data=registration)
 
@@ -101,6 +102,7 @@ class TypeformRegistrationSensor(PollingSensor):
             c.execute(query)
         except MySQLdb.Error, e:
             print str(e)
+            return False
 
         if c.fetchone():
             return True
