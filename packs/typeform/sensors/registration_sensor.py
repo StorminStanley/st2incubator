@@ -3,6 +3,8 @@
 
 import httplib
 import requests
+import urlparse
+import urllib
 import MySQLdb
 import MySQLdb.cursors
 
@@ -91,8 +93,8 @@ class TypeformRegistrationSensor(PollingSensor):
         self._sensor_service.dispatch(trigger, data)
 
     def _get_url(self, form_id, api_key, completed):
-        url = "%s/%s?key=%s&completed=%s" % \
-            (BASE_URL, form_id, api_key, str(completed).lower())
+        url = urlparse.urljoin(BASE_URL, "%s?key=%s&completed=%s" %
+                               (form_id, api_key, str(completed).lower()))
         return url
 
     def _check_db_registrations(self, email):
