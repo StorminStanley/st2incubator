@@ -98,6 +98,7 @@ class TypeformRegistrationSensor(PollingSensor):
         return url
 
     def _check_db_registrations(self, email):
+        email = MySQLdb.escape_string(email)
         c = self.db.cursor()
         query = 'SELECT * FROM user_registration WHERE email="%s"' % email
         try:
