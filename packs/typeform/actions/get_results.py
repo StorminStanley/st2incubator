@@ -25,7 +25,6 @@ class TypeformAction(Action):
                   }
 
         data = urllib.urlencode(params)
-        self.logger.info(data)
         response = requests.get(url=url,
                                 headers=headers, params=data)
 
