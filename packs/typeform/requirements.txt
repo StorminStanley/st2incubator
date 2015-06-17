@@ -1,4 +1,4 @@
 ndg-httpsclient
 pyasn1
 PyOpenSSL
-MySQLdb
+mysqldb
