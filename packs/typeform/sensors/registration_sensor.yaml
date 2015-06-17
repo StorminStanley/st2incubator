@@ -12,6 +12,7 @@
         properties:
           email:
             type: "string"
+            required: true
           first_name:
             type: "string"
           last_name:
