@@ -1,6 +1,5 @@
 # Requirements:
 # See ../requirements.txt
-# import datetime
 
 import httplib
 import requests
@@ -21,7 +20,7 @@ DATE_SUBMIT_FIELD = "date_submit"
 
 
 class TypeformRegistrationSensor(PollingSensor):
-    def __init__(self, sensor_service, config=None, poll_interval=5):
+    def __init__(self, sensor_service, config=None, poll_interval=180):
         super(TypeformRegistrationSensor, self).__init__(
             sensor_service=sensor_service,
             config=config,
@@ -30,14 +29,14 @@ class TypeformRegistrationSensor(PollingSensor):
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
-        self.db = self._conn_db(host=self.config['db_host'],
-                                user=self.config['db_user'],
-                                passwd=self.config['db_pass'],
-                                db=self.config['db_name'])
+        self.db = self._conn_db(host=self._config['db_host'],
+                                user=self._config['db_user'],
+                                passwd=self._config['db_pass'],
+                                db=self._config['db_name'])
 
-        self.url = self._get_url(self.config['form_id'],
-                                 self.config['api_key'],
-                                 self.config['completed'])
+        self.url = self._get_url(self._config['form_id'],
+                                 self._config['api_key'],
+                                 self._config['completed'])
 
     def setup(self):
         pass
@@ -91,16 +90,19 @@ class TypeformRegistrationSensor(PollingSensor):
         self._sensor_service.dispatch(trigger, data)
 
     def _get_url(self, form_id, api_key, completed):
-        return "%s/%s?key=%s&completed=%s" % \
-            (BASE_URL, form_id, api_key, completed)
+        url = "%s/%s?key=%s&completed=%s" % \
+            (BASE_URL, form_id, api_key, str(completed).lower())
+        return url
 
     def _check_db_registrations(self, email):
         c = self.db.cursor()
+        query = 'SELECT * FROM user_registration WHERE email="%s"' % email
+        try:
+            c.execute(query)
+        except MySQLdb.Error, e:
+            print str(e)
 
-        results = c.execute('SELECT * FROM user_registration WHERE \
-            email="%s"' % email)
-
-        if results.fetchone():
+        if c.fetchone():
             return True
 
         return False
