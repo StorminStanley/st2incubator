@@ -1,0 +1,20 @@
+---
+  chain:
+    -
+      name: "insert_user"
+      ref: "mysql.insert"
+      params:
+        db: "community"
+        table: true
+        count: "{registration_data}}"
+      publish:
+        build_server: "{{get_build_server.result[0]}}"
+      on-success: "send_slack_invite"
+    - 
+      name: "send_slack_invite"
+      ref: "community.send_slack_invite"
+      params: 
+        email: "{{trigger.email}}"
+        first_name: "{{trigger.first_name}}"
+
+  default: "insert_user"

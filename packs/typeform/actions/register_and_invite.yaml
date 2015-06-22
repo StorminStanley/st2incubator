@@ -1,0 +1,11 @@
+---
+  name: "register_and_invite"
+  runner_type: "action-chain"
+  description: "Send Slack invitation based on Typeform submissins"
+  enabled: true
+  entry_point: "chains/register_and_invite.yaml"
+  parameters:
+    registration_data:
+      type: "object"
+      required: true
+      description: "Registration data as formatted when sent from Typeform"
