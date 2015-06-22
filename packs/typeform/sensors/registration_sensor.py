@@ -106,7 +106,9 @@ class TypeformRegistrationSensor(PollingSensor):
             print str(e)
             return False
 
-        if c.fetchone():
+        row = c.fetchone()
+        if row:
+            print row
             return True
 
         return False
