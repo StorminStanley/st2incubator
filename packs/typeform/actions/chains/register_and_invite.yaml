@@ -1,0 +1,21 @@
+---
+  chain:
+    -
+      name: "insert_registration"
+      ref: "mysql.insert"
+      params:
+        db: "community"
+        table: "user_registration"
+        data: "{{registration_data}}"
+      publish:
+        email: "{{registration_data.email}}"
+        first_name: "{{registration_data.first_name}}"
+      on-success: "send_slack_invite"
+    - 
+      name: "send_slack_invite"
+      ref: "slack.users.admin.invite"
+      params: 
+        email: "{{email}}"
+        first_name: "{{first_name}}"
+
+  default: "insert_registration"
