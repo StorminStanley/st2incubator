@@ -28,13 +28,11 @@ class TypeformAction(Action):
         response = requests.get(url=url,
                                 headers=headers, params=data)
 
-        if response.status_code == httplib.OK:
-            return response.json()
-        else:
+        if response.status_code != httplib.OK:
             failure_reason = ('Failed to retrieve registrations: %s \
                 (status code: %s)' %
                               (response.text, response.status_code))
             self.logger.exception(failure_reason)
             raise Exception(failure_reason)
 
-        return True
+        return response.json()
