@@ -28,7 +28,8 @@ class TypeformRegistrationSensor(PollingSensor):
             config=config,
             poll_interval=poll_interval)
 
-        self.logger = self._sensor_service.get_logger(name=self.__class__.__name__)
+        self.logger = self._sensor_service.get_logger(
+            name=self.__class__.__name__)
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
@@ -39,7 +40,8 @@ class TypeformRegistrationSensor(PollingSensor):
                                 db=db_config.get('name', None))
 
         self.request_data = {"key": self._config.get('api_key', None),
-                             "completed": str(self._config.get('completed', True)).lower()}
+                             "completed": str(self._config.get('completed',
+                                                               True)).lower()}
 
         self.url = self._get_url(self._config.get('form_id', None))
 
