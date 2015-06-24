@@ -5,11 +5,12 @@ import httplib
 import MySQLdb
 import MySQLdb.cursors
 import requests
+import urllib
 import urlparse
 
 from st2reactor.sensor.base import PollingSensor
 
-BASE_URL = 'https://api.typeform.com/v0/form'
+BASE_URL = 'https://api.typeform.com/v0/form/'
 EMAIL_FIELD = "email_7723200"
 FIRST_NAME_FIELD = "textfield_7723291"
 LAST_NAME_FIELD = "textfield_7723236"
@@ -27,30 +28,32 @@ class TypeformRegistrationSensor(PollingSensor):
             config=config,
             poll_interval=poll_interval)
 
+        self.logger = self._sensor_service.get_logger(name=self.__class__.__name__)
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
         db_config = self._config.get('mysql', False)
         self.db = self._conn_db(host=db_config.get('host', None),
-                                user=db_config.get('db_user', None),
-                                passwd=db_config.get('db_pass', None),
-                                db=db_config.get('db_name', None))
+                                user=db_config.get('user', None),
+                                passwd=db_config.get('pass', None),
+                                db=db_config.get('name', None))
 
-        self.url = self._get_url(self._config.get('form_id', None),
-                                 self._config.get('api_key', None),
-                                 self._config.get('completed', None))
+        self.request_data = {"key": self._config.get('api_key', None),
+                             "completed": str(self._config.get('completed', True)).lower()}
+
+        self.url = self._get_url(self._config.get('form_id', None))
 
     def setup(self):
         pass
 
     def poll(self):
         registration = {}
-        api_registration_list = self._get_api_registrations()
+        api_registration_list = self._get_api_registrations(self.request_data)
 
         for r in api_registration_list.get('responses', None):
             user = r.get('answers', None)
             meta = r.get('metadata', None)
-            if not self._check_db_registrations(user.get(EMAIL_FIELD, False)):
+            if self._check_new_registration(user.get(EMAIL_FIELD, False)):
                 registration['email'] = user.get(EMAIL_FIELD, None)
                 registration['first_name'] = user.get(FIRST_NAME_FIELD, None)
                 registration['last_name'] = user.get(LAST_NAME_FIELD, None)
@@ -61,20 +64,6 @@ class TypeformRegistrationSensor(PollingSensor):
                 registration['date_submit'] = meta.get(DATE_SUBMIT_FIELD, None)
 
                 self._dispatch_trigger(self._trigger_ref, data=registration)
-
-    def _get_api_registrations(self):
-        headers = {}
-        headers['Content-Type'] = 'application/x-www-form-urlencoded'
-
-        response = requests.get(url=self.url, headers=headers)
-
-        if response.status_code == httplib.OK:
-            return response.json()
-        else:
-            failure_reason = ('Failed to retrieve registrations: %s \
-                (status code: %s)' % (response.text, response.status_code))
-            self.logger.exception(failure_reason)
-            raise Exception(failure_reason)
 
     def cleanup(self):
         pass
@@ -91,27 +80,45 @@ class TypeformRegistrationSensor(PollingSensor):
     def _dispatch_trigger(self, trigger, data):
         self._sensor_service.dispatch(trigger, data)
 
-    def _get_url(self, form_id, api_key, completed):
-        url = urlparse.urljoin(BASE_URL, "%s?key=%s&completed=%s" %
-                               (form_id, api_key, str(completed).lower()))
+    def _get_url(self, endpoint):
+        url = urlparse.urljoin(BASE_URL, endpoint)
+
         return url
 
-    def _check_db_registrations(self, email):
+    def _get_api_registrations(self, params):
+        data = urllib.urlencode(params)
+        headers = {}
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+
+        response = requests.get(url=self.url, headers=headers, params=data)
+
+        if response.status_code == httplib.OK:
+            return response.json()
+        else:
+            failure_reason = ('Failed to retrieve registrations: %s \
+                (status code: %s)' % (response.text, response.status_code))
+            self.logger.info(failure_reason)
+            raise Exception(failure_reason)
+
+    def _check_new_registration(self, email):
         email = MySQLdb.escape_string(email)
         c = self.db.cursor()
         query = 'SELECT * FROM user_registration WHERE email="%s"' % email
         try:
             c.execute(query)
+            self.db.commit()
         except MySQLdb.Error, e:
-            print str(e)
+            self.logger.info(str(e))
             return False
 
         row = c.fetchone()
-        if row:
-            print row
-            return True
+        c.close()
 
-        return False
+        if row:
+            return False
+
+        self.logger.info("%s is not a currently registered user." % email)
+        return True
 
     def _conn_db(self, host, user, passwd, db):
         return MySQLdb.connect(host=host,
