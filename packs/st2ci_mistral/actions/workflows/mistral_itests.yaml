@@ -127,7 +127,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{clone_st2_repo[get_build_server.result[0]].stdout}}"
         status_file: "{{itests_status_file}}"
-        timeout: 600
+        timeout: 700
       on-success: "slack_success"
       on-failure: "slack_failure"
     -
