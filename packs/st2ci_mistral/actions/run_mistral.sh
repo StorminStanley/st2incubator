@@ -30,6 +30,7 @@ LOG_FILE=/tmp/mistral-itests-$DATE.log
 LOG_TRACE_FILE=/tmp/mistral-trace-itests-$DATE.log
 sed -i s:/var/log/mistral.log:$LOG_FILE:g $LOG_CONFIG_FILE
 sed -i s:/var/log/mistral_wf_trace.log:$LOG_TRACE_FILE:g $LOG_CONFIG_FILE
+sed -i s:INFO:DEBUG:g $LOG_CONFIG_FILE
 
 service mistral start
 
