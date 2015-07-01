@@ -4,14 +4,19 @@
   description: "Executes puprun command"
   enabled: true
   entry_point: ""
-  parameters: 
-    sudo: 
+  parameters:
+    sudo:
       immutable: true
       default: true
-    cmd: 
+    environment:
+      type: "string"
+      description: "Puppet Environment (aka: git branch) to run. Will revert to 'production' when deleted"
+    role:
+      type: "string"
+      description: "Apply a specific role to a machine (will remain on this role until changed)"
+    cmd:
       immutable: false
-      default: "puprun"
-    kwarg_op: 
+      default: "{% if environment %}environment={{environment}}{% endif %} {% if role %}role={{role}}{% endif %} puprun"
+    kwarg_op:
       immutable: true
       default: "--"
-
