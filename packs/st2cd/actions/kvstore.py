@@ -1,6 +1,11 @@
 from st2actions.runners.pythonrunner import Action
 from st2client.client import Client
-from st2client.models.datastore import KeyValuePair
+
+# Keep Compatability with 0.8 and 0.11 until st2build is upgraded
+try:
+    from st2client.models.datastore import KeyValuePair
+except ImportError:
+    from st2client.models.keyvalue import KeyValuePair
 
 
 class KVPAction(Action):
