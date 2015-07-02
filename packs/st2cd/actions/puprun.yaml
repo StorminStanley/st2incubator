@@ -11,12 +11,16 @@
     environment:
       type: "string"
       description: "Puppet Environment (aka: git branch) to run. Will revert to 'production' when deleted"
+      default: "production"
     role:
       type: "string"
       description: "Apply a specific role to a machine (will remain on this role until changed)"
+    env:
+      default:
+        environment: "{{environment}}"
     cmd:
       immutable: false
-      default: "{% if environment %}environment={{environment}}{% endif %} {% if role %}role={{role}}{% endif %} puprun"
+      default: "puprun"
     kwarg_op:
       immutable: true
       default: "--"
