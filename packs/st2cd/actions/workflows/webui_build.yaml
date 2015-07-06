@@ -67,15 +67,8 @@
       ref: "core.remote"
       params:
         hosts: "{{build_server}}"
-        cmd: "cd {{repodir}} && tar --transform='s/build/webui/' -cvzpf webui.tar.gz build/"
+        cmd: "cd {{repodir}} && tar --transform='s/build/webui/' -cvzpf webui-{{web_version}}.tar.gz build/"
         timeout: 300
-      on-success: "rename_build_artifact"
-    -
-      name: "rename_build_artifact"
-      ref: "core.remote"
-      params:
-        hosts: "{{build_server}}"
-        cmd: "cd {{repodir}} && mv webui.tar.gz \"webui-{{web_version}}.tar.gz\""
       on-success: "publish_build_artifact"
     -
       name: "publish_build_artifact"
@@ -83,7 +76,7 @@
       params:
         hosts: "{{build_server}}"
         args: "-avzr -e 'ssh -i /home/stanley/.ssh/dl_rsync -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
-        source: "{{repodir}}/webui*.tar.gz"
+        source: "{{repodir}}/webui-{{web_version}}.tar.gz"
         dest_server: "{{dl_server}}"
         destination: "/tmp"
         timeout: 600

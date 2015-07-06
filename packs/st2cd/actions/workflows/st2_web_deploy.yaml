@@ -12,7 +12,7 @@
       ref: "core.remote"
       params:
         hosts: "{{hostname}}"
-        cmd: "curl -sS -k -f -o /tmp/webui.tar.gz 'https://downloads.stackstorm.net/releases/st2/{{version}}/webui/webui-{{version}}.tar.gz'"
+        cmd: "curl -sS -k -f -o /tmp/webui.tar.gz 'http://dl-staging201/releases/st2/{{version}}/webui/webui-{{version}}.tar.gz'"
       on-success: "clean_webui"
     -
       name: "clean_webui"
