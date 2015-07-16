@@ -173,5 +173,19 @@
         action: "examples.mistral_examples"
         hosts: "{{hostname}}"
         timeout: 600
+      on-success: "selenium"		
+    -		
+      name: "selenium"
+      ref: "webui.selenium"
+      params:
+        branch: "master"
+        repo: "https://github.com/StackStorm/st2e2e.git"
+        web_host: "{{hostname}}"
+      on-failure: "ignore_selenium_failure"
+    -		
+      name: "ignore_selenium_failure"
+      ref: "core.local"
+      params:
+        cmd: "echo 'Selenium tests failed, but all other tests were successful. Setting overall status to success'"
 
   default: "get_st2_token"
