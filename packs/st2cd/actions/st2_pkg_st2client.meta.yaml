@@ -1,9 +1,9 @@
 ---
-  name: "st2_packaging_st2client"
+  name: "st2_pkg_st2client"
   runner_type: "action-chain"
   description: "Clones a repo to a remote host and uploads st2client to pypi."
   enabled: true
-  entry_point: "workflows/st2_packaging_st2client.yaml"
+  entry_point: "workflows/st2_pkg_st2client.yaml"
   parameters:
     repo:
       type: "string"
