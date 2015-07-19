@@ -32,3 +32,15 @@
       type: "string"
       description: "Password to authenticate to the St2 server"
       default: "testp"
+    windows_host:
+      type: "string"
+      description: "Windows host name. If not specified, test will only check prerequisites"
+      default: ""
+    windows_username:
+      type: "string"
+      description: "Windows username. Default is Administrator"
+      default: "Administrator"
+    windows_password:
+      type: "string"
+      description: "Windows password"
+      default: ""
