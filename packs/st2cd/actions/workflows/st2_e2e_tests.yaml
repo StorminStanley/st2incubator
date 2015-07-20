@@ -173,7 +173,31 @@
         action: "examples.mistral_examples"
         hosts: "{{hostname}}"
         timeout: 600
-      on-success: "selenium"		
+      on-success: "test_timer_rule"		
+    -
+      name: "test_timer_rule"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_timer_rule"
+        token: "{{st2_token}}"
+        action: "tests.test_timer_rule"
+        params: "token={{st2_token}}"
+        hosts: "{{hostname}}"
+        timeout: 600
+      on-success: "test_windows_runners"
+      on-failure: "test_windows_runners"      
+    -
+      name: "test_windows_runners"
+      ref: "st2cd.action_run"
+      params:
+        name: "test_windows_runners"
+        token: "{{st2_token}}"
+        action: "tests.test_windows_runners"
+        params: "token={{st2_token}} windows_host={{windows_host}} windows_username={{windows_username}} windows_password={{windows_password}}"
+        hosts: "{{hostname}}"
+        timeout: 600
+      on-success: "selenium"
+      on-failure: "selenium"
     -		
       name: "selenium"
       ref: "webui.selenium"
