@@ -33,6 +33,7 @@ class TypeformRegistrationSensor(PollingSensor):
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
+        self.sensor_config = self._config.get('sensor', False)
         db_config = self._config.get('mysql', False)
         self.db = self._conn_db(host=db_config.get('host', None),
                                 user=db_config.get('user', None),
@@ -44,6 +45,7 @@ class TypeformRegistrationSensor(PollingSensor):
                                                                True)).lower()}
 
         self.url = self._get_url(self._config.get('form_id', None))
+        self.retries = self._config.get('retries', 3)
 
     def setup(self):
         pass
@@ -92,7 +94,18 @@ class TypeformRegistrationSensor(PollingSensor):
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        response = requests.get(url=self.url, headers=headers, params=data)
+        for x in range(self.sensor_config.retries):
+            try:
+                response = requests.request(method='GET',
+                                            url=self.url,
+                                            headers=headers,
+                                            timeout=self.sensor_config.timeout,
+                                            params=data)
+            except Exception, e:
+                self.logger.info(e)
+
+        if not response.text:
+            raise Exception('Failed to connect to TypeForm API.')
 
         if response.status_code != httplib.OK:
             failure_reason = ('Failed to retrieve registrations: %s \
