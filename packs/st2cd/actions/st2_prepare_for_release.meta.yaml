@@ -1,7 +1,7 @@
 ---
-  name: "pytests-setup"
+  name: "prepare-for-release"
   runner_type: "action-chain"
-  description: "Look at workflows/st2_pytests_setup.yaml"
+  description: "Look at workflows/st2_prepare_for_release.yaml"
   enabled: true
   entry_point: "workflows/st2_pytests_setup.yaml"
   parameters:
