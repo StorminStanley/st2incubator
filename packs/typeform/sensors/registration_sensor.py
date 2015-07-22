@@ -5,6 +5,7 @@ import httplib
 import MySQLdb
 import MySQLdb.cursors
 import requests
+import time
 import urllib
 import urlparse
 
@@ -94,7 +95,7 @@ class TypeformRegistrationSensor(PollingSensor):
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        for x in range(self.sensor_config['retries']):
+        for x in range(int(self.sensor_config['retries'])):
             try:
                 response = requests.request(
                     method='GET',
@@ -104,8 +105,10 @@ class TypeformRegistrationSensor(PollingSensor):
                     params=data)
             except Exception, e:
                 self.logger.info(e)
+                response = None
+                time.sleep(30)
 
-        if not response.text:
+        if not response:
             raise Exception('Failed to connect to TypeForm API.')
 
         if response.status_code != httplib.OK:

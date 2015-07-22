@@ -3,8 +3,8 @@ api_key: ""
 form_id: ""
 completed: ""
 sensor:
-  retries: ""
-  timeout: ""
+  retries: 3
+  timeout: 20
 mysql:
   host: ""
   user: ""
