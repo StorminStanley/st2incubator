@@ -94,13 +94,14 @@ class TypeformRegistrationSensor(PollingSensor):
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        for x in range(self.sensor_config.retries):
+        for x in range(self.sensor_config['retries']):
             try:
-                response = requests.request(method='GET',
-                                            url=self.url,
-                                            headers=headers,
-                                            timeout=self.sensor_config.timeout,
-                                            params=data)
+                response = requests.request(
+                    method='GET',
+                    url=self.url,
+                    headers=headers,
+                    timeout=self.sensor_config['timeout'],
+                    params=data)
             except Exception, e:
                 self.logger.info(e)
 
