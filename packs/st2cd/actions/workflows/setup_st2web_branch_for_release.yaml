@@ -11,7 +11,7 @@
       on-success: "set_verson_in_st2_common"
     -
       name: "set_verson_in_package_json"
-      ref: "s2tcd.json_field_modify"
+      ref: "st2cd.json_field_modify"
       params:
         file_path: "{{st2_web_repo_target}}/package.json"
         field: "st2_version"

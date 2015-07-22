@@ -11,7 +11,7 @@
       on-success: "set_verson_in_st2_common"
     -
       name: "set_verson_in_st2_common"
-      ref: "s2tcd.st2_set_version_info"
+      ref: "st2cd.st2_set_version_info"
       params:
         repo: "{{st2_repo_target}}"
         branch: "{{st2_release_branch}}"

@@ -21,7 +21,7 @@
       required: true
       position: 2
     date:
-      type: "string":
+      type: "string"
       description: "Release date to set. Format Month_string Date, YYYY. E.g. July 21, 2015."
       required: false
       position: 3
