@@ -1,5 +1,5 @@
 ---
-  name: "setup_st2_branch_for_release.yaml"
+  name: "setup_st2_branch_for_release"
   runner_type: "action-chain"
   description: "Sets up st2 branch for release."
   enabled: true
