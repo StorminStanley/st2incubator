@@ -44,7 +44,17 @@ then
                 SED_IN_DEV=`sed -i "/${RELEASE_STRING}/i \in development\n--------------\n\n" ${CHANGELOG_FILE}`
                 if [[ $? == 0 ]]
                 then
-                    exit 0
+                    OUT=`$GIT add ${CHANGELOG_FILE} >> ${OUTPUT} && $GIT commit -qm "Setting changelog info for release - ${VERSION}" >> ${OUTPUT}`
+                    if [[ $? == 0 ]]
+                        then
+                            echo "Version in ${CHANGELOG_FILE} set to ${RELEASE_STRING}"
+                            exit 0
+                        else
+                            echo "Failed setting release info in ${CHANGELOG_FILE}"
+                            cat ${OUTPUT}
+                            rm -f ${OUTPUT}
+                            exit 2
+                        fi
                 else
                     echo "Failed sed add in development string."
                     exit 6

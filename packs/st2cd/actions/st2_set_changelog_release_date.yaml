@@ -10,19 +10,16 @@
       description: "Location of st2 cloned git repo on disk."
       required: true
       position: 0
-      default: "/home/stanley/st2/"
     branch:
       type: "string"
       description: "Branch name to use. Example: v${version_number}."
       required: true
       position: 1
-      default: "v{{version}}"
     version:
       type: "string"
       description: "Version to use. Example: 0.7.0."
       required: true
       position: 2
-      default: "release"
     date:
       type: "string":
       description: "Release date to set. Format Month_string Date, YYYY. E.g. July 21, 2015."

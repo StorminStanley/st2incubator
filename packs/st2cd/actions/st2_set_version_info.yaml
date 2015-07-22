@@ -16,13 +16,11 @@
       description: "Version to use. Example: 0.7.0."
       required: true
       position: 1
-      default: "release"
     branch:
       type: "string"
       description: "Branch name to use. Example: v${version_number}."
       required: true
       position: 2
-      default: "v{{version}}"
     sudo:
       immutable: true
       default: false
