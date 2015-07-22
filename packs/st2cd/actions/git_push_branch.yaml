@@ -1,0 +1,27 @@
+---
+  name: "git_push_branch"
+  runner_type: "run-remote-script"
+  description: "Pushes a branch upwards to a git repo."
+  enabled: true
+  entry_point: "git_push_branch.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of cloned git repo on disk."
+      required: true
+      position: 0
+    branch:
+      type: "string"
+      description: "Branch name to use. Example: v${version_number}."
+      required: true
+      position: 1
+      default: "test"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

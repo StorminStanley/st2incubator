@@ -1,0 +1,34 @@
+---
+  name: "st2_set_version_info"
+  runner_type: "run-remote-script"
+  description: "Set version info in st2 branch."
+  enabled: true
+  entry_point: "st2_set_version_info.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of st2 cloned git repo on disk."
+      required: true
+      position: 0
+      default: "/home/stanley/st2/"
+    version:
+      type: "string"
+      description: "Version to use. Example: 0.7.0."
+      required: true
+      position: 1
+      default: "release"
+    branch:
+      type: "string"
+      description: "Branch name to use. Example: v${version_number}."
+      required: true
+      position: 2
+      default: "v{{version}}"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
