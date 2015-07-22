@@ -1,0 +1,35 @@
+---
+  chain:
+    -
+      name: "branch_st2"
+      ref: "st2cd.git_create_branch"
+      params:
+        repo:  "{{st2_repo_target}}"
+        branch: "{{st2_release_branch}}"
+        base_branch: "master"
+        hosts: "{{build_host}}"
+        timeout: 60
+      on-success: "set_verson_in_st2_common"
+    -
+      name: "set_verson_in_st2_common"
+      ref: "s2tcd.st2_set_version_info"
+      params:
+        repo: "{{st2_repo_target}}"
+        branch: "{{st2_release_branch}}"
+        version: "{{st2_release_version}}"
+      on-success: "set_release_info_in_changelog"
+    -
+      name: "set_release_info_in_changelog"
+      ref: "st2cd.st2_set_changelog_release_date"
+      params:
+        repo: "{{st2_repo_target}}"
+        branch: "{{st2_release_branch}}"
+        version: "{{st2_release_version}}"
+      on-success: "push_st2_release_branch_to_remote"
+    -
+      name: "push_st2_release_branch_to_remote"
+      ref: "st2cd.git_push_branch"
+      params:
+        repo: "{{st2_repo_target}}"
+        branch: "{{st2_release_branch}}"
+  default: branch_st2
