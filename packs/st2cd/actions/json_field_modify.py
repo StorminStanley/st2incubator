@@ -38,7 +38,7 @@ def modify_json_field_and_save(file_path, field, value):
 
 def main():
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--file-path', required=True,
+    parser.add_argument('--file_path', required=True,
                         help='Path to json file.')
     parser.add_argument('--field', required=True,
                         help='Name of field to modify value for.')

@@ -1,5 +1,5 @@
 ---
-  name: "json_field_modify.yaml"
+  name: "json_field_modify"
   runner_type: "remote-shell-script"
   description: "Modify a field in JSON file to given value."
   enabled: true

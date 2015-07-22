@@ -14,9 +14,9 @@
       type: "string"
       description: "st2 release branch. E.g. v0.12."
       required: true
-    st2_web_release_version:
+    st2_release_version:
       type: "string"
-      description: "st2 st2_release_version. Something like 0.12.0."
+      description: "st2_release_version. Something like 0.12.0."
       required: true
     build_host:
       type: "string"

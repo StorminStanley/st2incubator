@@ -8,7 +8,7 @@
         branch: "{{st2_web_release_branch}}"
         base_branch: "master"
         hosts: "{{build_host}}"
-      on-success: "set_verson_in_st2_common"
+      on-success: "set_verson_in_package_json"
     -
       name: "set_verson_in_package_json"
       ref: "st2cd.json_field_modify"
@@ -22,9 +22,10 @@
       name: "git_commit_changes"
       ref: "st2cd.git_commit_changes"
       params:
-        repo: "{{st2_web_repo_target"
+        repo: "{{st2_web_repo_target}}"
         branch: "{{st2_web_release_branch}}"
-        commit_msg: "Setting up st2_version to {{st2_release_version}} in package.json."
+        commit_msg: "\"Setting up st2_version to {{st2_release_version}} in package.json.\""
+        hosts: "{{build_host}}"
       on-success: "push_st2_web_release_branch_to_remote"
     -
       name: "push_st2_web_release_branch_to_remote"
