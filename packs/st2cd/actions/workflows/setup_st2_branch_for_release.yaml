@@ -8,7 +8,6 @@
         branch: "{{st2_release_branch}}"
         base_branch: "master"
         hosts: "{{build_host}}"
-        timeout: 60
       on-success: "set_verson_in_st2_common"
     -
       name: "set_verson_in_st2_common"
@@ -17,6 +16,7 @@
         repo: "{{st2_repo_target}}"
         branch: "{{st2_release_branch}}"
         version: "{{st2_release_version}}"
+        hosts: "{{build_host}}"
       on-success: "set_release_info_in_changelog"
     -
       name: "set_release_info_in_changelog"
@@ -25,6 +25,7 @@
         repo: "{{st2_repo_target}}"
         branch: "{{st2_release_branch}}"
         version: "{{st2_release_version}}"
+        hosts: "{{build_host}}"
       on-success: "push_st2_release_branch_to_remote"
     -
       name: "push_st2_release_branch_to_remote"
@@ -32,4 +33,5 @@
       params:
         repo: "{{st2_repo_target}}"
         branch: "{{st2_release_branch}}"
+        hosts: "{{build_host}}"
   default: branch_st2
