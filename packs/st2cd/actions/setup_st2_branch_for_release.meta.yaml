@@ -18,3 +18,7 @@
       type: "string"
       description: "st2 st2_release_version. Something like 0.12.0."
       required: true
+    build_host:
+      type: "string"
+      description: "Where to run tasks of the action-chain"
+      required: true
