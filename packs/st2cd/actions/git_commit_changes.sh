@@ -1,10 +1,10 @@
 #!/bin/bash
 
 GIT=`which git`
-REPO=$1
+REPO="$1"
 DATE=`date +%s`
-BRANCH=$2
-MSG=$3
+BRANCH="$2"
+MSG="$3"
 OUTPUT=/tmp/git-output-$DATE
 
 if [[ ! -d ${REPO} ]]
@@ -22,7 +22,7 @@ then
   exit 2
 fi
 
-OUT=`$GIT add -A && $GIT commit -m ${MSG} > ${OUTPUT}`
+OUT=`$GIT add -A && $GIT commit -m "${MSG}" > ${OUTPUT}`
 if [[ $? == 0 ]]
 then
   echo "Committed ${MSG} to ${BRANCH}."
