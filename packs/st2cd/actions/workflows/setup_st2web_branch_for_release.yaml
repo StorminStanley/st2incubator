@@ -1,0 +1,36 @@
+---
+  chain:
+    -
+      name: "branch_st2_web"
+      ref: "st2cd.git_create_branch"
+      params:
+        repo:  "{{st2_web_repo_target}}"
+        branch: "{{st2_web_release_branch}}"
+        base_branch: "master"
+        hosts: "{{build_host}}"
+      on-success: "set_verson_in_st2_common"
+    -
+      name: "set_verson_in_package_json"
+      ref: "s2tcd.json_field_modify"
+      params:
+        file_path: "{{st2_web_repo_target}}/package.json"
+        field: "st2_version"
+        value: "{{st2_release_version}}"
+        hosts: "{{build_host}}"
+      on-success: "git_commit_changes"
+    -
+      name: "git_commit_changes"
+      ref: "st2cd.git_commit_changes"
+      params:
+        repo: "{{st2_web_repo_target"
+        branch: "{{st2_web_release_branch}}"
+        commit_msg: "Setting up st2_version to {{st2_release_version}} in package.json."
+      on-success: "push_st2_web_release_branch_to_remote"
+    -
+      name: "push_st2_web_release_branch_to_remote"
+      ref: "st2cd.git_push_branch"
+      params:
+        repo: "{{st2_web_repo_target}}"
+        branch: "{{st2_web_release_branch}}"
+        hosts: "{{build_host}}"
+  default: branch_st2_web
