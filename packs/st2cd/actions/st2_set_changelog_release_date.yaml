@@ -20,11 +20,6 @@
       description: "Version to use. Example: 0.7.0."
       required: true
       position: 2
-    date:
-      type: "string"
-      description: "Release date to set. Format Month_string Date, YYYY. E.g. July 21, 2015."
-      required: false
-      position: 3
     sudo:
       immutable: true
       default: false

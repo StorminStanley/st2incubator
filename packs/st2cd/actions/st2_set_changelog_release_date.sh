@@ -5,12 +5,7 @@ REPO=$1
 DATE=`date +%s`
 BRANCH=$2
 VERSION=$3
-RELEASE_DATE=$4
-
-if [[ -z $RELEASE_DATE ]]
-then
-    RELEASE_DATE=`date +"%B %d, %Y"`
-fi
+RELEASE_DATE=`date +"%B %d, %Y"`
 
 OUTPUT=/tmp/changelog_release_date-output-$DATE
 CHANGELOG_FILE=${REPO}/CHANGELOG.rst
