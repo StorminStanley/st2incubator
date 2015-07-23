@@ -1,0 +1,24 @@
+---
+  name: "setup_st2_branch_for_release"
+  runner_type: "action-chain"
+  description: "Sets up st2 branch for release."
+  enabled: true
+  entry_point: "workflows/setup_st2_branch_for_release.yaml"
+  parameters:
+    st2_repo_target:
+      type: "string"
+      description: "Location of cloned st2 repo on disk."
+      required: true
+      default: "/home/stanley/st2/"
+    st2_release_branch:
+      type: "string"
+      description: "st2 release branch. E.g. v0.12."
+      required: true
+    st2_release_version:
+      type: "string"
+      description: "st2 st2_release_version. Something like 0.12.0."
+      required: true
+    build_host:
+      type: "string"
+      description: "Where to run tasks of the action-chain"
+      required: true

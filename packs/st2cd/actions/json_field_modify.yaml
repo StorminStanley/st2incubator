@@ -1,0 +1,28 @@
+---
+  name: "json_field_modify"
+  runner_type: "remote-shell-script"
+  description: "Modify a field in JSON file to given value."
+  enabled: true
+  entry_point: "json_field_modify.py"
+  parameters:
+    file_path:
+      type: "string"
+      description: "Location of JSON file on disk."
+      required: true
+    field:
+      type: "string"
+      description: "Name of the field to modify the value for."
+      required: true
+    value:
+      type: "string"
+      description: "Value to replace field with."
+      required: true
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

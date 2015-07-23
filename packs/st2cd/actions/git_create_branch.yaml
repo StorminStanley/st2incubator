@@ -1,0 +1,32 @@
+---
+  name: "git_create_branch"
+  runner_type: "run-remote-script"
+  description: "Creates a branch."
+  enabled: true
+  entry_point: "git_create_branch.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of cloned git repo on disk."
+      required: true
+      position: 0
+    branch:
+      type: "string"
+      description: "Branch name to use. Example: v${version_number}."
+      required: true
+      position: 1
+      default: "test"
+    base_branch:
+      type: "string"
+      description: "Branch name to use as base."
+      position: 2
+      default: "master"
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

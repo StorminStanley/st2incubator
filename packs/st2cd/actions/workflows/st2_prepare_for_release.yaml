@@ -1,6 +1,4 @@
 ---
-  var:
-    st2_release_base_ver: {{st2_release_version|truncate(3,True,'')}}
   chain:
     -
       name: "short_version"
@@ -113,23 +111,24 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo_target}}"
         branch: "v{{st2_release_base_ver}}"
-      on-success: "branch_st2_web"
+      on-success: "setup_st2web_for_release"
     -
-      name: "branch_st2_web"
-      ref: "st2cd.git_simple_branch"
+      name: "setup_st2web_for_release"
+      ref: "st2cd.setup_st2web_branch_for_release"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2_web_repo_target}}"
-        branch: "v{{st2_release_base_ver}}"
-      on-success: "branch_st2"
+        build_host: "{{get_build_server.result[0]}}"
+        st2_web_repo_target: "{{st2_web_repo_target}}"
+        st2_web_release_branch: "v{{st2_release_base_ver}}"
+        st2_release_version: "{{st2_release_version}}"
+      on-success: "setup_st2_for_release"
     -
-      name: "branch_st2"
-      ref: "st2cd.git_branch"
+      name: "setup_st2_for_release"
+      ref: "st2cd.setup_st2_branch_for_release"
       params:
-        hosts: "{{get_build_server.result[0]}}"
-        repo: "{{st2_repo_target}}"
-        version: "{{st2_release_version}}"
-        branch: "v{{st2_release_base_ver}}"
+        build_host: "{{get_build_server.result[0]}}"
+        st2_repo_target: "{{st2_repo_target}}"
+        st2_release_version: "{{st2_release_version}}"
+        st2_release_branch: "v{{st2_release_base_ver}}"
       on-success: "slack_success"
       on-failure: "slack_failure"
     -

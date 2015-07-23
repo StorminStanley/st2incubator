@@ -1,0 +1,31 @@
+---
+  name: "git_commit_changes"
+  runner_type: "run-remote-script"
+  description: "Commits all open changes in branch."
+  enabled: true
+  entry_point: "git_commit_changes.sh"
+  parameters:
+    repo:
+      type: "string"
+      description: "Location of cloned git repo on disk."
+      required: true
+      position: 0
+    branch:
+      type: "string"
+      description: "Branch to commit changes to."
+      required: true
+      position: 1
+    commit_msg:
+      type: "string"
+      description: "Commit message to use."
+      required: true
+      position: 2
+    sudo:
+      immutable: true
+      default: false
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
