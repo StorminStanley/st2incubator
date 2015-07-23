@@ -111,7 +111,7 @@
         hosts: "{{get_build_server.result[0]}}"
         repo: "{{st2_express_repo_target}}"
         branch: "v{{st2_release_base_ver}}"
-      on-success: "branch_st2_web"
+      on-success: "setup_st2web_for_release"
     -
       name: "setup_st2web_for_release"
       ref: "st2cd.setup_st2web_branch_for_release"
@@ -123,7 +123,7 @@
       on-success: "setup_st2_for_release"
     -
       name: "setup_st2_for_release"
-      ref: "st2cd.setup_st2_for_release"
+      ref: "st2cd.setup_st2_branch_for_release"
       params:
         build_host: "{{get_build_server.result[0]}}"
         st2_repo_target: "{{st2_repo_target}}"
