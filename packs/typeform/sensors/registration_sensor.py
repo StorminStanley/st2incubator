@@ -33,7 +33,6 @@ class TypeformRegistrationSensor(PollingSensor):
         self._trigger_pack = 'typeform'
         self._trigger_ref = '.'.join([self._trigger_pack, 'registration'])
 
-        self.sensor_config = self._config.get('sensor', False)
         db_config = self._config.get('mysql', False)
         self.db = self._conn_db(host=db_config.get('host', None),
                                 user=db_config.get('user', None),
@@ -45,13 +44,16 @@ class TypeformRegistrationSensor(PollingSensor):
                                                                True)).lower()}
 
         self.url = self._get_url(self._config.get('form_id', None))
-        self.retries = int(self._config.get('retries', 3))
+
+        # sensor specific config.
+        self.sensor_config = self._config.get('sensor', {})
+        self.retries = int(self.sensor_config.get('retries', 3))
         if self.retries < 0:
             self.retries = 0
-        self.retry_delay = int(self._config.get('retry_delay', 30))
+        self.retry_delay = int(self.sensor_config.get('retry_delay', 30))
         if self.retry_delay < 0:
             self.retry_delay = 30
-        self.timeout = int(self._config.get('retries', 20))
+        self.timeout = int(self.sensor_config.get('retries', 20))
         if self.timeout < 0:
             self.timeout = 20
 
