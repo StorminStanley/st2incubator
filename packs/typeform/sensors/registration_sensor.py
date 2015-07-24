@@ -104,6 +104,7 @@ class TypeformRegistrationSensor(PollingSensor):
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
+        response = None
         for _ in range(self.retries + 1):
             try:
                 response = requests.request(
@@ -112,9 +113,8 @@ class TypeformRegistrationSensor(PollingSensor):
                     headers=headers,
                     timeout=self.sensor_config['timeout'],
                     params=data)
-            except Exception, e:
-                self.logger.info(e)
-                response = None
+            except Exception:
+                self.logger.info('Unable to connect to registrations API.', exc_info=True)
                 eventlet.sleep(self.retry_delay)
 
         if not response:
