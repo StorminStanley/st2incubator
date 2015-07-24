@@ -1,13 +1,12 @@
 # Requirements:
 # See ../requirements.txt
 
+import eventlet
 import httplib
 import MySQLdb
 import MySQLdb.cursors
 import requests
-import time
-import urllib
-import urlparse
+from six.moves import urllib_parse
 
 from st2reactor.sensor.base import PollingSensor
 
@@ -94,12 +93,12 @@ class TypeformRegistrationSensor(PollingSensor):
         self._sensor_service.dispatch(trigger, data)
 
     def _get_url(self, endpoint):
-        url = urlparse.urljoin(BASE_URL, endpoint)
+        url = urllib_parse.urljoin(BASE_URL, endpoint)
 
         return url
 
     def _get_api_registrations(self, params):
-        data = urllib.urlencode(params)
+        data = urllib_parse.urlencode(params)
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -114,7 +113,7 @@ class TypeformRegistrationSensor(PollingSensor):
             except Exception, e:
                 self.logger.info(e)
                 response = None
-                time.sleep(self.retry_delay)
+                eventlet.sleep(self.retry_delay)
 
         if not response:
             raise Exception('Failed to connect to TypeForm API.')
