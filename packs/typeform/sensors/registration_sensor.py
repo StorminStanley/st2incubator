@@ -46,7 +46,15 @@ class TypeformRegistrationSensor(PollingSensor):
                                                                True)).lower()}
 
         self.url = self._get_url(self._config.get('form_id', None))
-        self.retries = self._config.get('retries', 3)
+        self.retries = int(self._config.get('retries', 3))
+        if self.retries < 0:
+            self.retries = 0
+        self.retry_delay = int(self._config.get('retry_delay', 30))
+        if self.retry_delay < 0:
+            self.retry_delay = 30
+        self.timeout = int(self._config.get('retries', 20))
+        if self.timeout < 0:
+            self.timeout = 20
 
     def setup(self):
         pass
@@ -95,7 +103,7 @@ class TypeformRegistrationSensor(PollingSensor):
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        for x in range(int(self.sensor_config['retries'])):
+        for _ in range(self.retries + 1):
             try:
                 response = requests.request(
                     method='GET',
@@ -106,7 +114,7 @@ class TypeformRegistrationSensor(PollingSensor):
             except Exception, e:
                 self.logger.info(e)
                 response = None
-                time.sleep(30)
+                time.sleep(self.retry_delay)
 
         if not response:
             raise Exception('Failed to connect to TypeForm API.')
