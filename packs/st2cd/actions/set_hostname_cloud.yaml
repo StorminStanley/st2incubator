@@ -16,12 +16,13 @@
       required: true
       enum:
         - "RHEL6"
+        - "RHEL7"
         - "F20"
         - "F21"
         - "UBUNTU14"
     cmd:
       immutable: true
-      default: '{% if distro == "RHEL6" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{fedora}}{% elif distro == "F21" -%}{{fedora}}{% endif -%}'
+      default: '{% if distro == "RHEL6" or distro == "RHEL7" -%}{{redhat}}{% elif distro == "UBUNTU14" -%}{{ubuntu}}{% elif distro == "F20" -%}{{fedora}}{% elif distro == "F21" -%}{{fedora}}{% endif -%}'
     redhat:
       type: "string"
       immutable: true
