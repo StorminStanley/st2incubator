@@ -13,6 +13,10 @@
       type: "string"
       description: "Environment to deploy to"
       default: "staging"
+      enum:
+        - "production"
+        - "staging"
+        - "sandbox"
     key_name:
       type: "string"
       description: "SSH key to use during intial instance creation"
@@ -40,6 +44,7 @@
       default: "UBUNTU14"
       enum:
         - "RHEL6"
+        - "RHEL7"
         - "F20"
         - "F21"
         - "UBUNTU14"
