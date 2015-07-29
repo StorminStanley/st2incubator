@@ -1,0 +1,15 @@
+---
+name: mistral_st2_master
+description: Run integration tests using StackStorm's Mistral fork
+enabled: true
+trigger:
+    type: webhooks.github_event
+criteria:
+    trigger.body.ref:
+    pattern: refs/heads/master
+    type: equals
+trigger.body.repository.full_name:
+    pattern: StackStorm/st2
+    type: equals
+action:
+    ref: st2ci.mistral

@@ -1,0 +1,327 @@
+version: '2.0'
+name: st2ci.mistral
+description: Run the continuous integration for Mistral.
+
+workflows:
+
+    main:
+        type: direct
+        input:
+            - hosts
+            - distro
+            - mis_repo_base
+            - mis_repo_main
+            - mis_repo_client
+            - mis_repo_action
+            - mis_repo_branch
+            - mis_repo_dir
+            - mis_db_type
+            - mis_db_name
+            - mis_db_user_name
+            - mis_db_user_pass
+            - mis_db_root_pass
+            - mis_api_port
+            - st2_repo
+            - st2_repo_branch
+            - st2_repo_dir
+            - merge_upstream
+            - debug
+        task-defaults:
+            on-error:
+                - teardown_on_failure: <% $.is_infra_setup and not $.debug %>
+                - notify_on_failure: <% not $.is_infra_setup or $.debug %>
+        tasks:
+            get_hosts:
+                workflow: get_build_hosts
+                input:
+                    hosts: <% $.hosts %>
+                publish:
+                    hosts: <% $.get_hosts.hosts %>
+                on-success:
+                    - setup
+            setup:
+                workflow: setup_infra
+                input:
+                    host: <% $.hosts.get(test) %>
+                    distro: <% $.distro %>
+                    mis_repo_base: <% $.mis_repo_base %>
+                    mis_repo_main: <% $.mis_repo_main %>
+                    mis_repo_client: <% $.mis_repo_client %>
+                    mis_repo_action: <% $.mis_repo_action %>
+                    mis_repo_branch: <% $.mis_repo_branch %>
+                    mis_repo_dir: <% $.mis_repo_dir %>
+                    mis_db_type: <% $.mis_db_type %>
+                    mis_db_name: <% $.mis_db_name %>
+                    mis_db_user_name: <% $.mis_db_user_name %>
+                    mis_db_user_pass: <% $.mis_db_user_pass %>
+                    mis_db_root_pass: <% $.mis_db_root_pass %>
+                    mis_api_port: <% $.mis_api_port %>
+                    st2_repo: <% $.st2_repo %>
+                    st2_repo_branch: <% $.st2_repo_branch %>
+                    st2_repo_dir: <% $.st2_repo_dir %>
+                    debug: <% $.debug %>
+                publish:
+                    is_infra_setup: True
+                on-success:
+                    - run_tests
+            run_tests:
+                action: core.remote
+                input:
+                    hosts: <% $.hosts.get(test) %> 
+                    cmd: cd <% $.setup.clones.get(st2) %> && make mistral-itests
+                    timeout: 600
+                on-complete:
+                    - record_pip_freeze
+            record_pip_freeze:
+                action: core.remote
+                input:
+                    hosts: <% $.hosts.get(test) %>
+                    cmd: . <% $.setup.clones.get(mistral) %>/.venv/bin/activate && pip freeze
+                on-complete:
+                    - get_commit_shas: <% $.merge_upstream and $.mis_repo_base = openstack %>
+                    - teardown: <% not $.merge_upstream or $.mis_repo_base = stackstorm %>
+            get_commit_shas:
+                workflow: get_commit_shas
+                input:
+                    host: <% $.hosts.get(test) %>
+                    repos: <% $.setup.clones %>
+                publish:
+                    shas: <% $.get_commit_shas.shas %>
+                on-success:
+                    - merge_upstreams
+            merge_upstreams:
+                workflow: merge_upstreams
+                input:
+                    host: <% $.hosts.get(build) %>
+                    shas: <% $.shas %>
+                on-success:
+                    - teardown
+            teardown:
+                workflow: teardown_infra
+                input:
+                    host: <% $.hosts.get(test) %>
+                    clones: <% $.setup.clones %>
+                on-success:
+                    - notify
+            notify:
+                action: slack.post_message
+                input:
+                    channel: '#thunderdome'
+                    message: '```[MISTRAL-CI] STATUS: SUCCEEDED```'
+
+            # Declare error handler(s) for the main workflow here.
+            teardown_on_failure:
+                workflow: teardown_infra
+                input:
+                    host: <% $.hosts.get(test) %>
+                    clones: <% $.setup.clones %>
+                on-complete:
+                    - notify_on_failure
+            notify_on_failure:
+                action: slack.post_message
+                input:
+                    channel: '#stackstorm'
+                    message: '```[MISTRAL-CI] STATUS: EPIC FAIL (WIP. Please ignore.)```'
+                on-complete:
+                    - fail
+
+
+    get_host:
+        type: direct
+        input:
+            - host
+            - type
+        output:
+            host: <% $.host %>
+        tasks:
+            has_host:
+                action: std.noop
+                on-success:
+                    - get_host: <% $.host = null or $.host = '' %>
+                    - succeed: <% $.host != null and $.host != '' %>
+            get_host:
+                action: linux.dig
+                input:
+                    hostname: <% $.type %>
+                    rand: true
+                    count: 1
+                publish:
+                    host: <% $.get_hosts[0] %>
+
+
+    get_build_hosts:
+        type: direct
+        input:
+            - hosts
+        output:
+            hosts: <% $.hosts %>
+        tasks:
+            get_test_host:
+                workflow: get_host
+                input:
+                    host: <% $.hosts.get(test) %>
+                    type: st2-build-slave-itests-ubuntu.service.consul
+                on-success:
+                    - get_build_host
+            get_build_host:
+                workflow: get_host
+                input:
+                    host: <% $.hosts.get(build) %>
+                    type: st2-build-slave-ubuntu.service.consul
+                on-success:
+                    - compose_hosts
+            compose_hosts:
+                action: std.noop
+                publish:
+                    hosts: <% dict(test=>$.get_test_host.host,
+                                   build=>$.get_build_host.host) %>
+
+
+    setup_infra:
+        type: direct
+        input:
+            - host
+            - distro
+            - mis_repo_base
+            - mis_repo_main
+            - mis_repo_client
+            - mis_repo_action
+            - mis_repo_branch
+            - mis_repo_dir
+            - mis_db_type
+            - mis_db_name
+            - mis_db_user_name
+            - mis_db_user_pass
+            - mis_db_root_pass
+            - mis_api_port
+            - st2_repo
+            - st2_repo_branch
+            - st2_repo_dir
+            - debug
+        output:
+            clones: <% dict(mistral=>$.mis_clones.get(mistral),
+                            mistralclient=>$.mis_clones.get(mistralclient),
+                            st2mistral=>$.mis_clones.get(st2mistral),
+                            st2=>$.st2_clone) %>
+        tasks:
+            setup_mistral:
+                action: mistral-dev.setup
+                input:
+                    host: <% $.host %>
+                    distro: <% $.distro %>
+                    repo_base: <% $.mis_repo_base %>
+                    repo_main: <% $.mis_repo_main %>
+                    repo_client: <% $.mis_repo_client %>
+                    repo_action: <% $.mis_repo_action %>
+                    repo_branch: <% $.mis_repo_branch %>
+                    repo_dir: <% $.mis_repo_dir %>
+                    db_type: <% $.mis_db_type %>
+                    db_name: <% $.mis_db_name %>
+                    db_user_name: <% $.mis_db_user_name %>
+                    db_user_pass: <% $.mis_db_user_pass %>
+                    db_root_pass: <% $.mis_db_root_pass %>
+                    api_port: <% $.mis_api_port %>
+                    debug: <% $.debug %>
+                publish:
+                    mis_clones: <% $.setup_mistral.clone_paths %>
+                on-success:
+                    - setup_st2
+            setup_st2:
+                action: st2ci.setup_st2
+                input:
+                    host: <% $.host %>
+                    repo: <% $.st2_repo %>
+                    repo_branch: <% $.st2_repo_branch %>
+                    repo_dir: <% $.st2_repo_dir %>
+                    debug: <% $.debug %>
+                publish:
+                    st2_clone: <% $.setup_st2.clone_path %>
+                on-error:
+                    # Manually tear down mistral here because by the time setup_st2
+                    # runs, the mistral infrastructure is already setup. Each setup
+                    # task above automatically rollback on error unless debugging.
+                    - teardown_mistral: <% not $.debug %>
+            teardown_mistral:
+                action: mistral-dev.teardown
+                input:
+                    host: <% $.host %>
+                    repo_main: <% $.mis_clones.get(mistral) %>
+                    repo_client: <% $.mis_clones.get(mistralclient) %>
+                    repo_action: <% $.mis_clones.get(st2mistral) %>
+
+
+    teardown_infra:
+        type: direct
+        input:
+            - host
+            - clones
+        tasks:
+            teardown_mistral:
+                action: mistral-dev.teardown
+                input:
+                    host: <% $.host %>
+                    repo_main: <% $.clones.get(mistral) %>
+                    repo_client: <% $.clones.get(mistralclient) %>
+                    repo_action: <% $.clones.get(st2mistral) %>
+                on-complete:
+                    - teardown_st2
+            teardown_st2:
+                action: st2ci.teardown_st2
+                input:
+                    host: <% $.host %>
+                    repo: <% $.clones.get(st2) %>
+
+
+    get_commit_shas:
+        type: direct
+        input:
+            - host
+            - repos
+        output:
+            shas: <% $.shas %>
+        tasks:
+            get_mistral_sha:
+                action: core.remote
+                input:
+                    hosts: <% $.host %>
+                    cmd: cd <% $.repos.get(mistral) %> && echo `git rev-parse HEAD`
+                on-success:
+                    - get_mistralclient_sha
+            get_mistralclient_sha:
+                action: core.remote
+                input:
+                    hosts: <% $.host %>
+                    cmd: cd <% $.repos.get(mistralclient) %> && echo `git rev-parse HEAD`
+                on-success:
+                    - compose_shas
+            compose_shas:
+                action: std.noop
+                publish:
+                    shas: <% dict(mistral=>$.get_mistral_sha.get($.host).stdout,
+                                  mistralclient=>$.get_mistralclient_sha.get($.host).stdout) %>
+
+
+    merge_upstreams:
+        type: direct
+        input:
+            - host
+            - shas
+        tasks:
+            merge_mistral:
+                action: st2ci.git_merge_upstream
+                input:
+                    hosts: <% $.host %>
+                    name: mistral
+                    repo: git@github.com:stackstorm/mistral.git
+                    repo_upstream: git@github.com:openstack/mistral.git
+                    commit_sha: <% $.shas.get(mistral) %>
+                on-success:
+                    - merge_mistralclient
+            merge_mistralclient:
+                action: st2ci.git_merge_upstream
+                input:
+                    hosts: <% $.host %>
+                    name: python-mistralclient
+                    repo: git@github.com:stackstorm/python-mistralclient.git
+                    repo_upstream: git@github.com:openstack/python-mistralclient.git
+                    commit_sha: <% $.shas.get(mistralclient) %>

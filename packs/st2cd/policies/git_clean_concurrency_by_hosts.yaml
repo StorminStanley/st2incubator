@@ -1,0 +1,11 @@
+---
+name: git_clean_concurrency_by_hosts
+pack: st2cd
+description: Limits the concurrent executions for the git_clean action by hosts.
+enabled: true
+resource_ref: st2cd.git_clean
+policy_type: action.concurrency.attr
+parameters:
+    threshold: 1
+    attributes:
+        - hosts

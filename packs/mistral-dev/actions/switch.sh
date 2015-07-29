@@ -10,6 +10,7 @@ REPO=$3
 BRANCH=$4
 
 OPT_DIR=/opt/openstack
+WWW_DIR=/var/www
 
 if [[ "${REPO}" = "st2" ]]; then
     SWITCH_TO=${ST2_REPO_ROOT}
@@ -45,6 +46,12 @@ fi
 
 cd ${OPT_DIR}
 if [[ -L ${OPT_DIR}/mistral ]]; then
+    rm mistral
+fi
+ln -s ${SWITCH_TO}/mistral mistral
+
+cd ${WWW_DIR}
+if [[ -L ${WWW_DIR}/mistral ]]; then
     rm mistral
 fi
 ln -s ${SWITCH_TO}/mistral mistral

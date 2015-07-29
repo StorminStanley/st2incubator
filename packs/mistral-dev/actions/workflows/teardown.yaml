@@ -1,0 +1,52 @@
+version: '2.0'
+
+mistral-dev.teardown:
+    description: Teardown a running instance of Mistral.
+    type: direct
+    input:
+        - host
+        - distro
+        - repo_main
+        - repo_client
+        - repo_action
+        - db_type
+        - db_name
+        - db_user_name
+        - db_root_pass
+
+    tasks:
+        stop_service:
+            action: core.remote_sudo
+            input:
+                hosts: <% $.host %>
+                cmd: service mistral stop
+            on-error:
+                - noop
+            on-complete:
+                - uninstall
+
+        uninstall:
+            action: mistral-dev.uninstall
+            input:
+                hosts: <% $.host %>
+                distro: <% $.distro %>
+            on-success:
+                - teardown_db
+
+        teardown_db:
+            action: mistral-dev.teardown_db
+            input:
+                hosts: <% $.host %>
+                db_type: <% $.db_type %>
+                db_name: <% $.db_name %>
+                db_user_name: <% $.db_user_name %>
+                db_root_pass: <% $.db_root_pass %>
+            on-success:
+                - remove_repos
+
+        remove_repos:
+            with-items: repo in <% list($.repo_main, $.repo_client, $.repo_action) %>
+            action: st2cd.git_clean
+            input:
+                hosts: <% $.host %>
+                target: <% $.repo %>

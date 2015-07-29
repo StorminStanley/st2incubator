@@ -1,0 +1,49 @@
+---
+name: setup_config
+description: Write the configuration files for Mistral.
+enabled: true
+runner_type: remote-shell-script
+entry_point: setup_config.sh
+parameters:
+  mistral_path:
+    type: string
+    default: /home/stanley/mistral
+    required: true
+    position: 0
+  db_type:
+    type: string
+    default: postgresql
+    required: true
+    position: 1
+    enum:
+        - postgresql
+        - mysql
+  db_name:
+    type: string
+    default: mistral
+    required: true
+    position: 2
+  db_user_name:
+    type: string
+    default: mistral
+    required: true
+    position: 3
+  db_user_pass:
+    type: string
+    default: StackStorm
+    required: true
+    position: 4
+  api_port:
+    type: integer
+    default: 8989
+    required: true
+    position: 5
+  sudo:
+    immutable: true
+    default: false
+  cmd:
+    immutable: true
+    default: ""
+  kwarg_op:
+    immutable: true
+    default: "--"
