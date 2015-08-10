@@ -1,12 +1,12 @@
 # Requirements:
 # See ../requirements.txt
 
+import eventlet
 import httplib
 import MySQLdb
 import MySQLdb.cursors
 import requests
-import urllib
-import urlparse
+from six.moves import urllib_parse
 
 from st2reactor.sensor.base import PollingSensor
 
@@ -44,6 +44,20 @@ class TypeformRegistrationSensor(PollingSensor):
                                                                True)).lower()}
 
         self.url = self._get_url(self._config.get('form_id', None))
+
+        # sensor specific config.
+        self.sensor_config = self._config.get('sensor', {})
+        self.retries = int(self.sensor_config.get('retries', 3))
+        if self.retries < 0:
+            self.retries = 0
+
+        self.retry_delay = int(self.sensor_config.get('retry_delay', 30))
+        if self.retry_delay < 0:
+            self.retry_delay = 30
+
+        self.timeout = int(self.sensor_config.get('timeout', 20))
+        if self.timeout < 0:
+            self.timeout = 20
 
     def setup(self):
         pass
@@ -83,21 +97,40 @@ class TypeformRegistrationSensor(PollingSensor):
         self._sensor_service.dispatch(trigger, data)
 
     def _get_url(self, endpoint):
-        url = urlparse.urljoin(BASE_URL, endpoint)
+        url = urllib_parse.urljoin(BASE_URL, endpoint)
 
         return url
 
     def _get_api_registrations(self, params):
-        data = urllib.urlencode(params)
+        data = urllib_parse.urlencode(params)
         headers = {}
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        response = requests.get(url=self.url, headers=headers, params=data)
+        response = None
+        attempts = 0
+        while attempts < self.retries:
+            try:
+                response = requests.request(
+                    method='GET',
+                    url=self.url,
+                    headers=headers,
+                    timeout=self.timeout,
+                    params=data)
+                self.logger.debug('Got repsonse: %s.', response.json())
+                break
+            except Exception:
+                msg = 'Unable to connect to registrations API.'
+                self.logger.exception(msg)
+                attempts += 1
+                eventlet.sleep(self.retry_delay)
+
+        if not response:
+            raise Exception('Failed to connect to TypeForm API.')
 
         if response.status_code != httplib.OK:
             failure_reason = ('Failed to retrieve registrations: %s \
                 (status code: %s)' % (response.text, response.status_code))
-            self.logger.info(failure_reason)
+            self.logger.error(failure_reason)
             raise Exception(failure_reason)
 
         return response.json()
