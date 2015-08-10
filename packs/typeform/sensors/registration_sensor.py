@@ -50,10 +50,12 @@ class TypeformRegistrationSensor(PollingSensor):
         self.retries = int(self.sensor_config.get('retries', 3))
         if self.retries < 0:
             self.retries = 0
+
         self.retry_delay = int(self.sensor_config.get('retry_delay', 30))
         if self.retry_delay < 0:
             self.retry_delay = 30
-        self.timeout = int(self.sensor_config.get('retries', 20))
+
+        self.timeout = int(self.sensor_config.get('timeout', 20))
         if self.timeout < 0:
             self.timeout = 20
 
@@ -105,16 +107,21 @@ class TypeformRegistrationSensor(PollingSensor):
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
         response = None
-        for _ in range(self.retries + 1):
+        attempts = 0
+        while attempts < self.retries:
             try:
                 response = requests.request(
                     method='GET',
                     url=self.url,
                     headers=headers,
-                    timeout=self.sensor_config['timeout'],
+                    timeout=self.timeout,
                     params=data)
+                self.logger.debug('Got repsonse: %s.', response.json())
+                break
             except Exception:
-                self.logger.info('Unable to connect to registrations API.', exc_info=True)
+                msg = 'Unable to connect to registrations API.'
+                self.logger.exception(msg)
+                attempts += 1
                 eventlet.sleep(self.retry_delay)
 
         if not response:
@@ -123,7 +130,7 @@ class TypeformRegistrationSensor(PollingSensor):
         if response.status_code != httplib.OK:
             failure_reason = ('Failed to retrieve registrations: %s \
                 (status code: %s)' % (response.text, response.status_code))
-            self.logger.info(failure_reason)
+            self.logger.error(failure_reason)
             raise Exception(failure_reason)
 
         return response.json()
