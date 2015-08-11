@@ -1,0 +1,34 @@
+---
+  name: "setup_service"
+  runner_type: "run-remote-script"
+  description: "Setup mistral to run as a service."
+  enabled: true
+  entry_point: "setup_service.sh"
+  parameters:
+    distro:
+      type: string
+      description: The flavor of Linux distribution.
+      required: true
+      position: 0
+      default: ubuntu
+      enum:
+        - ubuntu
+        - fedora
+    repo_main:
+      type: string
+      description: Location of cloned mistral repo on disk.
+      required: true
+      position: 1
+      default: /home/stanley/mistral
+    dir:
+      immutable: true
+      default: /home/stanley/
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

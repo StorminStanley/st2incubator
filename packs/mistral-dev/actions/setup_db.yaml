@@ -1,0 +1,63 @@
+---
+name: setup_db
+description: Setup the database for Mistral.
+enabled: true
+runner_type: remote-shell-script
+entry_point: setup_db.sh
+parameters:
+  mistral_path:
+    type: string
+    default: /home/stanley/mistral
+    required: true
+    position: 0
+  mistral_config:
+    type: string
+    default: "{{mistral_path}}/mistral.conf"
+    required: true
+    position: 1
+  distro:
+    type: string
+    description: The flavor of Linux distribution.
+    required: true
+    position: 2
+    default: ubuntu
+    enum:
+      - ubuntu
+      - fedora
+  db_type:
+    type: string
+    default: postgresql
+    required: true
+    position: 3
+    enum:
+      - postgresql
+      - mysql
+  db_name:
+    type: string
+    default: mistral
+    required: true
+    position: 4
+  db_user_name:
+    type: string
+    default: mistral
+    required: true
+    position: 5
+  db_user_pass:
+    type: string
+    default: StackStorm
+    required: true
+    position: 6
+  db_root_pass:
+    type: string
+    default: StackStorm
+    required: true
+    position: 7
+  sudo:
+    immutable: true
+    default: false
+  cmd:
+    immutable: true
+    default: ""
+  kwarg_op:
+    immutable: true
+    default: "--"

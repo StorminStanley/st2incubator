@@ -1,0 +1,28 @@
+---
+  name: "uninstall"
+  runner_type: "run-remote-script"
+  description: "Uninstall mistral and related components."
+  enabled: true
+  entry_point: "uninstall.sh"
+  parameters:
+    distro:
+      type: string
+      description: The flavor of Linux distribution.
+      required: true
+      position: 0
+      default: ubuntu
+      enum:
+        - ubuntu
+        - fedora
+    dir:
+      immutable: true
+      default: /home/stanley/
+    sudo:
+      immutable: true
+      default: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

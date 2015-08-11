@@ -1,0 +1,117 @@
+version: '2.0'
+
+mistral-dev.setup:
+    description: Setup a running instance of Mistral from git repo.
+    type: direct
+    input:
+        - host
+        - distro
+        - repo_base
+        - repo_main
+        - repo_client
+        - repo_action
+        - repo_branch
+        - repo_dir
+        - db_type
+        - db_name
+        - db_user_name
+        - db_user_pass
+        - db_root_pass
+        - api_port
+        - debug
+
+    output:
+        clone_paths: <% $.clone_paths %>
+
+    task-defaults:
+        on-error:
+            - teardown: <% not $.debug %>
+            - fail: <% $.debug %>
+
+    tasks:
+        clone_repos:
+            with-items:
+                - proj in <% list(mistral, mistralclient, st2mistral) %>
+                - repo in <% list($.repo_main, $.repo_client, $.repo_action) %>
+            action: st2cd.git_clone
+            input:
+                hosts: <% $.host %>
+                repo: <% $.repo %>
+                branch: <% $.repo_branch %>
+                target: <% $.repo_dir %>/<% $.proj %>_<% $.repo_branch %>
+            publish:
+                clone_paths: <% dict(mistral=>$.clone_repos[0].get($.host).stdout,
+                                     mistralclient=>$.clone_repos[1].get($.host).stdout,
+                                     st2mistral=>$.clone_repos[2].get($.host).stdout) %>
+            on-success:
+                - install
+
+        install:
+            action: mistral-dev.install
+            input:
+                hosts: <% $.host %>
+                repo_main: <% $.clone_paths.get(mistral) %>
+                repo_client: <% $.clone_paths.get(mistralclient) %>
+                repo_action: <% $.clone_paths.get(st2mistral) %>
+            on-success:
+                - setup_config
+
+        setup_config:
+            action: mistral-dev.setup_config
+            input:
+                hosts: <% $.host %>
+                mistral_path: <% $.clone_paths.get(mistral) %>
+                db_type: <% $.db_type %>
+                db_name: <% $.db_name %>
+                db_user_name: <% $.db_user_name %>
+                db_user_pass: <% $.db_user_pass %>
+                api_port: <% $.api_port %>
+            on-success:
+                - setup_db
+
+        setup_db:
+            action: mistral-dev.setup_db
+            input:
+                hosts: <% $.host %>
+                mistral_path: <% $.clone_paths.get(mistral) %>
+                distro: <% $.distro %>
+                db_type: <% $.db_type %>
+                db_name: <% $.db_name %>
+                db_user_name: <% $.db_user_name %>
+                db_user_pass: <% $.db_user_pass %>
+                db_root_pass: <% $.db_root_pass %>
+            on-success:
+                - setup_service
+
+        setup_service:
+            action: mistral-dev.setup_service
+            input:
+                hosts: <% $.host %>
+                distro: <% $.distro %>
+                repo_main: <% $.clone_paths.get(mistral) %>
+            on-success:
+                - start_service
+
+        start_service:
+            action: core.remote_sudo
+            input:
+                hosts: <% $.host %>
+                cmd: service mistral start
+
+
+
+        # Declare error handler(s) here
+        teardown:
+            action: mistral-dev.teardown
+            input:
+                host: <% $.host %>
+                distro: <% $.distro %>
+                repo_main: <% $.clone_paths.get(mistral) %>
+                repo_client: <% $.clone_paths.get(mistralclient) %>
+                repo_action: <% $.clone_paths.get(st2mistral) %>
+                db_type: <% $.db_type %>
+                db_name: <% $.db_name %>
+                db_user_name: <% $.db_user_name %>
+                db_root_pass: <% $.db_root_pass %>
+            on-complete:
+                - fail
