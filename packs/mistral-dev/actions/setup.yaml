@@ -2,8 +2,8 @@
 name: setup
 description: Install and configure a running instance of Mistral from git repo.
 enabled: true
-runner_type: mistral-v2
-entry_point: workflows/setup.yaml
+runner_type: action-chain
+entry_point: workflows/setup.chain.yaml
 parameters:
   host:
     type: string
@@ -19,8 +19,11 @@ parameters:
       - fedora
   repo_base:
     type: string
-    default: StackStorm
+    default: stackstorm
     required: true
+    enum:
+      - stackstorm
+      - openstack
   repo_main:
     type: string
     default: https://github.com/{{repo_base}}/mistral.git
@@ -76,3 +79,5 @@ parameters:
     default: null
     immutable: true
     type: string
+  timeout:
+    default: 600

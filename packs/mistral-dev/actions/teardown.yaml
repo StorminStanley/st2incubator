@@ -2,8 +2,8 @@
 name: teardown
 description: Teardown a running instance of Mistral.
 enabled: true
-runner_type: mistral-v2
-entry_point: workflows/teardown.yaml
+runner_type: action-chain
+entry_point: workflows/teardown.chain.yaml
 parameters:
   host:
     type: string

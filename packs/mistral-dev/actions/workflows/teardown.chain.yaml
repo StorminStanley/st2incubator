@@ -1,0 +1,50 @@
+---
+default: "stop_service"
+chain:
+    -
+        name: "stop_service"
+        ref: "core.remote_sudo"
+        params:
+            hosts: "{{host}}"
+            cmd: "service mistral stop"
+        on-success: "uninstall"
+        on-failure: "uninstall"
+    -
+        name: "uninstall"
+        ref: "mistral-dev.uninstall"
+        params:
+            hosts: "{{host}}"
+            distro: "{{distro}}"
+        on-success: "teardown_db"
+    -
+        name: "teardown_db"
+        ref: "mistral-dev.teardown_db"
+        params:
+            hosts: "{{host}}"
+            db_type: "{{db_type}}"
+            db_name: "{{db_name}}"
+            db_user_name: "{{db_user_name}}"
+            db_root_pass: "{{db_root_pass}}"
+        on-success: "remove_mistral"
+    -
+        name: "remove_mistral"
+        ref: "st2cd.git_clean"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_main}}"
+        on-success: "remove_mistralclient"
+        on-failure: "remove_mistralclient"
+    -
+        name: "remove_mistralclient"
+        ref: "st2cd.git_clean"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_client}}"
+        on-success: "remove_st2mistral"
+        on-failure: "remove_st2mistral"
+    -
+        name: "remove_st2mistral"
+        ref: "st2cd.git_clean"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_action}}"

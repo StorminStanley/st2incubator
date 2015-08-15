@@ -121,7 +121,7 @@ workflows:
                 action: slack.post_message
                 input:
                     channel: '#stackstorm'
-                    message: '```[MISTRAL-CI] STATUS: EPIC FAIL (WIP. Please ignore.)```'
+                    message: '```[MISTRAL-CI] STATUS: EPIC FAIL (WIP)```'
                 on-complete:
                     - fail
 
@@ -199,10 +199,10 @@ workflows:
             - st2_repo_dir
             - debug
         output:
-            clones: <% dict(mistral=>$.mis_clones.get(mistral),
-                            mistralclient=>$.mis_clones.get(mistralclient),
-                            st2mistral=>$.mis_clones.get(st2mistral),
-                            st2=>$.st2_clone) %>
+            clones: <% dict(mistral=>$.mis_clone_paths.get(mistral),
+                            mistralclient=>$.mis_clone_paths.get(mistralclient),
+                            st2mistral=>$.mis_clone_paths.get(st2mistral),
+                            st2=>$.st2_clone_path) %>
         tasks:
             setup_mistral:
                 action: mistral-dev.setup
@@ -223,7 +223,10 @@ workflows:
                     api_port: <% $.mis_api_port %>
                     debug: <% $.debug %>
                 publish:
-                    mis_clones: <% $.setup_mistral.clone_paths %>
+                    mis_clone_paths: <%
+                        dict(mistral=>$.setup_mistral.tasks[0].result.get($.host).stdout,
+                             mistralclient=>$.setup_mistral.tasks[1].result.get($.host).stdout,
+                             st2mistral=>$.setup_mistral.tasks[2].result.get($.host).stdout) %>
                 on-success:
                     - setup_st2
             setup_st2:
@@ -235,7 +238,7 @@ workflows:
                     repo_dir: <% $.st2_repo_dir %>
                     debug: <% $.debug %>
                 publish:
-                    st2_clone: <% $.setup_st2.clone_path %>
+                    st2_clone_path: <% $.setup_st2.clone_path %>
                 on-error:
                     # Manually tear down mistral here because by the time setup_st2
                     # runs, the mistral infrastructure is already setup. Each setup
