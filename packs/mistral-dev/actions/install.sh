@@ -30,6 +30,7 @@ virtualenv --no-site-packages .venv
 
 # Setup mistral.
 cd ${REPO_MAIN}
+sed -i 's/yaql>=0.2.7,!=0.3.0/yaql>=0.2.7,!=0.3.0,<1.0.0/g' requirements.txt
 pip install -q -r requirements.txt
 
 # Temporary hack to bypass conflict in pbr version.
