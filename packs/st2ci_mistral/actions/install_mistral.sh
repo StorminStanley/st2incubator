@@ -30,18 +30,12 @@ install_mistral() {
     fi
 
     git checkout -q -b ${BRANCH} origin/${BRANCH}
+    sed -i 's/yaql>=0.2.7,!=0.3.0/yaql>=0.2.7,!=0.3.0,<1.0.0/g' requirements.txt
     pip install -r requirements.txt >> $OUTPUT
     if [[ $? != 0 ]]
     then
         echo "Failed installing pip requirements for branch: $BRANCH"
         exit 3
-    fi
-
-    # Temporary hack to bypass conflict in pbr version.
-    VENV_PKG_DIR="$REPO/.venv/local/lib/python2.7/site-packages"
-    YAQL_REQ_FILE="$VENV_PKG_DIR/yaql-0.2.7-py2.7.egg-info/requires.txt"
-    if [[ -f "${YAQL_REQ_FILE}" ]]; then
-        sed -i 's/pbr>=0.6,!=0.7,<1.0/pbr<2.0,>=0.11/g' ${YAQL_REQ_FILE}
     fi
 
     pip install -q mysql-python
@@ -51,7 +45,7 @@ install_mistral() {
         exit 4
     fi
 
-    python setup.py develop >> $OUTPUT
+    python setup.py install >> $OUTPUT
     if [[ $? != 0 ]]
     then
         echo "Failed installing mistral"
