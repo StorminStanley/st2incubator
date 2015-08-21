@@ -7,7 +7,8 @@ workflows:
     main:
         type: direct
         input:
-            - hosts
+            - test_host
+            - build_host
             - distro
             - mis_repo_base
             - mis_repo_main
@@ -26,6 +27,10 @@ workflows:
             - st2_repo_dir
             - merge_upstream
             - debug
+        output:
+            hosts: <% $.hosts %>
+            shas: <% $.shas %>
+            deps: <% $.deps %>
         task-defaults:
             on-error:
                 - teardown_on_failure: <% $.is_infra_setup and not $.debug %>
@@ -34,7 +39,7 @@ workflows:
             get_hosts:
                 workflow: get_build_hosts
                 input:
-                    hosts: <% $.hosts %>
+                    hosts: <% dict(test=>$.test_host, build=>$.build_host) %>
                 publish:
                     hosts: <% $.get_hosts.hosts %>
                 on-success:
@@ -77,6 +82,8 @@ workflows:
                 input:
                     hosts: <% $.hosts.get(test) %>
                     cmd: . <% $.setup.clones.get(mistral) %>/.venv/bin/activate && pip freeze
+                publish:
+                    deps: <% $.record_pip_freeze.get($.hosts.get(test)).stdout %>
                 on-complete:
                     - get_commit_shas: <% $.merge_upstream and $.mis_repo_base = openstack %>
                     - teardown: <% not $.merge_upstream or $.mis_repo_base = stackstorm %>
