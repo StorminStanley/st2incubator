@@ -1,0 +1,53 @@
+---
+  name: "git_merge_upstream"
+  runner_type: "run-remote-script"
+  description: "Merge git repo with upstream."
+  enabled: true
+  entry_point: "git_merge_upstream.sh"
+  parameters:
+    name:
+      type: string
+      description: Name of the project.
+      required: true
+      position: 0
+    repo:
+      type: string
+      description: HTTPS or SSH path for the git repo.
+      required: true
+      position: 1
+    repo_branch:
+      type: string
+      description: Branch of the git repo to checkout.
+      default: master
+      position: 2
+    repo_upstream:
+      type: string
+      description: HTTPS or SSH path for the upstream git repo.
+      required: true
+      position: 3
+    repo_upstream_branch:
+      type: string
+      description: Branch of the upstream git repo to merge.
+      default: master
+      position: 4
+    repo_dir:
+      type: string
+      description: Working directory
+      default: /home/stanley
+      position: 5
+    commit_sha:
+      type: string
+      description: Expected commit sha for HEAD after merge
+      required: true
+      position: 6
+    dir:
+      immutable: true
+      default: /home/stanley/
+    sudo:
+      immutable: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"

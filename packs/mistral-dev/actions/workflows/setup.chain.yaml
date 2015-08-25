@@ -1,0 +1,99 @@
+---
+default: "clone_mistral"
+chain:
+    -
+        name: "clone_mistral"
+        ref: "st2cd.git_clone"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_main}}"
+            branch: "{{repo_branch}}"
+            target: "{{repo_dir}}/mistral_{{repo_branch}}"
+        on-success: "clone_mistralclient"
+        on-failure: "clone_mistralclient"
+    -
+        name: "clone_mistralclient"
+        ref: "st2cd.git_clone"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_client}}"
+            branch: "{{repo_branch}}"
+            target: "{{repo_dir}}/mistralclient_{{repo_branch}}"
+        on-success: "clone_st2mistral"
+        on-failure: "clone_st2mistral"
+    -
+        name: "clone_st2mistral"
+        ref: "st2cd.git_clone"
+        params:
+            hosts: "{{host}}"
+            repo: "{{repo_action}}"
+            branch: "{{repo_branch}}"
+            target: "{{repo_dir}}/st2mistral_{{repo_branch}}"
+        on-success: "install"
+        on-failure: "teardown"
+    -
+        name: "install"
+        ref: "mistral-dev.install"
+        params:
+            hosts: "{{host}}"
+            repo_main: "{{clone_mistral[host].stdout}}"
+            repo_client: "{{clone_mistralclient[host].stdout}}"
+            repo_action: "{{clone_st2mistral[host].stdout}}"
+        on-success: "setup_config"
+        on-failure: "teardown"
+    -
+        name: "setup_config"
+        ref: "mistral-dev.setup_config"
+        params:
+            hosts: "{{host}}"
+            mistral_path: "{{clone_mistral[host].stdout}}"
+            db_type: "{{db_type}}"
+            db_name: "{{db_name}}"
+            db_user_name: "{{db_user_name}}"
+            db_user_pass: "{{db_user_pass}}"
+            api_port: "{{api_port}}"
+        on-success: "setup_db"
+        on-failure: "teardown"
+    -
+        name: "setup_db"
+        ref: "mistral-dev.setup_db"
+        params:
+            hosts: "{{host}}"
+            mistral_path: "{{clone_mistral[host].stdout}}"
+            distro: "{{distro}}"
+            db_type: "{{db_type}}"
+            db_name: "{{db_name}}"
+            db_user_name: "{{db_user_name}}"
+            db_user_pass: "{{db_user_pass}}"
+            db_root_pass: "{{db_root_pass}}" 
+        on-success: "setup_service"
+        on-failure: "teardown"
+    -
+        name: "setup_service"
+        ref: "mistral-dev.setup_service"
+        params:
+            hosts: "{{host}}"
+            distro: "{{distro}}"
+            repo_main: "{{clone_mistral[host].stdout}}"
+        on-success: "start_service"
+        on-failure: "teardown"
+    -
+        name: "start_service"
+        ref: "core.remote_sudo"
+        params:
+            hosts: "{{host}}"
+            cmd: "service mistral start"
+        on-failure: "teardown"
+    -
+        name: "teardown"
+        ref: "mistral-dev.teardown"
+        params:
+            host: "{{host}}"
+            distro: "{{distro}}"
+            repo_main: "{{clone_mistral[host].stdout}}"
+            repo_client: "{{clone_mistralclient[host].stdout}}"
+            repo_action: "{{clone_st2mistral[host].stdout}}"
+            db_type: "{{db_type}}"
+            db_name: "{{db_name}}"
+            db_user_name: "{{db_user_name}}"
+            db_root_pass: "{{db_root_pass}}"

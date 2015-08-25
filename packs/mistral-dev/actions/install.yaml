@@ -1,0 +1,38 @@
+---
+  name: "install"
+  runner_type: "run-remote-script"
+  description: "Install mistral and related components."
+  enabled: true
+  entry_point: "install.sh"
+  parameters:
+    repo_main:
+      type: string
+      description: Location of cloned mistral repo on disk.
+      required: true
+      position: 0
+      default: /home/stanley/mistral
+    repo_client:
+      type: string
+      description: Location of cloned python-mistralclient repo on disk.
+      required: true
+      position: 1
+      default: /home/stanley/mistralclient
+    repo_action:
+      type: string
+      description: Location of cloned st2mistral repo on disk.
+      required: true
+      position: 2
+      default: /home/stanley/st2mistral
+    dir:
+      immutable: true
+      default: /home/stanley/
+    sudo:
+      immutable: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
+    timeout:
+      default: 600

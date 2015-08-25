@@ -1,0 +1,25 @@
+---
+  name: "install_st2"
+  runner_type: "run-remote-script"
+  description: "Install StackStorm and related components."
+  enabled: true
+  entry_point: "install_st2.sh"
+  parameters:
+    repo:
+      type: string
+      description: Location of cloned st2 repo on disk.
+      position: 0
+      default: /home/stanley/st2
+    dir:
+      immutable: true
+      default: /home/stanley/
+    sudo:
+      immutable: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
+    timeout:
+      default: 600

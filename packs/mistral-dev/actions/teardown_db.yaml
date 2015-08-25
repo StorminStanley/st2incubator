@@ -1,0 +1,39 @@
+---
+name: teardown_db
+description: Teardown the database for Mistral.
+enabled: true
+runner_type: remote-shell-script
+entry_point: teardown_db.sh
+parameters:
+  db_type:
+    type: string
+    default: postgresql
+    required: true
+    position: 0
+    enum:
+        - postgresql
+        - mysql
+  db_name:
+    type: string
+    default: mistral
+    required: true
+    position: 1
+  db_user_name:
+    type: string
+    default: mistral
+    required: true
+    position: 2
+  db_root_pass:
+    type: string
+    default: StackStorm
+    required: true
+    position: 3
+  sudo:
+    immutable: true
+    default: false
+  cmd:
+    immutable: true
+    default: ""
+  kwarg_op:
+    immutable: true
+    default: "--"

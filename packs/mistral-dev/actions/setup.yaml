@@ -1,0 +1,83 @@
+---
+name: setup
+description: Install and configure a running instance of Mistral from git repo.
+enabled: true
+runner_type: action-chain
+entry_point: workflows/setup.chain.yaml
+parameters:
+  host:
+    type: string
+    default: localhost
+    required: true
+  distro:
+    type: string
+    description: The flavor of Linux distribution.
+    required: true
+    default: ubuntu
+    enum:
+      - ubuntu
+      - fedora
+  repo_base:
+    type: string
+    default: stackstorm
+    required: true
+    enum:
+      - stackstorm
+      - openstack
+  repo_main:
+    type: string
+    default: https://github.com/{{repo_base}}/mistral.git
+    required: true
+  repo_client:
+    type: string
+    default: https://github.com/{{repo_base}}/python-mistralclient.git
+    required: true
+  repo_action:
+    type: string
+    default: https://github.com/StackStorm/st2mistral.git
+    required: true
+  repo_branch:
+    type: string
+    default: master
+    required: true
+  repo_dir:
+    type: string
+    default: /home/stanley
+  db_type:
+    type: string
+    default: postgresql
+    enum:
+        - postgresql
+        - mysql
+  db_name:
+    type: string
+    default: mistral
+  db_user_name:
+    type: string
+    default: mistral
+  db_user_pass:
+    type: string
+    default: StackStorm
+  db_root_pass:
+    type: string
+    default: StackStorm
+  api_port:
+    type: integer
+    default: 8989
+  debug:
+    type: boolean
+    default: false
+  context:
+    default: {}
+    immutable: true
+    type: object
+  task:
+    default: null
+    immutable: true
+    type: string
+  workflow:
+    default: null
+    immutable: true
+    type: string
+  timeout:
+    default: 600
