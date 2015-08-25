@@ -144,8 +144,8 @@ workflows:
             has_host:
                 action: std.noop
                 on-success:
-                    - get_host: <% $.host = null or $.host = '' %>
-                    - succeed: <% $.host != null and $.host != '' %>
+                    - get_host: <% $.host = null or $.host = '' or $.host = 'None' %>
+                    - succeed: <% $.host != null and $.host != '' and $.host != 'None' %>
             get_host:
                 action: linux.dig
                 input:
@@ -153,7 +153,7 @@ workflows:
                     rand: true
                     count: 1
                 publish:
-                    host: <% $.get_hosts[0] %>
+                    host: <% $.get_host.result[0] %>
 
 
     get_build_hosts:
