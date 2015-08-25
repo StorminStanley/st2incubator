@@ -114,7 +114,7 @@ workflows:
                 action: slack.post_message
                 input:
                     channel: '#thunderdome'
-                    message: '```[MISTRAL-CI] STATUS: SUCCEEDED```'
+                    message: '```[MISTRAL-CI][<% $.mis_repo_base %>] STATUS: SUCCEEDED```'
 
             # Declare error handler(s) for the main workflow here.
             teardown_on_failure:
@@ -128,7 +128,7 @@ workflows:
                 action: slack.post_message
                 input:
                     channel: '#stackstorm'
-                    message: '```[MISTRAL-CI] STATUS: EPIC FAIL (WIP)```'
+                    message: '```[MISTRAL-CI][<% $.mis_repo_base %>] STATUS: EPIC FAIL```'
                 on-complete:
                     - fail
 
