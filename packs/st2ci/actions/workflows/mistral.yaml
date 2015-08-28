@@ -84,9 +84,8 @@ workflows:
                     cmd: . <% $.setup.clones.get(mistral) %>/.venv/bin/activate && pip freeze
                 publish:
                     deps: <% $.record_pip_freeze.get($.hosts.get(test)).stdout %>
-                on-complete:
-                    - get_commit_shas: <% $.merge_upstream and $.mis_repo_base = openstack %>
-                    - teardown: <% not $.merge_upstream or $.mis_repo_base = stackstorm %>
+                on-success:
+                    - get_commit_shas
             get_commit_shas:
                 workflow: get_commit_shas
                 input:
@@ -95,7 +94,8 @@ workflows:
                 publish:
                     shas: <% $.get_commit_shas.shas %>
                 on-success:
-                    - merge_upstreams
+                    - merge_upstreams: <% $.merge_upstream and $.mis_repo_base = openstack %>
+                    - teardown: <% not $.merge_upstream or $.mis_repo_base = stackstorm %>
             merge_upstreams:
                 workflow: merge_upstreams
                 input:
