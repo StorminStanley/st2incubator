@@ -1,0 +1,16 @@
+---
+name: mistral_os_master
+description: Run integration tests and merge upstream changes from OpenStack Mistral master
+enabled: true
+trigger:
+  type: core.st2.CronTimer
+  parameters:
+      timezone: US/Pacific
+      hour: 12
+      minute: 0
+      second: 0
+action:
+    ref: st2ci.mistral
+    parameters:
+        mis_repo_base: openstack
+        merge_upstream: True
