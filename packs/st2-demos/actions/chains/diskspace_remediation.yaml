@@ -19,7 +19,6 @@
       on-failure: "victorops_escalation"
     -
       name: "validate_dir_size"
-      ref: "core.local"
       ref: "st2-demos.check_dir_size"
       params:
         #cmd: "echo {{remove_files[hostname]}}"
