@@ -1,0 +1,7 @@
+---
+name: "diskspace_remediation"
+action_ref: "st2-demos.diskspace_remediation"
+description: "Run diskspace clean up from chatops"
+formats:
+  - "disk clean {{directory}} on {{hostname}}"
+  - "disk clean {{hostname}} {{directory=/var/log}}"

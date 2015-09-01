@@ -19,11 +19,9 @@
       on-failure: "victorops_escalation"
     -
       name: "validate_dir_size"
-      ref: "core.local"
       ref: "st2-demos.check_dir_size"
       params:
-        #cmd: "echo {{remove_files[hostname]}}"
-        hostname: "{{hostname}}"
+        hosts: "{{hostname}}"
         directory: "{{directory}}"
         threshold: "{{threshold}}"
       on-success: "post_success_to_slack"
@@ -33,12 +31,11 @@
       ref: "slack.post_message"
       params:
         channel: "#demos"
-        message: "DemoBot has pruned {{directory}} on {{hostname}} due to a monitoring event.  ID: {{event_id}}"
+        message: "DemoBot has pruned {{directory}} on {{hostname}} due to a monitoring event.  ID: {{event_id}}\nhttp://st2demo002:8080/#/history/{{action_context.parent.execution_id}}/general"
     -
       name: "victorops_escalation"
       ref: "victorops.open_incident"
       params:
-        #cmd: "echo '{{raw_payload}}' >> /tmp/test.json"
         severity: "critical"
         entity: "{{hostname}}"
         message: "DemoBot could not autoremediate disk space event on {{hostname}}. Alert: {{alert_message}}"

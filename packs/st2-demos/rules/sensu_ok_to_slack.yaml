@@ -1,0 +1,16 @@
+---
+    name: "sensu_ok_to_slack"
+    pack: "st2-demos"
+    description: "Post all sensu oks to the demo channel in Slack"
+    enabled: true
+    trigger:
+        type: "sensu.event_handler"
+    criteria:
+        trigger.check.status:
+            pattern: 0
+            type: "equals"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            message: "[SENSU OK] {{trigger.client.name}} - {{trigger.check.name}}"
+            channel: "#demos"
