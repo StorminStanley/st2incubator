@@ -6,14 +6,17 @@
         type: "sensu.event_handler"
     criteria:
         trigger.check.status:
-            pattern: "2"
+            pattern: 2
             type: "equals"
         trigger.check.name:
             pattern: "diskspace"
             type: "equals"
     action:
-        ref: "st2-demo.diskspace_remediation"
+        ref: "st2-demos.diskspace_remediation"
         parameters:
             hostname: "{{trigger.client.address}}"
             directory: "{{system.logs_dir}}"
             threshold: "{{system.logs_dir_threshold}}"
+            event_id: "{{trigger.id}}"
+            alert_message: "{{trigger.check.output}}"
+            raw_payload: "{{trigger}}"

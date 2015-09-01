@@ -7,7 +7,7 @@
         hosts: "{{hostname}}"
         directory: "{{directory}}"
         threshold: "{{threshold}}"
-      on-success: "pager_duty_escalation"
+      on-success: "victorops_escalation"
       on-failure: "remove_files"
     -
       name: "remove_files"
@@ -16,7 +16,7 @@
         hosts: "{{hostname}}"
         cmd: "rm -Rfv {{directory}}/*{{file_extension}}"
       on-success: "validate_dir_size"
-      on-failure: "pager_duty_escalation"
+      on-failure: "victorops_escalation"
     -
       name: "validate_dir_size"
       ref: "core.local"
@@ -27,7 +27,7 @@
         directory: "{{directory}}"
         threshold: "{{threshold}}"
       on-success: "post_success_to_slack"
-      on-failure: "pager_duty_escalation"
+      on-failure: "victorops_escalation"
     -
       name: "post_success_to_slack"
       ref: "slack.post_message"
@@ -35,8 +35,11 @@
         channel: "#demos"
         message: "DemoBot has pruned {{directory}} on {{hostname}} due to a monitoring event.  ID: {{event_id}}"
     -
-      name: "pager_duty_escalation"
-      ref: "core.local"
+      name: "victorops_escalation"
+      ref: "victorops.open_incident"
       params:
-        cmd: "echo '{{raw_payload}}' >> /tmp/test.json"
+        #cmd: "echo '{{raw_payload}}' >> /tmp/test.json"
+        severity: "critical"
+        entity: "{{hostname}}"
+        message: "DemoBot could not autoremediate disk space event on {{hostname}}. Alert: {{alert_message}}"
   default: "check_dir_size"
