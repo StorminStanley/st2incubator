@@ -7,15 +7,15 @@
   parameters:
     hostname:
       type: "string"
-      description: "Flavor of to use for instance creation"
+      description: "Host to remediate disk space on"
       default: "t2.medium"
     directory:
       type: "string"
-      description: "Environment to deploy to"
+      description: "Directory to prune if over the threshold"
       default: "staging"
     file_extension:
       type: "string"
-      description: "SSH key to use during intial instance creation"
+      description: "file extension to be used during pruning"
       default: "st2_deploy"
     raw_payload:
       type: "string"
