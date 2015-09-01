@@ -23,6 +23,10 @@
       type: "string"
       description: "Event ID as passed from monitoring system"
       default: ""
+    alert_message:
+      type: "string"
+      description: "Alert message as passed from monitoring system"
+      default: ""
     raw_payload:
       type: "string"
       description: "Raw payload from monitoring event.  Used for ticket creation during escalation."
