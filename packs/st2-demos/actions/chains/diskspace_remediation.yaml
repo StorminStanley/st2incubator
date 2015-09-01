@@ -4,7 +4,7 @@
       name: "check_dir_size"
       ref: "st2-demos.check_dir_size"
       params:
-        hostname: "{{hostname}}"
+        hosts: "{{hostname}}"
         directory: "{{directory}}"
         threshold: "{{threshold}}"
       on-success: "pager_duty_escalation"
@@ -14,13 +14,15 @@
       ref: "core.remote_sudo"
       params:
         hosts: "{{hostname}}"
-        cmd: "rm -Rf {{directory}}/*{{file_extension}}"
+        cmd: "rm -Rfv {{directory}}/*{{file_extension}}"
       on-success: "validate_dir_size"
       on-failure: "pager_duty_escalation"
     -
       name: "validate_dir_size"
+      ref: "core.local"
       ref: "st2-demos.check_dir_size"
       params:
+        #cmd: "echo {{remove_files[hostname]}}"
         hostname: "{{hostname}}"
         directory: "{{directory}}"
         threshold: "{{threshold}}"
@@ -28,14 +30,13 @@
       on-failure: "pager_duty_escalation"
     -
       name: "post_success_to_slack"
-      ref: "slack.chat.postMessage"
+      ref: "slack.post_message"
       params:
         channel: "#demos"
-        text: "DemoBot has pruned {{directory}} on {{hostname}} due to a monitoring event.  ID: {{event_id}}"
+        message: "DemoBot has pruned {{directory}} on {{hostname}} due to a monitoring event.  ID: {{event_id}}"
     -
       name: "pager_duty_escalation"
-      ref: "pagerduty.launch_incident"
+      ref: "core.local"
       params:
-        details: "{{raw_payload}}"
-        description: "Diskspace Event {{hostname}}"
+        cmd: "echo '{{raw_payload}}' >> /tmp/test.json"
   default: "check_dir_size"
