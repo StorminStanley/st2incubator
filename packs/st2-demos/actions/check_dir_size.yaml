@@ -15,10 +15,12 @@ parameters:
   threshold:
     description: "Maximum percentage of disk space that can be consumed by the directory."
     default: 80
-    immutable: true
     type: integer
   debug:
     description: "Turn on debug output"
     default: false
     type: boolean
+  sudo:
+    default: true
+    immutable: true
 runner_type: remote-shell-script
