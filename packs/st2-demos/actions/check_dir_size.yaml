@@ -1,0 +1,24 @@
+description: 'Check the total percentage of disk taken up by a specified directory'
+enabled: true
+entry_point: check_dir_size.py
+name: check_dir_size
+parameters:
+  action:
+    description: "Run as an action.  (Outputs structured data)"
+    default: true
+    immutable: true
+    type: boolean
+  directory:
+    description: "The directory to check"
+    required: true
+    type: string
+  threshold:
+    description: "Maximum percentage of disk space that can be consumed by the directory."
+    default: 80
+    immutable: true
+    type: integer
+  debug:
+    description: "Turn on debug output"
+    default: false
+    type: boolean
+runner_type: remote-shell-script

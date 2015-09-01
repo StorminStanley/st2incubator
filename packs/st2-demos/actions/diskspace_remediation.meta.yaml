@@ -1,0 +1,23 @@
+---
+  name: "diskspace_remediation"
+  runner_type: "action-chain"
+  description: "Remediation workflow for diskspace alerts"
+  enabled: true
+  entry_point: "chains/diskspace_remediation.yaml"
+  parameters:
+    hostname:
+      type: "string"
+      description: "Flavor of to use for instance creation"
+      default: "t2.medium"
+    directory:
+      type: "string"
+      description: "Environment to deploy to"
+      default: "staging"
+    file_extension:
+      type: "string"
+      description: "SSH key to use during intial instance creation"
+      default: "st2_deploy"
+    raw_payload:
+      type: "string"
+      description: "Username for initial ssh test"
+      default: "ubuntu"
