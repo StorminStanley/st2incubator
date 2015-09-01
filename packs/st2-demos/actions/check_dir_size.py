@@ -63,7 +63,7 @@ disk_size = float(results['df'][results['device']]['1K-blocks'])
 dir_use = float(results['du'][args.directory])
 results['usage'] = int(dir_use / disk_size * 100)
 
-if int(results['use']) >= int(args.threshold):
+if int(results['usage']) >= int(args.threshold):
     results['status'] = 'ERROR'
     exitcode = 2
 else:
