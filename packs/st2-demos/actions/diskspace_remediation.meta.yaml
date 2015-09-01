@@ -8,16 +8,22 @@
     hostname:
       type: "string"
       description: "Host to remediate disk space on"
-      default: "t2.medium"
     directory:
       type: "string"
       description: "Directory to prune if over the threshold"
-      default: "staging"
     file_extension:
       type: "string"
       description: "file extension to be used during pruning"
-      default: "st2_deploy"
+      default: ".log"
+    threshold:
+      type: "string"
+      description: "threshold for check diskspace action. percentage"
+      default: "50"
+    event_id:
+      type: "string"
+      description: "Event ID as passed from monitoring system"
+      default: ""
     raw_payload:
       type: "string"
       description: "Raw payload from monitoring event.  Used for ticket creation during escalation."
-      default: "ubuntu"
+      default: ""
