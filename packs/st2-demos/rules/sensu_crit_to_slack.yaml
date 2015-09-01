@@ -1,0 +1,16 @@
+---
+    name: "sensu_crit_to_slack"
+    pack: "st2-demos"
+    description: "Post all critical alerts to the demo channel in Slack"
+    enabled: true
+    trigger:
+        type: "sensu.event_handler"
+    criteria:
+        trigger.check.status:
+            pattern: 2
+            type: "equals"
+    action:
+        ref: "slack.post_message"
+        parameters:
+            message: "[SENSU ALERT] {{trigger.client.name}}\n{{trigger.check.output}}"
+            channel: "#demos"

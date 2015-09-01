@@ -31,3 +31,11 @@
       type: "string"
       description: "Raw payload from monitoring event.  Used for ticket creation during escalation."
       default: ""
+    skip_notify:
+      immutable: true
+      default:
+        - check_dir_size
+        - remove_files
+        - validate_dir_size
+        - post_success_to_slack
+        - victorops_escalation

@@ -8,3 +8,8 @@
     hostname:
       type: "string"
       description: "Host to reset disk space demo on"
+    skip_notify:
+      immutable: true
+      default:
+        - victorops_recover_incident
+        - write_big_file

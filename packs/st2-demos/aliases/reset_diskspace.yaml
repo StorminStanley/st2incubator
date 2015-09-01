@@ -1,0 +1,6 @@
+---
+name: "reset_diskspace"
+action_ref: "st2-demos.reset_diskspace_demo"
+description: "Reset diskspace demo"
+formats:
+  - "demo reset diskspace on {{hostname}}"
