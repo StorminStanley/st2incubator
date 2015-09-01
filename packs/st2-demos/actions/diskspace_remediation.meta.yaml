@@ -19,5 +19,5 @@
       default: "st2_deploy"
     raw_payload:
       type: "string"
-      description: "Username for initial ssh test"
+      description: "Raw payload from monitoring event.  Used for ticket creation during escalation."
       default: "ubuntu"
