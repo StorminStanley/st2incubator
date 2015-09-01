@@ -1,0 +1,10 @@
+---
+  name: "reset_diskspace_demo"
+  runner_type: "action-chain"
+  description: "Reset diskspace demo"
+  enabled: true
+  entry_point: "chains/reset_diskspace_demo.yaml"
+  parameters:
+    hostname:
+      type: "string"
+      description: "Host to reset disk space demo on"

@@ -1,0 +1,18 @@
+---
+  chain:
+    -
+      name: "victorops_recover_incident"
+      ref: "victorops.recover_incident"
+      params:
+        entity: "{{hostname}}"
+        message: "DemoBot is resetting the diskspace demo"
+      on-success: "write_big_file"
+      on-failure: "write_big_file"
+    -
+      name: "write_big_file"
+      ref: "core.remote_sudo"
+      params:
+        timeout: 300
+        hosts: "{{hostname}}"
+        cmd: "cp /mnt/limbo/big.log /var/log/"
+  default: "victorops_recover_incident"
