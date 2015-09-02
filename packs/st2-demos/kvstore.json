@@ -1,0 +1,10 @@
+[
+    {
+        "name": "logs_dir_threshold", 
+        "value": "20"
+    }, 
+    {
+        "name": "logs_dir", 
+        "value": "/var/log"
+    }
+]
