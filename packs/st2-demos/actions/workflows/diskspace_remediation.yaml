@@ -28,7 +28,7 @@ workflows:
         action: core.remote_sudo
         input:
           hosts: <% $.hostname %>
-          cmd: "rm -Rfv <% directory %>/*<% $.file_extension %>"
+          cmd: "rm -Rfv <% $.directory %>/*<% $.file_extension %>"
         on-error:
           - victorops_escalation
         on-success:
