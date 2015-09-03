@@ -4,7 +4,6 @@ name: st2-demos.diskspace_remediation
 
 workflows:
   main:
-    type: direct
     input:
       - hostname
       - directory

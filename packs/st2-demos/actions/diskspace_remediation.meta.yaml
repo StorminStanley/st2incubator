@@ -3,7 +3,7 @@
   runner_type: mistral-v2
   description: "Remediation workflow for diskspace alerts"
   enabled: true
-  entry_point: "chains/diskspace_remediation.yaml"
+  entry_point: "workflows/diskspace_remediation.yaml"
   parameters:
     hostname:
       type: "string"
