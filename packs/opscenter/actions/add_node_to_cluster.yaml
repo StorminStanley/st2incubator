@@ -1,6 +1,6 @@
 ---
 name: add-node-to-cluster
-runner_type: run-python
+runner_type: python-script
 description: Add provisioned node to Cassandra cluster.
 enabled: true
 entry_point: add_node_to_cluster.py
@@ -8,7 +8,7 @@ parameters:
   cluster_id:
     type: string
     description: "Name of the cass cluster E.g.: Test-Cluster."
-    required: true
+    required: false
   node_config:
     type: string
     description: "Node configuration as JSON string."

@@ -6,7 +6,10 @@ from lib.base import OpscenterAction
 
 class SetNodeConfAction(OpscenterAction):
 
-    def run(self, cluster_id, node_ip, node_conf):
+    def run(self, node_ip, node_conf, cluster_id=None):
+        if not cluster_id:
+            cluster_id = self.cluster_id
+
         try:
             yaml.safe_loads(node_conf)  # If this throws, fail the action.
         except:

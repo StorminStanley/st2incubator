@@ -1,6 +1,6 @@
 ---
 name: get-cluster-info
-runner_type: run-python
+runner_type: python-script
 description: Get Cassandra cluster info.
 enabled: true
 entry_point: get_cluster_info.py
@@ -8,7 +8,7 @@ parameters:
   cluster_id:
     type: string
     description: "Name of the cass cluster E.g.: Test-Cluster."
-    required: true
+    required: false
   cluster_property:
     type: string
     description: "Specific cluster property."

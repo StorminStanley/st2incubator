@@ -1,6 +1,6 @@
 ---
 name: get-repair-status
-runner_type: run-python
+runner_type: python-script
 description: "Get repair status for cluster."
 enabled: true
 entry_point: get_repair_status.py
@@ -8,4 +8,4 @@ parameters:
   cluster_id:
     type: string
     description: "Name of the cass cluster E.g.: Test-Cluster."
-    required: true
+    required: false

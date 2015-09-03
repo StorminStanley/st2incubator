@@ -5,14 +5,16 @@ from st2actions.runners.pythonrunner import Action
 
 class OpscenterAction(Action):
 
-    def _get_base_url(self):
-        return self.config.get('opscenter_base_url', None)
+    def __init__(self, config=None):
+        super(OpscenterAction, self).__init__(config=config)
+        self.cluster_id = self.config.get('cluster_id', None)
+        self.base_url = self.config.get('opscenter_base_url', None)
 
     def _get_auth_creds(self):
         pass
 
-    def _get_full_url(url_parts):
-        base = 'http://localhost:8888/v1'
+    def _get_full_url(self, url_parts):
+        base = self.base_url
 
         if not url_parts:
             return base
