@@ -1,0 +1,13 @@
+{
+  "action": 28,
+  "api_source_ip": 192.168.1.12,
+  "event_source": "OpsCenter",
+  "level": 1,
+  "level_str": "INFO",
+  "message": "Restarting node 192.168.100.3",
+  "source_node": 192.168.100.3,
+  "success": null,
+  "target_node": null,
+  "time": "1334768517145625",
+  "user": joe
+}
