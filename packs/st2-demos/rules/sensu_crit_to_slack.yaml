@@ -9,6 +9,9 @@
         trigger.check.status:
             pattern: 2
             type: "equals"
+        trigger.check.name:
+            pattern: "demo_.*"
+            type: "matchregex"
     action:
         ref: "slack.post_message"
         parameters:

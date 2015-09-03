@@ -14,5 +14,12 @@
       params:
         timeout: 300
         hosts: "{{hostname}}"
-        cmd: "cp /mnt/limbo/big.log /var/log/"
+        cmd: "fallocate -l 4G /var/log/big.log"
+      on-success: "check_request"
+    -
+      name: "check_request"
+      ref: "sensu.check_request"
+      params:
+        check: "diskspace"
+        subscribers: "linux"
   default: "victorops_recover_incident"
