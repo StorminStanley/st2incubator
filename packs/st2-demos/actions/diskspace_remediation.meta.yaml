@@ -1,6 +1,6 @@
 ---
   name: "diskspace_remediation"
-  runner_type: "action-chain"
+  runner_type: mistral-v2
   description: "Remediation workflow for diskspace alerts"
   enabled: true
   entry_point: "chains/diskspace_remediation.yaml"
@@ -31,11 +31,15 @@
       type: "string"
       description: "Raw payload from monitoring event.  Used for ticket creation during escalation."
       default: ""
-    skip_notify:
+    context:
+      default: {}
       immutable: true
-      default:
-        - check_dir_size
-        - remove_files
-        - validate_dir_size
-        - post_success_to_slack
-        - victorops_escalation
+      type: object
+    task:
+      default: null
+      immutable: true
+      type: string
+    workflow:
+      default: st2-demos.diskspace_remediation.main
+      immutable: true
+      type: string
