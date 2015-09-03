@@ -1,5 +1,3 @@
-from urlparse import urljoin
-
 import requests
 
 from lib.base import OpscenterAction
@@ -8,6 +6,6 @@ from lib.base import OpscenterAction
 class GetClustersAction(OpscenterAction):
 
     def run(self):
-        url = urljoin(self._get_base_url(), 'cluster_configs')
+        url = self._get_full_url(['cluster_configs'])
 
         return requests.get(url).json()

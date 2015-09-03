@@ -3,9 +3,8 @@ import requests
 from lib.base import OpscenterAction
 
 
-class GetStorageCapacity(OpscenterAction):
-
+class GetClusterRepairStatusAction(OpscenterAction):
     def run(self, cluster_id):
-        url = self._get_full_url([cluster_id, 'storage-capacity'])
+        url = self.get_full_url([cluster_id, 'services', 'repair'])
 
         return requests.get(url).json()

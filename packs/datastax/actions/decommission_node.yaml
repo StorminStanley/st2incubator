@@ -1,15 +1,15 @@
 ---
-name: get-cluster-info
+name: decommission-node
 runner_type: run-python
-description: Get Cassandra cluster info.
+description: Get Cassandra cluster nodes info.
 enabled: true
-entry_point: get_cluster_info.py
+entry_point: decommission_node.py
 parameters:
   cluster_id:
     type: string
     description: "Name of the cass cluster E.g.: Test-Cluster."
     required: true
-  cluster_property:
+  node_ip:
     type: string
-    description: "Specific cluster property."
-    required: false
+    description: "IP of the node."
+    required: true

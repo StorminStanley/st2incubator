@@ -1,5 +1,5 @@
 ---
-name: get_cluster_configs
+name: get-cluster-configs
 runner_type: run-python
 description: Get Cassandra cluster info.
 enabled: true

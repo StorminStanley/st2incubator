@@ -1,9 +1,9 @@
 ---
-name: get-nodes-info
+name: start-cluster-repair
 runner_type: run-python
-description: Get Cassandra cluster nodes info.
+description: "Start repair for cluster."
 enabled: true
-entry_point: get_nodes_info.py
+entry_point: start_cluster_repair.py
 parameters:
   cluster_id:
     type: string

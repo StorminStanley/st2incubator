@@ -1,9 +1,9 @@
 ---
-name: get-nodes-info
+name: restart-cluster
 runner_type: run-python
-description: Get Cassandra cluster nodes info.
+description: Add provisioned node to Cassandra cluster.
 enabled: true
-entry_point: get_nodes_info.py
+entry_point: restart_cluster.py
 parameters:
   cluster_id:
     type: string
