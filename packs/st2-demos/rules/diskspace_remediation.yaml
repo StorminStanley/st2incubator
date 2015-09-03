@@ -10,7 +10,7 @@
             pattern: 2
             type: "equals"
         trigger.check.name:
-            pattern: "diskspace"
+            pattern: "demo_diskspace"
             type: "equals"
     action:
         ref: "st2-demos.diskspace_remediation"
