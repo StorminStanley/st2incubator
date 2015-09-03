@@ -16,7 +16,7 @@
       description: "file extension to be used during pruning"
       default: ".log"
     threshold:
-      type: "string"
+      type: "integer"
       description: "threshold for check diskspace action. percentage"
       default: "50"
     event_id:
