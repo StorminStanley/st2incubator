@@ -53,7 +53,7 @@ class EventsConsumerSensor(PollingSensor):
     def _query_events(self, timestamp=None, count_per_batch=50):
         params = {}
         params['count'] = count_per_batch
-        params['reversed'] = '0'  # gets all newer events > timestamp.
+        params['reverse'] = '0'  # gets all newer events > timestamp.
         if timestamp:
             params['timestamp'] = timestamp
 

@@ -13,3 +13,8 @@ parameters:
     type: string
     description: "IP of the node."
     required: true
+  drain_node:
+    type: boolean
+    description: "Should drain node before stopping?"
+    default: true
+    required: false

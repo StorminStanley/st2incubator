@@ -48,6 +48,14 @@ For node actions, node_ip argument is mandatory.
 `set-node-conf` - Sets configuration for specified node.
 `get-node-conf` - Dumps configuration for specified node.
 
+
+### Helper actions
+
+`get-request-status` - Some actions return a request id. You can query
+    status of request using this action.
+`cancel-request` - Cancel a long running request.
+`list-requests` - List all outstanding requests for a request type.
+
 ## Sensors
 
 `EventsConsumer` - Consumes all events from opscenter and injects them into StackStorm
