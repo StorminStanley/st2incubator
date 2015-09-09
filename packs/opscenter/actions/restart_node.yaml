@@ -13,3 +13,11 @@ parameters:
     type: string
     description: "IP of the node."
     required: true
+  wait_for_thrift:
+    type: boolean
+    description: "Should wait until thrift interface is up?"
+    default: true
+  drain_first:
+    type: boolean
+    description: "Should drain node first before restarting?"
+    default: true

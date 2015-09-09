@@ -9,3 +9,17 @@ parameters:
     type: string
     description: "Name of the cass cluster E.g.: Test-Cluster."
     required: false
+  drain_first:
+    type: boolean
+    description: "Should drain nodes before restarting?"
+    required: false
+    default: true
+  sleep_interval:
+    type: number
+    description: "Time to sleep before restarting next node."
+    default: 60  # in seconds
+    required: false
+  ips:
+    type: array
+    description: "List of IPs to restart. By default, all nodes will be restarted."
+    required: false
