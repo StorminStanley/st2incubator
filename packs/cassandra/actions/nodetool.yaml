@@ -27,4 +27,3 @@ parameters:
     default: false
   cmd:
     default: "{{nodetool_path}} -h {{nodetool_host}} -p {{nodetool_port}} {{command}}"
-
