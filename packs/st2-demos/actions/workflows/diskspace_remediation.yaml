@@ -10,10 +10,22 @@ workflows:
       - file_extension
       - threshold
       - event_id
+      - check_name
       - alert_message
       - raw_payload
     tasks:
+      silence_check:
+        # [215, 26]
+        action: sensu.silence
+        input:
+          client: <% $.hostname %>
+          check: <% $.check_name %>
+        on-success:
+          - check_dir_size
+        on-error:
+          - victorops_escalation
       check_dir_size:
+        # [285, 128]
         action: st2-demos.check_dir_size
         input:
           hosts: <% $.hostname %>
@@ -24,6 +36,7 @@ workflows:
         on-success:
           - victorops_escalation
       remove_files:
+        # [355, 230]
         action: core.remote_sudo
         input:
           hosts: <% $.hostname %>
@@ -33,12 +46,14 @@ workflows:
         on-success:
           - validate_dir_size
       victorops_escalation:
+        # [105, 434]
         action: victorops.open_incident
         input:
           severity: "critical"
           entity: "<% $.hostname %>"
           message: "DemoBot could not autoremediate disk space event on <% $.hostname %>. Alert: <% $.alert_message %>"
       validate_dir_size:
+        # [425, 332]
         action: st2-demos.check_dir_size
         input:
           hosts: <% $.hostname %>
@@ -49,7 +64,9 @@ workflows:
         on-error:
           - victorops_escalation
       post_success_to_slack:
+        # [435, 434]
         action: slack.post_message
         input:
           channel: "#demos"
           message: "DemoBot has pruned <% $.directory %> on <% $.hostname %> due to a monitoring event.  ID: <% $.event_id %>\nhttp://st2demo002:8080/#/history/<% $.__env.st2_execution_id %>/general"
+
