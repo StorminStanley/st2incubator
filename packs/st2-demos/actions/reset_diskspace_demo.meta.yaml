@@ -13,3 +13,4 @@
       default:
         - victorops_recover_incident
         - write_big_file
+        - sensu.check_request
