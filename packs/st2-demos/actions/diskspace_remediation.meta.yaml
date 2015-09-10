@@ -19,6 +19,9 @@
       type: "integer"
       description: "threshold for check diskspace action. percentage"
       default: "50"
+    check_name:
+      tpe: "string"
+      description: "Check name as passed from sensu"
     event_id:
       type: "string"
       description: "Event ID as passed from monitoring system"
