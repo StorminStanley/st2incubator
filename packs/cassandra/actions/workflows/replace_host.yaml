@@ -1,0 +1,85 @@
+version: '2.0'
+
+cassandra.replace_host:
+    description: A basic workflow that replaces a dead cassandra node with a spare.
+    type: direct
+    input:
+        - dead_node
+        - replacement_node
+        - healthy_node
+    output:
+        just_output_the_whole_worfklow_context: "<% $ %>"
+    tasks:
+        is_seed_node:
+            action: cassandra.is_seed_node
+            input:
+                hosts: "<% $.healthy_node %>"
+                node_id: "<% $.dead_node %>"
+            publish:
+                seed_node: "<% $.is_seed_node.get($.healthy_node).stdout %>"
+            on-success:
+                - abort_replace: "<% $.seed_node = 'True' %>"
+                - create_vm: "<% $.seed_node = 'False' %>"
+                - error_seed_node_determination: "<% not $.seed_node in list(False, True) %>"
+            on-error:
+                - error_seed_node_determination
+        abort_replace:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: FAILED REASON: SEED NODE DEAD. NOT HANDLED. ABORTED.```"
+            on-complete:
+                - fail
+        error_seed_node_determination:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: FAILED READON: SEED NODE DETERMINATION FAILED.```"
+            on-complete:
+                - fail
+        create_vm:
+            action: st2cd.create_vm_role
+            input:
+                hostname: "<% $.replacement_node %>"
+                role: "st2_demo_datastax"
+            on-success:
+                - stop_cassandra_service
+            on-error:
+                - notify_create_vm_failed
+        notify_create_vm_failed:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] STATUS: FAILED REASON: create_vm_with_role failed.```"
+            on-complete:
+                - fail
+        stop_cassandra_service:
+            action: cassandra.stop_dse
+            input:
+                hosts: "<% $.replacement_node %>"
+            on-success:
+                - remove_cass_data
+        remove_cass_data:
+            action: cassandra.clear_cass_data
+            input:
+                data_dir: "/var/lib/cassandra"
+                hosts: "<% $.replacement_node %>"
+            on-success:
+                - set_jvm_opts_with_replace_address
+        set_jvm_opts_with_replace_address:  # place holder
+            action: core.local
+            input:
+                cmd: "Set JVM opts"
+            on-success:
+                - start_cassandra_service
+        start_cassandra_service:
+            action: cassandra.start_dse
+            input:
+                hosts: "<% $.replacement_node %>"
+            on-success:
+                - notify_replace_host_success
+        notify_replace_host_success:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: SUCCEEDED READON: @lakstorm is awesome!.```"
