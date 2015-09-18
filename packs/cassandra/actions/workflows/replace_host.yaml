@@ -38,10 +38,9 @@ cassandra.replace_host:
             on-complete:
                 - fail
         create_vm:
-            action: st2cd.create_vm_role
+            action: core.local
             input:
-                hostname: "<% $.replacement_node %>"
-                role: "st2_demo_datastax"
+                cmd: "echo Replacing <% $.dead_node%> with <% $.replacement_node %>"
             on-success:
                 - stop_cassandra_service
             on-error:
@@ -65,15 +64,48 @@ cassandra.replace_host:
                 data_dir: "/var/lib/cassandra"
                 hosts: "<% $.replacement_node %>"
             on-success:
-                - set_jvm_opts_with_replace_address
-        set_jvm_opts_with_replace_address:  # place holder
-            action: core.local
+                - remove_replace_address_jvm_opt_if_exists
+        remove_replace_address_jvm_opt_if_exists:
+            action: cassandra.remove_replace_address_env_file
             input:
-                cmd: "Set JVM opts"
+                hosts: "<% $.replacement_node %>"
+            on-success:
+                - set_jvm_opts_with_replace_address
+        set_jvm_opts_with_replace_address:
+            action: cassandra.append_replace_address_env_file
+            input:
+                dead_node: <% $.dead_node %>
+                hosts: <% $.replacement_node %>
             on-success:
                 - start_cassandra_service
         start_cassandra_service:
             action: cassandra.start_dse
+            input:
+                hosts: "<% $.replacement_node %>"
+            on-success:
+                - notify_replace_host_started
+        notify_replace_host_started:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: STARTED```"
+            on-success:
+                - wait_for_read_ports_to_open
+            on-success:
+                - wait_for_read_ports_to_open
+        wait_for_read_ports_to_open:
+            action: cassandra.wait_for_port_open
+            input:
+                check_port: 9042
+                server: "<% $.replacement_node %>"
+                hosts: "<% $.replacement_node %>"
+                timeout: 1800
+            on-success:
+                - remove_replace_address_env_file
+            on-error:
+                - notify_replace_host_failed
+        remove_replace_address_env_file:
+            action: cassandra.remove_replace_address_env_file
             input:
                 hosts: "<% $.replacement_node %>"
             on-success:
@@ -82,4 +114,9 @@ cassandra.replace_host:
             action: slack.post_message
             input:
                 channel: "#dsedemo"
-                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: SUCCEEDED READON: @lakstorm is awesome!.```"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: SUCCEEDED```"
+        notify_replace_host_failed:
+            action: slack.post_message
+            input:
+                channel: "#dsedemo"
+                message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: FAILED```. REASON: BOOTSTRAP TIMED OUT."
