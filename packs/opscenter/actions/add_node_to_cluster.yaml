@@ -1,5 +1,5 @@
 ---
-name: add-node-to-cluster
+name: add_node_to_cluster
 runner_type: python-script
 description: Add provisioned node to Cassandra cluster.
 enabled: true

@@ -1,5 +1,5 @@
 ---
-name: set-node-conf
+name: set_node_conf
 runner_type: python-script
 description: Set node configuration.
 enabled: true

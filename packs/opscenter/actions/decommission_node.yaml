@@ -1,5 +1,5 @@
 ---
-name: decommission-node
+name: decommission_node
 runner_type: python-script
 description: Decommission node from cluster.
 enabled: true

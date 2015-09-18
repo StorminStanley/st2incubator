@@ -1,5 +1,5 @@
 ---
-name: stop-node
+name: stop_node
 runner_type: python-script
 description: Stop node.
 enabled: true

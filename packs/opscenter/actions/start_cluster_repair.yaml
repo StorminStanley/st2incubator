@@ -1,5 +1,5 @@
 ---
-name: start-cluster-repair
+name: start_cluster_repair
 runner_type: python-script
 description: "Start repair for cluster."
 enabled: true

@@ -1,5 +1,5 @@
 ---
-name: list-requests
+name: list_requests
 runner_type: python-script
 description: List all requests made to opscenter.
 enabled: true

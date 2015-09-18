@@ -1,5 +1,5 @@
 ---
-name: drain-node
+name: drain_node
 runner_type: python-script
 description: Drain node.
 enabled: true

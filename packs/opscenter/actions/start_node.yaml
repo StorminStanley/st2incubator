@@ -1,5 +1,5 @@
 ---
-name: start-node
+name: start_node
 runner_type: python-script
 description: Start node.
 enabled: true

@@ -1,5 +1,5 @@
 ---
-name: get-storage-capacity
+name: get_storage_capacity
 runner_type: python-script
 description: Get Cassandra cluster storage capacity.
 enabled: true

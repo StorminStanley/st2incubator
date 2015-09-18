@@ -1,5 +1,5 @@
 ---
-name: cancel-request
+name: cancel_request
 runner_type: python-script
 description: Cancel long running request.
 enabled: true

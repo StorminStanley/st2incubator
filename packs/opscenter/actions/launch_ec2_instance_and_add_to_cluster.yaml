@@ -1,5 +1,5 @@
 ---
-name: launch-ec2-instance-and-add-to-cluster
+name: launch_ec2_instance_and_add_to_cluster
 runner_type: python-script
 description: Launch EC2 instance and add to cass cluster.
 enabled: true

@@ -1,5 +1,5 @@
 ---
-name: get-request-status
+name: get_request_status
 runner_type: python-script
 description: Get status of long running request.
 enabled: true

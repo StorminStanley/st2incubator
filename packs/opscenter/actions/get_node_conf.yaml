@@ -1,5 +1,5 @@
 ---
-name: get-node-conf
+name: get_node_conf
 runner_type: python-script
 description: Get Cassandra cluster nodes info.
 enabled: true

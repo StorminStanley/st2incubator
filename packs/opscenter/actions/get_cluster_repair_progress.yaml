@@ -1,5 +1,5 @@
 ---
-name: get-cluster-repair-progress
+name: get_cluster_repair_progress
 runner_type: python-script
 description: "Get repair progress for cluster."
 enabled: true

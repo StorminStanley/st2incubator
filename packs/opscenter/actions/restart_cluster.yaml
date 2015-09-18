@@ -1,5 +1,5 @@
 ---
-name: restart-cluster
+name: restart_cluster
 runner_type: python-script
 description: Restart cassandra cluster.
 enabled: true

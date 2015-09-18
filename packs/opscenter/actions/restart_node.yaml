@@ -1,5 +1,5 @@
 ---
-name: restart-node
+name: restart_node
 runner_type: python-script
 description: Restart node in cluster.
 enabled: true

@@ -1,5 +1,5 @@
 ---
-name: get-repair-status
+name: get_repair_status
 runner_type: python-script
 description: "Get repair status for cluster."
 enabled: true

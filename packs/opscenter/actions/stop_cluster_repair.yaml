@@ -1,5 +1,5 @@
 ---
-name: stop-cluster-repair
+name: stop_cluster_repair
 runner_type: python-script
 description: "Stop repair for cluster."
 enabled: true

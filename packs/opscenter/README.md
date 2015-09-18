@@ -21,40 +21,40 @@ operating multiple clusters with same opscenter, be sure to explicitly provide t
 `cluster_id` argument for the actions.
 
 ### General actions
-`get-cluster-configs` - Lists configurations of all clusters managed by opscenter.
+`get_cluster_configs` - Lists configurations of all clusters managed by opscenter.
 
 ### Cluster actions
 
-`add-node-to-cluster` - Adds a node to an existing Cassandra cluster.
-`launch-ec2-instance-and-add-to-cluster` - Launches an EC2 instance and adds the instance
+`add_node_to_cluster` - Adds a node to an existing Cassandra cluster.
+`launch_ec2_instance_and_add_to_cluster` - Launches an EC2 instance and adds the instance
     to the cluster. Needs both node configuration and ec2 credentials.
-`get-cluster-info` - Lists info about specified cluster.
-`start-cluster-repair` - Starts repair operation in specified cluster.
-`get-repair-status` - Get status of repair operation in specified cluster.
-`get-cluster-repair-progress` - Get repair progress for specified cluster.
-`restart-cluster` - Restarts the specified cluster.
-`get-nodes-info` - Dumps info about all nodes in cluster.
-`get-storage-capacity` - Lists info about storage capacity of specified cluster.
+`get_cluster_info` - Lists info about specified cluster.
+`start_cluster_repair` - Starts repair operation in specified cluster.
+`get_repair_status` - Get status of repair operation in specified cluster.
+`get_cluster_repair_progress` - Get repair progress for specified cluster.
+`restart_cluster` - Restarts the specified cluster.
+`get_nodes_info` - Dumps info about all nodes in cluster.
+`get_storage_capacity` - Lists info about storage capacity of specified cluster.
 
 ### Node actions
 
 For node actions, node_ip argument is mandatory.
 
-`decommission-node` - Decommissions a node from cluster.
-`drain-node` - Drains a Cassandra node.
-`start-node` - Starts the specified node.
-`stop-node` - Stops the specified node.
-`restart-node` - Restarts the specified node.
-`set-node-conf` - Sets configuration for specified node.
-`get-node-conf` - Dumps configuration for specified node.
+`decommission_node` - Decommissions a node from cluster.
+`drain_node` - Drains a Cassandra node.
+`start_node` - Starts the specified node.
+`stop_node` - Stops the specified node.
+`restart_node` - Restarts the specified node.
+`set_node_conf` - Sets configuration for specified node.
+`get_node_conf` - Dumps configuration for specified node.
 
 
 ### Helper actions
 
-`get-request-status` - Some actions return a request id. You can query
+`get_request_status` - Some actions return a request id. You can query
     status of request using this action.
-`cancel-request` - Cancel a long running request.
-`list-requests` - List all outstanding requests for a request type.
+`cancel_request` - Cancel a long running request.
+`list_requests` - List all outstanding requests for a request type.
 
 ## Sensors
 
