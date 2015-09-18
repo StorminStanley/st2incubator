@@ -21,13 +21,11 @@ operating multiple clusters with same opscenter, be sure to explicitly provide t
 `cluster_id` argument for the actions.
 
 ### General actions
+
 `get_cluster_configs` - Lists configurations of all clusters managed by opscenter.
 
 ### Cluster actions
 
-`add_node_to_cluster` - Adds a node to an existing Cassandra cluster.
-`launch_ec2_instance_and_add_to_cluster` - Launches an EC2 instance and adds the instance
-    to the cluster. Needs both node configuration and ec2 credentials.
 `get_cluster_info` - Lists info about specified cluster.
 `start_cluster_repair` - Starts repair operation in specified cluster.
 `get_repair_status` - Get status of repair operation in specified cluster.
