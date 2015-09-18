@@ -19,3 +19,11 @@ This StackStorm Cassandra pack provides integrations for Apache Cassandra.
 `get_dse_status` - Gets DSE cassandra service status from an ubuntu box (uses upstart).
 
 `replace_host` - Workflow that replaces a given `dead_node` with a `replacement_node`.
+
+`append_replace_address_env_file` - Appends JVM_OPT `-Dcassandra.replace_address=${dead_node_ip}` in cassandra startup env file.
+
+`remove_replace_address_env_file` - Removes `-Dcassandra.replace_address` from cassandra startup env file.
+
+`wait_for_port_open` - Wait until specified port opens, sleeps for specified interval and constantly tries to connect to server + port combo.
+
+`remove_gossip_peer_info` - Removes cassandra gossip peer info from disk.
