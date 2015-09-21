@@ -91,7 +91,7 @@ cassandra.replace_host:
                 message: "```[CASS-REPLACE-HOST] [<% $.dead_node %>] STATUS: STARTED```"
             on-success:
                 - wait_for_read_ports_to_open
-            on-success:
+            on-error:
                 - wait_for_read_ports_to_open
         wait_for_read_ports_to_open:
             action: cassandra.wait_for_port_open
