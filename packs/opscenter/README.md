@@ -27,11 +27,17 @@ operating multiple clusters with same opscenter, be sure to explicitly provide t
 ### Cluster actions
 
 `get_cluster_info` - Lists info about specified cluster.
+
 `start_cluster_repair` - Starts repair operation in specified cluster.
+
 `get_repair_status` - Get status of repair operation in specified cluster.
+
 `get_cluster_repair_progress` - Get repair progress for specified cluster.
+
 `restart_cluster` - Restarts the specified cluster.
+
 `get_nodes_info` - Dumps info about all nodes in cluster.
+
 `get_storage_capacity` - Lists info about storage capacity of specified cluster.
 
 ### Node actions
@@ -39,11 +45,17 @@ operating multiple clusters with same opscenter, be sure to explicitly provide t
 For node actions, node_ip argument is mandatory.
 
 `decommission_node` - Decommissions a node from cluster.
+
 `drain_node` - Drains a Cassandra node.
+
 `start_node` - Starts the specified node.
+
 `stop_node` - Stops the specified node.
+
 `restart_node` - Restarts the specified node.
+
 `set_node_conf` - Sets configuration for specified node.
+
 `get_node_conf` - Dumps configuration for specified node.
 
 
@@ -51,7 +63,9 @@ For node actions, node_ip argument is mandatory.
 
 `get_request_status` - Some actions return a request id. You can query
     status of request using this action.
+
 `cancel_request` - Cancel a long running request.
+
 `list_requests` - List all outstanding requests for a request type.
 
 ## Sensors
