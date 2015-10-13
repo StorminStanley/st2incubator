@@ -37,13 +37,15 @@ fi
 
 echo "Setup database in ${DB_TYPE} on ${DISTRO}..."
 
-# Create the database and user.
+# Create the database and user. Restart DB server first in case of active user sessions.
 if [ "${DB_TYPE}" == "mysql" ]; then
+    sudo service mysql restart
     mysql -uroot -p${DB_ROOT_PASS} -e "DROP DATABASE IF EXISTS ${DB_NAME}"
     mysql -uroot -p${DB_ROOT_PASS} -e "CREATE DATABASE ${DB_NAME}"
     mysql -uroot -p${DB_ROOT_PASS} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER_NAME}'@'%' IDENTIFIED BY '${DB_USER_PASS}'"
     mysql -uroot -p${DB_ROOT_PASS} -e "FLUSH PRIVILEGES"
 elif [ "${DB_TYPE}" == "postgresql" ]; then
+    sudo service postgresql restart
     sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${DB_NAME};"
     sudo -u postgres psql -c "DROP USER IF EXISTS ${DB_USER_NAME};"
     sudo -u postgres psql -c "CREATE USER ${DB_USER_NAME} WITH ENCRYPTED PASSWORD '${DB_USER_PASS}';"
