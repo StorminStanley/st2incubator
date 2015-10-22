@@ -43,7 +43,7 @@ st2ci.setup_st2:
             action: core.remote
             input:
                 hosts: <% $.host %>
-                cmd: <% $.clone_path %>/tools/launchdev.sh startclean
+                cmd: <% $.clone_path %>/tools/launchdev.sh startclean -x
 
 
 
