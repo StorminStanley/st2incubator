@@ -31,7 +31,9 @@ port=${API_PORT}
 
 [database]
 connection=${DB_TYPE}://${DB_USER_NAME}:${DB_USER_PASS}@localhost/${DB_NAME}
-max_pool_size=50
+max_pool_size=25
+max_overflow=50
+idle_timeout=30
 
 [pecan]
 auth_enable=false
