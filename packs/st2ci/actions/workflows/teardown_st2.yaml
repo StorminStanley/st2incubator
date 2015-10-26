@@ -22,6 +22,14 @@ st2ci.teardown_st2:
                 hosts: <% $.host %>
                 cmd: mongo st2 --eval "db.dropDatabase();"
             on-success:
+                - remove_packs
+
+        remove_packs:
+            action: core.remote
+            input:
+                hosts: <% $.host %>
+                cmd: rm -rf /opt/stackstorm/packs
+            on-success:
                 - remove_repo
 
         remove_repo:
