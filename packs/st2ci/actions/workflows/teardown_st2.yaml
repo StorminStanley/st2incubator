@@ -25,7 +25,7 @@ st2ci.teardown_st2:
                 - remove_packs
 
         remove_packs:
-            action: core.remote
+            action: core.remote_sudo
             input:
                 hosts: <% $.host %>
                 cmd: rm -rf /opt/stackstorm/packs
