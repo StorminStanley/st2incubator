@@ -3,7 +3,7 @@ name: mistral_st2_master
 description: Run integration tests using StackStorm's Mistral fork
 enabled: true
 trigger:
-    type: webhooks.github_event
+    type: GitHubWebhook.github_event
 criteria:
     trigger.body.ref:
         pattern: refs/heads/master
