@@ -74,7 +74,7 @@ workflows:
                 input:
                     hosts: <% $.hosts.get(test) %> 
                     cmd: cd <% $.setup.clones.get(st2) %> && make mistral-itests
-                    timeout: 600
+                    timeout: 1800
                 on-complete:
                     - record_pip_freeze
             record_pip_freeze:
