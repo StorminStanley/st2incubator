@@ -51,6 +51,24 @@ ln -s ${SWITCH_TO}/mistral mistral
 
 # Reinstall the python-mistralclient.
 cd ${SWITCH_TO}/python-mistralclient
+git checkout ${BRANCH}
+python setup.py develop
+
+# Recreate virtual environment
+cd ${OPT_DIR}/mistral
+git checkout ${BRANCH}
+rm -rf .venv
+virtualenv --no-site-packages .venv
+. ${OPT_DIR}/mistral/.venv/bin/activate
+pip install -r requirements.txt
+pip install -r test-requirements.txt
+pip install psycopg2
+pip install gunicorn
+python setup.py develop
+
+# Install the st2 action proxy
+git checkout ${BRANCH}
+cd ${ST2_REPO_ROOT}/st2mistral
 python setup.py develop
 
 # Restart the mistral service appropriately
