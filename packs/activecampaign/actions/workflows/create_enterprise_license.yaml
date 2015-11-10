@@ -1,0 +1,67 @@
+---
+version: '2.0'
+name: activecampaign.create_enterprise_license
+workflows:
+  main:
+    type: direct
+    input:
+      - environment
+      - email
+    tasks:
+      get_downloads_server:
+        # [385, 26]
+        action: st2cd.kvstore
+        input:
+          action: get
+          key: downloads_server_<% $.environment %>
+        publish:
+          downloads_server: <% $.get_downloads_server.result %>
+        on-success:
+          - generate_token
+        on-error:
+          - post_failure
+      generate_token:
+        # [315, 128]
+        action: core.local
+        input:
+          cmd: openssl rand -hex 20
+        publish:
+          enterprise_token: <% $.generate_token.stdout %>
+        on-success:
+          - add_token_to_htpasswd
+        on-error:
+          - post_failure
+      add_token_to_htpasswd:
+        # [245, 230]
+        action: core.remote_sudo
+        input:
+          hosts: <% $.downloads_server %>
+          cmd: "echo '' | htpasswd -i /var/www/sites/.st2enterprise_htpasswd <% $.enterprise_token %>"
+        on-success:
+          - add_email_comment
+        on-error:
+          - post_failure
+      add_email_comment:
+        # [175, 332]
+        action: core.remote_sudo
+        input:
+          hosts: <% $.downloads_server %>
+          cmd: "sed -i -e 's/\\(<% $.enterprise_token %>.*\\)/\\1 #<% $.email %>/g' /var/www/sites/.st2enterprise_htpasswd"
+        on-success:
+          - add_token_to_contact
+        on-error:
+          - post_failure
+      add_token_to_contact:
+        # [105, 434]
+        action: activecampaign.contact_sync
+        input:
+          email: <% $.email %>
+          field:
+            LICENSEKEY: <% $.enterprise_token %>
+        on-error:
+          - post_failure
+      post_failure:
+        # [365, 536]
+        action: st2-slack.chat.postMessage
+        input:
+          text: "Failed to add enterprise license token"

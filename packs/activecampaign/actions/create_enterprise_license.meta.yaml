@@ -1,0 +1,39 @@
+---
+  description: "Workflow to create a new enterprise license token"
+  runner_type: "mistral-v2"
+  tags: []
+  enabled: true
+  pack: "activecampaign"
+  entry_point: "workflows/create_enterprise_license.yaml"
+  uid: "action:default:create_enterprise_license"
+  parameters: 
+    skip_notify: 
+      default: []
+      type: "array"
+      description: "List of tasks to skip notifications for."
+      immutable: true
+    task: 
+      type: "string"
+      description: "The name of the task to run for reverse workflow."
+      #default: null
+      #immutable: true
+    workflow: 
+      type: "string"
+      description: "The name of the workflow to run if the entry_point is a workbook of many workflows. The name should be in the format \"<pack_name>.<action_name>.<workflow_name>\". If entry point is a workflow or a workbook with a single workflow, the runner will identify the workflow automatically."
+      #default: "activecampaign.create_enterprise_license"
+      #immutable: true
+    environment: 
+      enum: 
+        - "staging"
+        - "production"
+        - "sandbox"
+      type: "string"
+      description: "Which environment to add the token to."
+    context: 
+      default: {}
+      type: "object"
+      description: "Additional workflow inputs."
+    email: 
+      type: "string"
+      description: "The customer email address"
+  name: "create_enterprise_license"
