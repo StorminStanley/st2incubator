@@ -19,9 +19,10 @@ class ActiveCampaignAction(Action):
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
         params = self._format_params(params)
+        #self.logger.info(params)
         data = urllib.urlencode(params)
-        response = requests.get(url=url,
-                                headers=headers, params=data)
+        response = requests.request('POST', url=url,
+                                headers=headers, data=params)
 
         results = response.json()
         if results['result_code'] is not 1:
@@ -37,10 +38,13 @@ class ActiveCampaignAction(Action):
         output = {}
         for k, v in params.iteritems():
             if isinstance(v, dict):
-                print type(v)
                 for pk, pv in v.iteritems():
-                    param_name = "%s[%s]" % (k, pk)
+                    if k == 'field':
+                        param_name = "{}[%{}%,0]".format(k, pk)
+                    else:
+                        param_name = "%s[%s]" % (k, pk)
                     output[param_name] = pv
             else:
-                output[k] = v
+                if v is not None:
+                    output[k] = v
         return output
