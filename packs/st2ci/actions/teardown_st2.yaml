@@ -17,10 +17,10 @@ parameters:
     immutable: true
     type: object
   task:
-    default: null
+    default: ""
     immutable: true
     type: string
   workflow:
-    default: null
+    default: ""
     immutable: true
     type: string
