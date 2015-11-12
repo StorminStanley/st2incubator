@@ -36,6 +36,11 @@ workflows:
                 - teardown_on_failure: <% $.is_infra_setup and not $.debug %>
                 - notify_on_failure: <% not $.is_infra_setup or $.debug %>
         tasks:
+            init:
+                publish:
+                    is_infra_setup: False
+                on-complete:
+                    - get_hosts
             get_hosts:
                 workflow: get_build_hosts
                 input:
@@ -255,9 +260,9 @@ workflows:
                 action: mistral-dev.teardown
                 input:
                     host: <% $.host %>
-                    repo_main: <% $.mis_clones.get(mistral) %>
-                    repo_client: <% $.mis_clones.get(mistralclient) %>
-                    repo_action: <% $.mis_clones.get(st2mistral) %>
+                    repo_main: <% $.mis_clone_paths.get(mistral) %>
+                    repo_client: <% $.mis_clone_paths.get(mistralclient) %>
+                    repo_action: <% $.mis_clone_paths.get(st2mistral) %>
 
 
     teardown_infra:
