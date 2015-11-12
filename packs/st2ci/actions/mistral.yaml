@@ -8,11 +8,9 @@ parameters:
   test_host:
     type: string
     description: The name of the hosts where the integration test(s) will run.
-    default: None
   build_host:
     type: string
     description: The name of the hosts where the build process will run.
-    default: None
   distro:
     type: string
     description: The flavor of Linux distribution.
@@ -77,14 +75,6 @@ parameters:
   debug:
     type: boolean
     default: false
-  context:
-    default: {}
-    immutable: true
-    type: object
-  task:
-    default: null
-    immutable: true
-    type: string
   workflow:
     default: st2ci.mistral.main
     immutable: true
