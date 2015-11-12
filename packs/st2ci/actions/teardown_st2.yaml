@@ -12,15 +12,3 @@ parameters:
   repo:
     type: string
     default: /home/stanley/st2
-  context:
-    default: {}
-    immutable: true
-    type: object
-  task:
-    default: null
-    immutable: true
-    type: string
-  workflow:
-    default: null
-    immutable: true
-    type: string
