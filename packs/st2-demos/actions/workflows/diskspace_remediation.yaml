@@ -68,5 +68,5 @@ workflows:
         action: slack.post_message
         input:
           channel: "#demos"
-          message: "DemoBot has pruned <% $.directory %> on <% $.hostname %> due to a monitoring event.  ID: <% $.event_id %>\nhttp://st2demo002:8080/#/history/<% $.__env.st2_execution_id %>/general"
+          message: "DemoBot has pruned <% $.directory %> on <% $.hostname %> due to a monitoring event.  ID: <% $.event_id %>\nhttp://st2demo002:8080/#/history/<% env().st2_execution_id %>/general"
 
