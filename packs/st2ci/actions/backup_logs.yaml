@@ -1,0 +1,35 @@
+---
+  name: "backup_logs"
+  runner_type: "run-remote-script"
+  description: "Backup logs for StackStorm and related components."
+  enabled: true
+  entry_point: "backup_logs.sh"
+  parameters:
+    st2_log_dir:
+      type: string
+      description: Location of st2 logs.
+      position: 0
+      default: /var/log/st2
+    mis_log_dir:
+      type: string
+      description: Location of mistral logs.
+      position: 1
+      default: /var/log
+    backup_dir:
+      type: string
+      description: Location where to backup logs.
+      position: 2
+      default: /home/stanley/logs
+    dir:
+      immutable: true
+      default: /home/stanley
+    sudo:
+      immutable: true
+    cmd:
+      immutable: true
+      default: ""
+    kwarg_op:
+      immutable: true
+      default: "--"
+    timeout:
+      default: 600
