@@ -33,6 +33,7 @@ workflows:
             deps: <% $.deps %>
         task-defaults:
             on-error:
+                - backup_logs
                 - teardown_on_failure: <% $.is_infra_setup and not $.debug %>
                 - notify_on_failure: <% not $.is_infra_setup or $.debug %>
         tasks:
@@ -122,6 +123,14 @@ workflows:
                     message: '```[MISTRAL-CI][<% $.mis_repo_base %>] STATUS: SUCCEEDED```'
 
             # Declare error handler(s) for the main workflow here.
+            backup_logs:
+                action: st2ci.backup_logs
+                input:
+                    st2_log_dir: <% $.st2_repo_dir %>/logs
+                    mis_log_dir: /var/log
+                    backup_dir: /home/stanley/logs/<% env().st2_execution_id %>
+                on-error:
+                    - noop
             teardown_on_failure:
                 workflow: teardown_infra
                 input:
