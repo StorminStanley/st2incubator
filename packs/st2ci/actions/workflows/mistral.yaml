@@ -127,7 +127,7 @@ workflows:
                 action: st2ci.backup_logs
                 input:
                     hosts: <% $.hosts.get(test) %>
-                    st2_log_dir: <% $.st2_repo_dir %>/logs
+                    st2_log_dir: <% $.setup.clones.get(st2) %>/logs
                     mis_log_dir: /var/log
                     backup_dir: /home/stanley/logs/<% env().st2_execution_id %>
                 on-error:
