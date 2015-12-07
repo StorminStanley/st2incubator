@@ -81,4 +81,5 @@ fi
 deactivate
 
 echo "Creating and populating tables..."
-${MISTRAL_PATH}/.venv/bin/python ${MISTRAL_PATH}/tools/sync_db.py --config-file ${MISTRAL_CONFIG}
+${MISTRAL_PATH}/.venv/bin/mistral-db-manage --config-file ${MISTRAL_CONFIG} upgrade head
+${MISTRAL_PATH}/.venv/bin/mistral-db-manage --config-file ${MISTRAL_CONFIG} populate

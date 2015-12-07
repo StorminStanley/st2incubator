@@ -40,6 +40,9 @@ if [[ -f "${YAQL_REQ_FILE}" ]]; then
     sed -i 's/pbr>=0.6,!=0.7,<1.0/pbr<2.0,>=0.11/g' ${YAQL_REQ_FILE}
 fi
 
+# Temporary hack to get around oslo.utils bug.
+pip install -q netifaces
+
 python setup.py develop
 
 # Setup plugins for custom actions.
