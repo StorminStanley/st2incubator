@@ -45,7 +45,6 @@ if [ "${DB_TYPE}" == "mysql" ]; then
     mysql -uroot -p${DB_ROOT_PASS} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER_NAME}'@'%' IDENTIFIED BY '${DB_USER_PASS}'"
     mysql -uroot -p${DB_ROOT_PASS} -e "FLUSH PRIVILEGES"
 elif [ "${DB_TYPE}" == "postgresql" ]; then
-    sudo -u postgres psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '${DB_NAME}';"
     sudo service postgresql restart
     sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${DB_NAME};"
     sudo -u postgres psql -c "DROP USER IF EXISTS ${DB_USER_NAME};"
