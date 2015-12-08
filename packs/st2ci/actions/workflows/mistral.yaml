@@ -34,8 +34,8 @@ workflows:
         task-defaults:
             on-error:
                 - backup_logs
-                - teardown_on_failure: <% $.is_infra_setup and not $.debug %>
-                - notify_on_failure: <% not $.is_infra_setup or $.debug %>
+                - teardown_on_failure: <% not $.debug %>
+                - notify_on_failure: <% $.debug %>
         tasks:
             init:
                 publish:
@@ -119,7 +119,7 @@ workflows:
                 action: slack.post_message
                 input:
                     channel: '#thunderdome'
-                    message: '```[MISTRAL-CI][<% $.mis_repo_base %>] STATUS: SUCCEEDED```'
+                    message: '```[MISTRAL-CI][<% $.mis_repo_base.toUpper() %>] STATUS: SUCCEEDED```'
 
             # Declare error handler(s) for the main workflow here.
             backup_logs:
@@ -142,7 +142,7 @@ workflows:
                 action: slack.post_message
                 input:
                     channel: '#stackstorm'
-                    message: '```[MISTRAL-CI][<% $.mis_repo_base %>] STATUS: EPIC FAIL```'
+                    message: '```[MISTRAL-CI][<% $.mis_repo_base.toUpper() %>] STATUS: EPIC FAIL```'
                 on-complete:
                     - fail
 
