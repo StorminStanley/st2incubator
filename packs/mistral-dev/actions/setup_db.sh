@@ -37,6 +37,9 @@ fi
 
 echo "Setup database in ${DB_TYPE} on ${DISTRO}..."
 
+# Stop mistral service in case of action user sessions.
+sudo service mistral stop || true
+
 # Create the database and user. Restart DB server first in case of active user sessions.
 if [ "${DB_TYPE}" == "mysql" ]; then
     sudo service mysql restart
