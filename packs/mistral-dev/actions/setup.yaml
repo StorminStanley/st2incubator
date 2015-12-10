@@ -2,8 +2,8 @@
 name: setup
 description: Install and configure a running instance of Mistral from git repo.
 enabled: true
-runner_type: action-chain
-entry_point: workflows/setup.chain.yaml
+runner_type: mistral-v2
+entry_point: workflows/setup.mistral.yaml
 parameters:
   host:
     type: string

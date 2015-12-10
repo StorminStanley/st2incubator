@@ -70,6 +70,7 @@ workflows:
                     st2_repo: <% $.st2_repo %>
                     st2_repo_branch: <% $.st2_repo_branch %>
                     st2_repo_dir: <% $.st2_repo_dir %>
+                    debug: <% $.debug %>
                 publish:
                     is_infra_setup: True
                 on-success:
@@ -218,6 +219,7 @@ workflows:
             - st2_repo
             - st2_repo_branch
             - st2_repo_dir
+            - debug
         output:
             clones: <% dict(mistral=>$.mis_clone_paths.get(mistral),
                             mistralclient=>$.mis_clone_paths.get(mistralclient),
@@ -241,7 +243,7 @@ workflows:
                     db_user_pass: <% $.mis_db_user_pass %>
                     db_root_pass: <% $.mis_db_root_pass %>
                     api_port: <% $.mis_api_port %>
-                    debug: True
+                    debug: <% $.debug %>
                 publish:
                     mis_clone_paths: <%
                         dict(mistral=>$.setup_mistral.tasks[0].result.get($.host).stdout,
@@ -256,9 +258,19 @@ workflows:
                     repo: <% $.st2_repo %>
                     repo_branch: <% $.st2_repo_branch %>
                     repo_dir: <% $.st2_repo_dir %>
-                    debug: True
+                    debug: <% $.debug %>
                 publish:
                     st2_clone_path: <% $.setup_st2.clone_path %>
+                on-error:
+                    - teardown_mistral: <% not $.debug %>
+                    - fail
+            teardown_mistral:
+                action: mistral-dev.teardown
+                input:
+                    host: <% $.host %>
+                    repo_main: <% $.mis_clone_paths.get(mistral) %>
+                    repo_client: <% $.mis_clone_paths.get(mistralclient) %>
+                    repo_action: <% $.mis_clone_paths.get(st2mistral) %>
 
 
     teardown_infra:
