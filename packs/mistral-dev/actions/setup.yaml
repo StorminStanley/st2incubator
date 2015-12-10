@@ -67,5 +67,3 @@ parameters:
   debug:
     type: boolean
     default: false
-  timeout:
-    default: 600
