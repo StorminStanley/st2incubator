@@ -245,10 +245,7 @@ workflows:
                     api_port: <% $.mis_api_port %>
                     debug: <% $.debug %>
                 publish:
-                    mis_clone_paths: <%
-                        dict(mistral=>$.setup_mistral.tasks[0].result.get($.host).stdout,
-                             mistralclient=>$.setup_mistral.tasks[1].result.get($.host).stdout,
-                             st2mistral=>$.setup_mistral.tasks[2].result.get($.host).stdout) %>
+                    mis_clone_paths: <% $.setup_mistral.clone_paths %>
                 on-success:
                     - setup_st2
             setup_st2:
