@@ -5,20 +5,24 @@
   enabled: true
   entry_point: "backup_logs.sh"
   parameters:
-    st2_log_dir:
+    mis_repo_dir:
       type: string
-      description: Location of st2 logs.
+      description: Location of the local mistral repo.
       position: 0
-      default: /var/log/st2
     mis_log_dir:
       type: string
       description: Location of mistral logs.
       position: 1
       default: /var/log
+    st2_log_dir:
+      type: string
+      description: Location of st2 logs.
+      position: 2
+      default: /var/log/st2
     backup_dir:
       type: string
       description: Location where to backup logs.
-      position: 2
+      position: 3
       default: /home/stanley/logs
     dir:
       immutable: true
