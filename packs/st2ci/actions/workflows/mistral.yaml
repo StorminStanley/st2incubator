@@ -127,10 +127,11 @@ workflows:
                 action: st2ci.backup_logs
                 input:
                     hosts: <% $.hosts.get(test) %>
+                    st2_execution_id: <% env().st2_execution_id %>
                     mis_repo_dir: <% $.setup.clones.get(mistral) %>
                     mis_log_dir: /var/log
                     st2_log_dir: <% $.setup.clones.get(st2) %>/logs
-                    backup_dir: /home/stanley/logs/<% env().st2_execution_id %>
+                    backup_dir: /home/stanley/logs
                 on-error:
                     - noop
             teardown_on_failure:
