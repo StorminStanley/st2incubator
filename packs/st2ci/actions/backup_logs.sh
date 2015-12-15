@@ -32,8 +32,10 @@ fi
 echo "Capturing DB logs..."
 sudo -u postgres psql -x -c "SELECT ka.query AS blocking, a.query AS blocked FROM pg_catalog.pg_locks bl JOIN pg_catalog.pg_stat_activity a ON a.pid = bl.pid JOIN pg_catalog.pg_locks kl ON kl.transactionid = bl.transactionid AND kl.pid != bl.pid JOIN pg_catalog.pg_stat_activity ka ON ka.pid = kl.pid WHERE NOT bl.GRANTED;" > ${BACKUP_PATH}/psql_deadlocks.log
 
-# Restart DB service to clear deadlocks so the steps below can run.
+# Restart services to clear locks so the backup steps below can run.
+sudo service mistral stop
 sudo service postgresql restart
+sudo service mistral start
 
 # Backup the list of WF and task executions
 . ${MISTRAL_REPO}/.venv/bin/activate
