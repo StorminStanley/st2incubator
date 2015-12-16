@@ -15,11 +15,16 @@ class FormatResultAction(Action):
         self.jinja = jinja2.Environment(trim_blocks=True, lstrip_blocks=True)
         self.jinja.tests['in'] = lambda item, list: item in list
 
+        path = os.path.dirname(os.path.realpath(__file__))
+        with open(os.path.join(path, 'templates/default.j2'), 'r') as f:
+            self.default_template = f.read()
+
     def run(self, execution):
         context = {
             'six': six,
             'execution': execution
         }
+        template = self.default_template
 
         alias_id = execution['context'].get('action_alias_ref', {}).get('id', None)
         if alias_id:
@@ -29,12 +34,11 @@ class FormatResultAction(Action):
                 'alias': alias
             })
 
-        if alias_id and alias and hasattr(alias, 'result'):
-            enabled = alias.result.get('enabled', True)
+            result = getattr(alias, 'result', None)
+            if result:
+                enabled = result.get('enabled', True)
 
-            if enabled and 'format' in alias.result:
-                return self.jinja.from_string(alias.result['format']).render(context)
-        else:
-            path = os.path.dirname(os.path.realpath(__file__))
-            with open(os.path.join(path, 'templates/default.j2'), 'r') as f:
-                return self.jinja.from_string(f.read()).render(context)
+                if enabled and 'format' in alias.result:
+                    template = alias.result['format']
+
+        return self.jinja.from_string(template).render(context)

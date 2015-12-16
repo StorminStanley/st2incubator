@@ -2,10 +2,10 @@
   {% for key, value in iter -%}
     {{ prefix }}{{ key }} : {% if value is mapping -%}
       {{ '\n' + serialize(six.iteritems(value), prefix+'  ') }}
-    {%- elif value is string and value.split('\n') | length > 1 %}
-      {{ '\n' + prefix + '  ' + value | replace('\n', '\n' + prefix + '  ')}}
+    {%- elif value is string and (value | trim).split('\n') | length > 1 %}
+      {{ '\n' + prefix + '  ' + value | trim | replace('\n', '@')}}
     {% else -%}
-      {{ value }}
+      {{ value | trim }}
     {% endif %}
   {% endfor %}
 {%- endmacro %}
@@ -20,7 +20,7 @@ result :
 {% if execution.runner['name'] in ('http-request',) -%}
   {# TODO: is there are conceptual difference between it and default? #}
   {{ serialize(six.iteritems(execution.result)) }}
-{% elif execution.runner['name'] in ('python-script', 'windows-cmd', 'windows-script',) -%}
+{% elif execution.runner['name'] in ('run-python', 'python-script', 'windows-cmd', 'windows-script',) -%}
   {{ serialize(six.iteritems(execution.result)
                | selectattr('0', 'in', ['result', 'stdout', 'stderr', 'exit_code'])
                | selectattr('1')) }}
