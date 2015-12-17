@@ -4,8 +4,9 @@ set -e
 ST2_EXEC_ID=$1
 MISTRAL_REPO=$2
 MISTRAL_LOG_DIR=$3
-ST2_LOG_DIR=$4
-BACKUP_DIR=$5
+ST2_REPO=$4
+ST2_LOG_DIR=$5
+BACKUP_DIR=$6
 
 # Cleanup anything from the backup directory older than a week
 find ${BACKUP_DIR}/* -type d -ctime +7 | xargs rm -rf
@@ -33,6 +34,7 @@ echo "Capturing DB logs..."
 sudo -u postgres psql -x -c "SELECT ka.query AS blocking, a.query AS blocked FROM pg_catalog.pg_locks bl JOIN pg_catalog.pg_stat_activity a ON a.pid = bl.pid JOIN pg_catalog.pg_locks kl ON kl.transactionid = bl.transactionid AND kl.pid != bl.pid JOIN pg_catalog.pg_stat_activity ka ON ka.pid = kl.pid WHERE NOT bl.GRANTED;" > ${BACKUP_PATH}/psql_deadlocks.log
 
 # Restart services to clear locks so the backup steps below can run.
+${ST2_REPO}/tools/launchdev.sh stop
 sudo service mistral stop
 sudo service postgresql restart
 sudo service mistral start

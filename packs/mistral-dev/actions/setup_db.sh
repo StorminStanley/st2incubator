@@ -38,7 +38,10 @@ fi
 echo "Setup database in ${DB_TYPE} on ${DISTRO}..."
 
 # Stop mistral service in case of action user sessions.
-sudo service mistral stop || true
+echo `ps aux | grep 'mistral/cmd/launch.py'`
+if [[ -e "/etc/init/mistral.conf" ]]; then
+    sudo service mistral stop || true
+fi
 
 # Create the database and user. Restart DB server first in case of active user sessions.
 if [ "${DB_TYPE}" == "mysql" ]; then
