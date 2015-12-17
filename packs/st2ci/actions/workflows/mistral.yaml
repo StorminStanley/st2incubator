@@ -33,7 +33,6 @@ workflows:
             deps: <% $.deps %>
         task-defaults:
             on-error:
-                - backup_logs
                 - teardown_on_failure: <% not $.debug %>
                 - notify_on_failure: <% $.debug %>
         tasks:
@@ -123,24 +122,15 @@ workflows:
                     message: '```[MISTRAL-CI][<% $.mis_repo_base.toUpper() %>] STATUS: SUCCEEDED```'
 
             # Declare error handler(s) for the main workflow here.
-            backup_logs:
-                action: st2ci.backup_logs
-                input:
-                    hosts: <% $.hosts.get(test) %>
-                    st2_execution_id: <% env().st2_execution_id %>
-                    mis_repo_dir: <% $.setup.clones.get(mistral) %>
-                    mis_log_dir: /var/log
-                    st2_log_dir: <% $.setup.clones.get(st2) %>/logs
-                    backup_dir: /home/stanley/logs
-                on-error:
-                    - noop
             teardown_on_failure:
                 workflow: teardown_infra
                 input:
                     host: <% $.hosts.get(test) %>
                     clones: <% $.setup.clones %>
+                    backup: True
                 on-complete:
                     - notify_on_failure
+
             notify_on_failure:
                 action: slack.post_message
                 input:
@@ -277,7 +267,25 @@ workflows:
         input:
             - host
             - clones
+            - backup: False
         tasks:
+            init:
+                action: std.noop
+                on-complete:
+                    - backup_logs: <% $.backup %>
+                    - teardown_mistral: <% not $.backup %>
+            backup_logs:
+                action: st2ci.backup_logs
+                input:
+                    hosts: <% $.host %>
+                    st2_execution_id: <% env().st2_execution_id %>
+                    mis_repo_dir: <% $.clones.get(mistral) %>
+                    mis_log_dir: /var/log
+                    st2_repo_dir: <% $.clones.get(st2) %>
+                    st2_log_dir: <% $.clones.get(st2) %>/logs
+                    backup_dir: /home/stanley/logs
+                on-complete:
+                    - teardown_mistral
             teardown_mistral:
                 action: mistral-dev.teardown
                 input:
