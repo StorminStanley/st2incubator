@@ -12,7 +12,7 @@ parser.add_argument("-D", "--directory",
                     dest="directory", required=True)
 parser.add_argument("-t", "--threshold",
                     help="Maximum percentage of disk",
-                    dest="threshold")
+                    dest="threshold", required=True)
 parser.add_argument("-a", "--action",
                     help="Run this script as an action",
                     action="store_true",
@@ -74,6 +74,6 @@ if args.action is True or args.debug is True:
 else:
     print("%s is %s. Current Usage: %s" % (results['args']['directory'],
                                            results['status'],
-                                           results['use']) + '%')
+                                           results['usage']) + '%')
 
 sys.exit(exitcode)
