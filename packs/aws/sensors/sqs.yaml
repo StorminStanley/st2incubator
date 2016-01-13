@@ -1,5 +1,5 @@
 ---
-  class_name: "SQSsensor"
+  class_name: "AWSSQSSensor"
   entry_point: "sqs.py"
   description: "Sensor which monitors a SQS queue for new messages"
   poll_interval: 5

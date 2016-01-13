@@ -26,10 +26,10 @@ class AWSSQSSensor(PollingSensor):
                                            poll_interval=poll_interval)
 
     def setup(self):
-        self.input_queue = self._config['sensor_config']['input_queue']
-        self.aws_access_key = self._config['sensor_config']['aws_access_key_id']
-        self.aws_secret_key = self._config['sensor_config']['aws_secret_access_key']
-        self.aws_region = self._config['sensor_config']['region']
+        self.input_queue = self._config['setup']['input_queue']
+        self.aws_access_key = self._config['setup']['aws_access_key_id']
+        self.aws_secret_key = self._config['setup']['aws_secret_access_key']
+        self.aws_region = self._config['setup']['region']
 
         self.session = None
         self.sqs_res = None
@@ -38,10 +38,11 @@ class AWSSQSSensor(PollingSensor):
         self.queue = self._GetQueueByName(self.input_queue)
 
     def poll(self):
-        msg = self._receive_messages(self.queue)
+        msg = self._receive_messages(queue=self.queue)
         if msg:
-            payload = {"queue": self.input_queue, "body": msg.body}
+            payload = {"queue": self.input_queue, "body": msg[0].body}
             self._sensor_service.dispatch(trigger="aws.sqs.new_message", payload=payload)
+            msg[0].delete()
 
     def cleanup(self):
         pass
@@ -78,8 +79,14 @@ class AWSSQSSensor(PollingSensor):
 
         return queue
 
-    def _receive_messages(self, queue, wait_time=_poll_interval, num_messages=1):
+    def _receive_messages(self, queue, wait_time=2, num_messages=1):
         ''' Receive a message from queue and return it. '''
         msg = queue.receive_messages(WaitTimeSeconds=wait_time, MaxNumberOfMessages=num_messages)
+
+        return msg
+
+    def _delete_message(self, queue, message_handle):
+        ''' Receive a message from queue and return it. '''
+        msg = queue.delete_messages(WaitTimeSeconds=wait_time, MaxNumberOfMessages=num_messages)
 
         return msg
