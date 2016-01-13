@@ -1,6 +1,6 @@
 ---
 name : aws
 description : st2 content pack containing Amazon Web Services integrations.
-version : 0.2
+version : 0.3
 author : st2-dev
 email : info@stackstorm.com
