@@ -80,7 +80,7 @@ workflows:
                     hosts: <% $.hosts.get(test) %> 
                     cmd: cd <% $.setup.clones.get(st2) %> && make mistral-itests
                     timeout: 1800
-                on-complete:
+                on-success:
                     - record_pip_freeze
             record_pip_freeze:
                 action: core.remote
