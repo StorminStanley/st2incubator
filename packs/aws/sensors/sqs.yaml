@@ -2,10 +2,10 @@
   class_name: "AWSSQSSensor"
   entry_point: "sqs.py"
   description: "Sensor which monitors a SQS queue for new messages"
-  poll_interval: 5
+  poll_interval: 30
   trigger_types:
     -
-      name: "new_message"
+      name: "sqs_new_message"
       description: "Trigger which indicates that a new message has arrived"
       payload_schema:
         type: "object"

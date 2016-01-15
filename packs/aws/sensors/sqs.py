@@ -30,6 +30,7 @@ class AWSSQSSensor(PollingSensor):
         self.aws_access_key = self._config['setup']['aws_access_key_id']
         self.aws_secret_key = self._config['setup']['aws_secret_access_key']
         self.aws_region = self._config['setup']['region']
+        self._logger = self._sensor_service.get_logger(name=self.__class__.__name__)
 
         self.session = None
         self.sqs_res = None
@@ -41,7 +42,7 @@ class AWSSQSSensor(PollingSensor):
         msg = self._receive_messages(queue=self.queue)
         if msg:
             payload = {"queue": self.input_queue, "body": msg[0].body}
-            self._sensor_service.dispatch(trigger="aws.sqs.new_message", payload=payload)
+            self._sensor_service.dispatch(trigger="aws.sqs_new_message", payload=payload)
             msg[0].delete()
 
     def cleanup(self):
@@ -60,6 +61,7 @@ class AWSSQSSensor(PollingSensor):
 
     def _SetupSqs(self):
         ''' Setup Boto3 structures '''
+        self._logger.debug('Setting up SQS resources')
         self.session = Session(aws_access_key_id=self.aws_access_key,
                                aws_secret_access_key=self.aws_secret_key,
                                region_name=self.aws_region)
@@ -71,7 +73,7 @@ class AWSSQSSensor(PollingSensor):
         try:
             queue = self.sqs_res.get_queue_by_name(QueueName=queueName)
         except ClientError as e:
-            logger.warning("SQS Queue: %s doesn't exist, creating it.", queueName)
+            self._logger.warning("SQS Queue: %s doesn't exist, creating it.", queueName)
             if e.response['Error']['Code'] == 'AWS.SimpleQueueService.NonExistentQueue':
                 queue = self.sqs_res.create_queue(QueueName=queueName)
             else:
@@ -82,11 +84,5 @@ class AWSSQSSensor(PollingSensor):
     def _receive_messages(self, queue, wait_time=2, num_messages=1):
         ''' Receive a message from queue and return it. '''
         msg = queue.receive_messages(WaitTimeSeconds=wait_time, MaxNumberOfMessages=num_messages)
-
-        return msg
-
-    def _delete_message(self, queue, message_handle):
-        ''' Receive a message from queue and return it. '''
-        msg = queue.delete_messages(WaitTimeSeconds=wait_time, MaxNumberOfMessages=num_messages)
 
         return msg
