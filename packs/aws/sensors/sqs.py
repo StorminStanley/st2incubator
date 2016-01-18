@@ -1,3 +1,14 @@
+"""
+This is generic SQS Sensor using boto3 api to fetch messages from sqs queue.
+After receiving a messge it's content is passed as payload to a trigger 'aws.sqs_new_message'
+
+This sensor can be configured either by using config.yaml withing a pack or by creating
+following values in datastore:
+    - aws.input_queue
+    - aws.aws_access_key_id
+    - aws.aws_secret_access_key
+    - aws.region
+"""
 
 import time
 
@@ -10,26 +21,16 @@ import json
 from st2reactor.sensor.base import PollingSensor
 
 class AWSSQSSensor(PollingSensor):
-    """
-    * self._sensor_service
-        - provides utilities like
-            get_logger() for writing to logs.
-            dispatch() for dispatching triggers into the system.
-    * self._config
-        - contains configuration that was specified as
-          config.yaml in the pack.
-    * self._poll_interval
-        - indicates the interval between two successive poll() calls.
-    """
     def __init__(self, sensor_service, config=None, poll_interval=5):
         super(AWSSQSSensor, self).__init__(sensor_service=sensor_service, config=config,
                                            poll_interval=poll_interval)
 
     def setup(self):
-        self.input_queue = self._config['setup']['input_queue']
-        self.aws_access_key = self._config['setup']['aws_access_key_id']
-        self.aws_secret_key = self._config['setup']['aws_secret_access_key']
-        self.aws_region = self._config['setup']['region']
+        self.input_queue = self._GetConfigEntry(key='input_queue', prefix='sqs_sensor')
+        self.aws_access_key = self._GetConfigEntry('aws_access_key_id')
+        self.aws_secret_key = self._GetConfigEntry('aws_secret_access_key')
+        self.aws_region = self._GetConfigEntry('region')
+
         self._logger = self._sensor_service.get_logger(name=self.__class__.__name__)
 
         self.session = None
@@ -58,6 +59,16 @@ class AWSSQSSensor(PollingSensor):
 
     def remove_trigger(self, trigger):
         pass
+
+    def _GetConfigEntry(self, key, prefix='setup'):
+        ''' Get configuration values either from Datastore or config file. '''
+        config = self._config.get(prefix, None)
+
+        value = self._sensor_service.get_value('aws.%s' % (key), local=False)
+        if not value:
+            value = config.get(key, None)
+
+        return value
 
     def _SetupSqs(self):
         ''' Setup Boto3 structures '''

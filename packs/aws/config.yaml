@@ -3,6 +3,8 @@ setup:
   region: ""
   aws_access_key_id: ""
   aws_secret_access_key: ""
-  input_queue: ""
 interval: 20
 st2_user_data: ""
+
+sqs_sensor:
+  input_queue: ""
