@@ -5,3 +5,6 @@ setup:
   aws_secret_access_key: ""
 interval: 20
 st2_user_data: ""
+
+sqs_sensor:
+  input_queue: ""
