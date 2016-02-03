@@ -1,7 +1,7 @@
 ---
 name: mistral_os_master
 description: Run integration tests and merge upstream changes from OpenStack Mistral master
-enabled: true
+enabled: false
 trigger:
   type: core.st2.CronTimer
   parameters:
