@@ -1,0 +1,15 @@
+---
+name: ack_event
+runner_type: run-python
+description: Acknowledge an event in Zabbix.
+enabled: true
+entry_point: ack_event.py
+parameters:
+  eventid:
+    type: string
+    description: Id of event to be ack.
+    required: true
+  message:
+    type: string
+    description: "Acknowledge message"
+    required: true
