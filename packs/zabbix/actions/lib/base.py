@@ -1,13 +1,9 @@
 from pyzabbix import ZabbixAPI
+from st2actions.runners.pythonrunner import Action
 
 __all__ = [
     'BaseZabbixAction'
 ]
-
-
-class Action(object):
-    def __init__(self, config):
-        self.config = config
 
 
 class BaseZabbixAction(Action):
