@@ -35,7 +35,7 @@ This pack ships with a sensor that checks the Typeform API for submissions to a 
 * form_id - This ID is displayed when you go to the URL for your form.  The format looks like this:
     * https://[USERNAME].typeform.com/to/[FORM_ID]
 
-PLEASE NOTE: the fields used in registration_sensor.py for user information are unique to your form.  E.g. EMAIL_FIELD = "email_7723200" which is listed in the provided registration_sensor.py file will not work for you.  To get the field names you need to use first create the form you want people to fill out, fill out a sample form, and then modify this URL with your information to get a JSON response the correct field names:
+PLEASE NOTE: the fields used in registration_sensor.py for user information are unique to your form.  E.g. EMAIL_FIELD = "email_7723200" which is listed in the provided registration_sensor.py file will not work for you.  To get the field names you need to use first create the form you want people to fill out, fill out a sample form, and then modify this URL with your information to get a JSON response with the correct field names:
 https://api.typeform.com/v0/form/[FORM_ID]?key=[API_key]&completed=true
 
 ### Actions
