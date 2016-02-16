@@ -2,7 +2,7 @@
   chain:
     -
       name: "insert_registration"
-      ref: "mysql.insert"
+      ref: "st2-mysql.insert"
       params:
         db: "community"
         table: "user_registration"
