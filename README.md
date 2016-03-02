@@ -1,6 +1,14 @@
 st2incubator
 ============
 
+# WHOA! DEPRECATION WARNING
+
+Easy there, fella!
+
+This repo is deprecated and will be removed once packs are transferred to [st2contrib](https://github.com/StackStorm/st2contrib). If you want to contribute a pack (awesome!), [our main packs repo](https://github.com/StackStorm/st2contrib) is the place.
+
+---
+
 StackStorm repo for development of new integration packs, prototypes, experiments, and work in progress.
 
 Contents of this repository comprise of integrations and automations that
