@@ -10,12 +10,12 @@ parameters:
     type: string
     description: Local root path to the StackStorm repositories.
     position: 0
-    default: /home/vagrant/code/stackstorm
+    default: /home/vagrant/projects/stackstorm
   os_repo_root:
     type: string
     description: Local root path to the OpenStack/StackForge repositories.
     position: 1
-    default: /home/vagrant/code/openstack
+    default: /home/vagrant/projects/openstack
   repo:
     enum:
         - st2
