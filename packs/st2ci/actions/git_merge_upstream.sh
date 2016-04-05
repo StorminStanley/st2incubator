@@ -39,15 +39,6 @@ git fetch upstream
 echo "Merging upstream/${REPO_UPSTREAM_BRANCH}..."
 git merge upstream/${REPO_UPSTREAM_BRANCH}
 
-# Exit if the current commit sha is not the same as expected.
-COMMIT_SHA=`git rev-parse HEAD`
-echo "Latest commit sha: ${COMMIT_SHA}"
-
-if [[ ${COMMIT_SHA} != ${EXPECTED_COMMIT_SHA} ]]; then
-    echo "ERROR: Latest commit does not match (${COMMIT_SHA} != ${EXPECTED_COMMIT_SHA})."
-    exit 1
-fi
-
 # Push change to origin.
 set +e
 echo "Pushing to origin ${REPO_BRANCH}..."
