@@ -1,9 +1,0 @@
----
-name: mistral_concurrency
-pack: st2ci
-description: Limits the concurrent executions of the Mistral CI.
-enabled: true
-resource_ref: st2ci.mistral
-policy_type: action.concurrency
-parameters:
-    threshold: 1

@@ -1,6 +1,0 @@
----
-name : st2ci
-description : Pack for continuous integration at StackStorm
-version : 0.1
-author : st2-dev
-email : info@stackstorm.com
