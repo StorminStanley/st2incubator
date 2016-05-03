@@ -40,9 +40,9 @@ mistral-dev.setup:
                 branch: <% $.repo_branch %>
                 target: <% $.repo_dir %>/<% $.proj %>_<% $.repo_branch %>
             publish:
-                clone_paths: <% dict(mistral=>$.clone_repos[0].get($.host).stdout,
-                                     mistralclient=>$.clone_repos[1].get($.host).stdout,
-                                     st2mistral=>$.clone_repos[2].get($.host).stdout) %>
+                clone_paths: <% dict(mistral=>task(clone_repos).result[0].get($.host).stdout,
+                                     mistralclient=>task(clone_repos).result[1].get($.host).stdout,
+                                     st2mistral=>task(clone_repos).result[2].get($.host).stdout) %>
             on-success:
                 - install
 
