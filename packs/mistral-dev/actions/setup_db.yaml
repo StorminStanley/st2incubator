@@ -12,7 +12,7 @@ parameters:
     position: 0
   mistral_config:
     type: string
-    default: "{{mistral_path}}/mistral.conf"
+    default: "/etc/mistral/mistral.conf"
     required: true
     position: 1
   distro:
