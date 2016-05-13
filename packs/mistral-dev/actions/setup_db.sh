@@ -41,6 +41,16 @@ echo "Setup database in ${DB_TYPE} on ${DISTRO}..."
 echo `ps aux | grep 'mistral/cmd/launch.py'`
 if [[ -e "/etc/init/mistral.conf" ]]; then
     sudo service mistral stop || true
+else
+    sudo pkill -f 'mistral/cmd/launch.py' || true
+fi
+
+# Stop mistral API server in case of action user sessions.
+echo `ps aux | grep mistral.api.wsgi`
+if [[ -e "/etc/init/mistral-api.conf" ]]; then
+    (sudo service mistral-api stop & sudo pkill -f mistral.api.wsgi) || true
+else
+    sudo pkill -f mistral.api.wsgi || true
 fi
 
 # Create the database and user. Restart DB server first in case of active user sessions.
