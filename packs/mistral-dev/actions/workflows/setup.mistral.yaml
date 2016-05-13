@@ -39,6 +39,9 @@ mistral-dev.setup:
                 repo: <% $.repo %>
                 branch: <% $.repo_branch %>
                 target: <% $.repo_dir %>/<% $.proj %>_<% $.repo_branch %>
+            retry:
+                count: 3
+                delay: 3
             publish:
                 clone_paths: <% dict(mistral=>task(clone_repos).result[0].get($.host).stdout,
                                      mistralclient=>task(clone_repos).result[1].get($.host).stdout,
