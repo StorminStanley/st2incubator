@@ -8,8 +8,13 @@ DB_USER_NAME=$4
 DB_USER_PASS=$5
 API_PORT=$6
 
-MISTRAL_CONFIG=${MISTRAL_PATH}/mistral.conf
-MISTRAL_LOG_CONFIG=${MISTRAL_PATH}/wf_trace_logging.conf
+CONFIG_PATH=/etc/mistral
+MISTRAL_CONFIG=${CONFIG_PATH}/mistral.conf
+MISTRAL_LOG_CONFIG=${CONFIG_PATH}/wf_trace_logging.conf
+
+# Create config directory
+sudo mkdir -p ${CONFIG_PATH}
+sudo chown -R ${USER}:${USER} ${CONFIG_PATH}
 
 # Check database type.
 if [ "${DB_TYPE}" != "mysql" ] && [ "${DB_TYPE}" != "postgresql" ]; then

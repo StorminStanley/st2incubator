@@ -82,6 +82,7 @@ mistral-dev.setup:
                 db_root_pass: <% $.db_root_pass %>
             on-success:
                 - setup_service
+                - setup_api_server
 
         setup_service:
             action: mistral-dev.setup_service
@@ -98,6 +99,20 @@ mistral-dev.setup:
                 hosts: <% $.host %>
                 cmd: service mistral start
 
+        setup_api_server:
+            action: mistral-dev.setup_api_server
+            input:
+                hosts: <% $.host %>
+                distro: <% $.distro %>
+                repo_main: <% $.clone_paths.get(mistral) %>
+            on-success:
+                - start_api_server
+
+        start_api_server:
+            action: core.remote_sudo
+            input:
+                hosts: <% $.host %>
+                cmd: service mistral-api start
 
 
         # Declare error handler(s) here

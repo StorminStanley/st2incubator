@@ -15,6 +15,16 @@ mistral-dev.teardown:
         - db_root_pass
 
     tasks:
+        stop_api_server:
+            action: core.remote_sudo
+            input:
+                hosts: <% $.host %>
+                cmd: (service mistral-api stop & pkill -f gunicorn) || true
+            on-error:
+                - noop
+            on-complete:
+                - stop_service
+
         stop_service:
             action: core.remote_sudo
             input:
@@ -24,14 +34,14 @@ mistral-dev.teardown:
                 - noop
             on-complete:
                 - uninstall
+                - teardown_db
+                - remove_repos
 
         uninstall:
             action: mistral-dev.uninstall
             input:
                 hosts: <% $.host %>
                 distro: <% $.distro %>
-            on-success:
-                - teardown_db
 
         teardown_db:
             action: mistral-dev.teardown_db
@@ -41,8 +51,6 @@ mistral-dev.teardown:
                 db_name: <% $.db_name %>
                 db_user_name: <% $.db_user_name %>
                 db_root_pass: <% $.db_root_pass %>
-            on-success:
-                - remove_repos
 
         remove_repos:
             with-items: repo in <% list($.repo_main, $.repo_client, $.repo_action) %>

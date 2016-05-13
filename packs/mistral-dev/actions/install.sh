@@ -32,6 +32,7 @@ virtualenv --no-site-packages .venv
 cd ${REPO_MAIN}
 sed -i 's/yaql>=0.2.7,!=0.3.0/yaql>=0.2.7,!=0.3.0,<1.0.0/g' requirements.txt
 pip install -q -r requirements.txt
+pip install gunicorn
 
 # Temporary hack to bypass conflict in pbr version.
 VENV_PKG_DIR="${REPO_MAIN}/.venv/local/lib/python2.7/site-packages"
