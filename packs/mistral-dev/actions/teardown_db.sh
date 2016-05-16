@@ -6,6 +6,22 @@ DB_NAME=$2
 DB_USER_NAME=$3
 DB_ROOT_PASS=$4
 
+# Stop mistral service in case of action user sessions.
+echo `ps aux | grep 'mistral/cmd/launch.py'`
+if [[ -e "/etc/init/mistral.conf" ]]; then
+    sudo service mistral stop || true
+else
+    sudo pkill -f 'mistral/cmd/launch.py' || true
+fi
+
+# Stop mistral API server in case of action user sessions.
+echo `ps aux | grep mistral.api.wsgi`
+if [[ -e "/etc/init/mistral-api.conf" ]]; then
+    (sudo service mistral-api stop & sudo pkill -f mistral.api.wsgi) || true
+else
+    sudo pkill -f mistral.api.wsgi || true
+fi
+
 # Deleting database and user.
 echo "Deleting database and user in ${DB_TYPE}..."
 
