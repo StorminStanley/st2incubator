@@ -8,8 +8,12 @@ ST2_REPO_ROOT=$1
 OS_REPO_ROOT=$2
 REPO=$3
 BRANCH=$4
+REFRESH_VENV=$5
+VENV_OWNER=$6
 
 OPT_DIR=/opt/openstack
+SRC_DIR=${OPT_DIR}/mistral
+VENV_DIR=${SRC_DIR}/.venv
 
 if [[ "${REPO}" = "st2" ]]; then
     SWITCH_TO=${ST2_REPO_ROOT}
@@ -55,21 +59,32 @@ git checkout ${BRANCH}
 python setup.py develop
 
 # Recreate virtual environment
-cd ${OPT_DIR}/mistral
+cd ${SRC_DIR}
 git checkout ${BRANCH}
-rm -rf .venv
-virtualenv --no-site-packages .venv
-. ${OPT_DIR}/mistral/.venv/bin/activate
+
+if [ ${REFRESH_VENV} -eq 1 ]; then
+    rm -rf ${VENV_DIR}
+fi
+
+if [ ! -d "${VENV_DIR}" ]; then
+    virtualenv --no-site-packages .venv
+fi
+
+. ${VENV_DIR}/bin/activate
 pip install -r requirements.txt
 pip install -r test-requirements.txt
 pip install psycopg2
 pip install gunicorn
+pip install newrelic
 python setup.py develop
 
 # Install the st2 action proxy
 git checkout ${BRANCH}
 cd ${ST2_REPO_ROOT}/st2mistral
 python setup.py develop
+
+# Update .venv directory owner
+chown -R ${VENV_OWNER}:${VENV_OWNER} ${VENV_DIR}
 
 # Restart the mistral service appropriately
 echo ""
