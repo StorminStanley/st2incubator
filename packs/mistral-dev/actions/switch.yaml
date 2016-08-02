@@ -28,6 +28,16 @@ parameters:
     description: Checkout the given branch for the repo.
     position: 3
     default: master
+  refresh_venv:
+    type: boolean
+    description: Rebuild the python venv if specified.
+    position: 4
+    default: false
+  venv_owner:
+    type: string
+    description: Owner of the venv directory.
+    position: 5
+    default: vagrant
   cmd:
     immutable: true
     default: ""
