@@ -56,6 +56,7 @@ python setup.py develop
 
 # Setup mistral client.
 cd ${REPO_CLIENT}
+pip uninstall -y python-mistralclient
 pip install -q -r requirements.txt
 python setup.py develop
 
