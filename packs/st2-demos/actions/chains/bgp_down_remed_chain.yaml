@@ -1,0 +1,65 @@
+---
+    chain:
+        -
+            name: "notify_on_slack"
+            ref: "chatops.post_message"
+            parameters:
+                channel: "lkhtesting"
+                message: "BGP neighbour {{neighbour}} just went down on {{host}}"
+            on-success: "show_bgp_neighbours"
+            on-failure: "report_failure"
+        -
+            name: "show_bgp_neighbours"
+            ref: "clicrud.ops_command"
+            parameters:
+                host: "{{host}}"
+                command: "show ip bgp neighbors" 
+            on-success: "send_show_bgp_neighbours_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_show_bgp_neighbours_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "{{show_bgp_neighbours.result}}"
+                channel: 'lkhtesting'
+            on-success: "show_interface_brief"
+            on-failure: "report_failure"
+        -
+            name: "show_interface_brief"
+            ref: "clicrud.ops_command"
+            parameters:
+                host: "{{host}}"
+                command: "show ip int br"
+            on-success: "send_show_interface_brief_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_show_interface_brief_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "{{show_interface_brief.result}}"
+                channel: 'lkhtesting'
+            on-success: "send_jira_msg_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_jira_msg_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "Creating a Jira issue for this event!"
+                channel: 'lkhtesting'
+            on-success: "create_jira_issue"
+            on-failure: "report_failure"
+        -
+            name: "create_jira_issue"
+            ref: "jira.create_issue"
+            parameters:
+                type: "IT Help"
+                summary: "BGP neighbour down: {{neighbour}} on {{host}}"
+                description: "{{show_bgp_neighbours.result}}\n{{show_interface_brief.result}}"
+            on-failure: "report_failure"
+        -
+            name: "report_failure"
+            ref: "chatops.post_message"
+            parameters:
+                message: "Something went wrong in bgp down auto-remediation!"
+                channel: 'lkhtesting'
+    default: "notify_on_slack"

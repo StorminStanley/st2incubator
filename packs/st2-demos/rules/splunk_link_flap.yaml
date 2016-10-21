@@ -1,0 +1,17 @@
+---
+  name: "splunk_link_flap_webhook_rule"
+  enabled: true
+  description: "Splunk link flap  webhook rule"
+
+  trigger:
+    type: "core.st2.webhook"
+    parameters:
+      url: "splunk_link_flap"
+
+  criteria: {}
+
+  action:
+    ref: st2-demos.link_flap_remed_workflow
+    parameters:
+      host: "{{trigger.body.result.host}}"
+      interface: "{{trigger.body.result.interface}}" 

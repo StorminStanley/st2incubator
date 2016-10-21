@@ -1,0 +1,14 @@
+---
+description: Run a series of simulated actions.
+enabled: true
+entry_point: workflows/link_flap_remed_workflow.yaml
+name: link_flap_remed_workflow 
+pack: st2-demos 
+parameters:
+  host:
+    required: true
+    type: string
+  interface:
+    required: true
+    type: string
+runner_type: mistral-v2

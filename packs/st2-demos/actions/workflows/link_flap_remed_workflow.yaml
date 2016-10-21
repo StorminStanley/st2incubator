@@ -1,0 +1,105 @@
+---
+version: '2.0'
+
+st2-demos.link_flap_remed_workflow:
+  
+  input:
+    - host
+    - interface
+  tasks:
+
+    notify_on_slack:
+      # [105, 26]
+      action: chatops.post_message
+      input:
+        channel: "lkhtesting"
+        message: "Interface <% $.interface %> just went down on <% $.host %>"
+      on-success:
+        - show_run_interface
+      on-error:
+        - report_failure
+    show_run_interface:
+      # [175, 128]
+      action: clicrud.ops_command
+      input:
+        host: <% $.host %>
+        command: "show run interface <% $.interface %>"
+      on-success:
+        - send_show_run_interface_to_slack
+      on-error:
+        - report_failure
+    send_show_run_interface_to_slack:
+      # [175, 230]
+      action: chatops.post_message
+      input:
+        message: <% task(show_run_interface).result.result %>
+        channel: "lkhtesting"
+      on-success:
+        - bring_up_msg_to_slack
+      on-error:
+        - report_failure
+    bring_up_msg_to_slack:
+      # [245, 332]
+      action: chatops.post_message
+      input:
+        channel: "lkhtesting"
+        message: "Trying to bring up the link <% $.interface %> on <% $.host %>!"
+      on-success:
+        - bring_up_link
+      on-error:
+        - report_failure
+    bring_up_link:
+      # [315, 434]
+      action: clicrud.config_command
+      input:
+        host: <% $.host %>
+        command: ["int <% $.interface %>","shut","no shut"]
+      on-success:
+        - show_interface_detail
+      on-error:
+        - report_failure
+    show_interface_detail:
+      # [385, 536]
+      action: clicrud.ops_command
+      input:
+        host: <% $.host %>
+        command: "show interface <% $.interface %>"
+      on-success:
+        - send_interface_details_to_slack
+      on-error:
+        - report_failure
+    send_interface_details_to_slack:
+      # [455, 638]
+      action: chatops.post_message
+      input:
+        channel: "lkhtesting"
+        message: <% task(show_interface_detail).result.result %>
+      on-success:
+        - send_zendesk_msg_to_slack
+      on-error:
+        - report_failure
+    send_zendesk_msg_to_slack:
+      # [525, 740]
+      action: chatops.post_message
+      input:
+        message: "Creating a Zendesk issue for this event!"
+        channel: "lkhtesting"
+      on-success:
+        - create_zendesk_tkt
+      on-error:
+        - report_failure
+    create_zendesk_tkt:
+      # [595, 842]
+      action: zendesk.create_ticket
+      input:
+        subject: "Link down: <% $.interface %> on <% $.host %>"
+        description:  "<% task(show_run_interface).result.result %>\n<% task(show_interface_detail).result.result %>"
+      on-error:
+        - report_failure
+    report_failure:
+      # [145, 944]
+      action: chatops.post_message
+      input:
+        message: "Something went wrong in link down auto-remediation!"
+        channel: "lkhtesting"
+        

@@ -1,0 +1,15 @@
+---
+  name: "bgp_down_remed_chain"
+  runner_type: "action-chain"
+  description: "Brocade IP Fabric bgp down remediation"
+  enabled: true
+  entry_point: "chains/bgp_down_remed_chain.yaml"
+  parameters:
+    host:
+      type: "string"
+      description: "IP of the switch"
+      required: true
+    neighbour:
+      type: "string"
+      description: "neighbour that has gone down"
+      required: true

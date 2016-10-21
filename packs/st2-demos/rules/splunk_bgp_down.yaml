@@ -1,0 +1,17 @@
+---
+  name: "splunk_bgp_down_webhook_rule"
+  enabled: true
+  description: "Splunk bgp down webhook rule"
+
+  trigger:
+    type: "core.st2.webhook"
+    parameters:
+      url: "splunk_bgp_down"
+
+  criteria: {}
+
+  action:
+    ref: st2-demos.bgp_down_remed_workflow 
+    parameters:
+      host: "{{trigger.body.result.host}}"
+      neighbour: "{{trigger.body.result.neighbour}}"
