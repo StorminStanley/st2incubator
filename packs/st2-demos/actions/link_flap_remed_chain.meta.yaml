@@ -1,0 +1,15 @@
+---
+  name: "link_flap_remed_chain"
+  runner_type: "action-chain"
+  description: "Brocade IP Fabric link flap remediation"
+  enabled: true
+  entry_point: "chains/link_flap_remed_chain.yaml"
+  parameters:
+    host:
+      type: "string"
+      description: "IP of the switch"
+      required: true
+    interface:
+      type: "string"
+      description: "interface that has gone down"
+      required: true

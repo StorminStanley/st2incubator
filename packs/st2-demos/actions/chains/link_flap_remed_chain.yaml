@@ -1,0 +1,80 @@
+---
+    chain:
+        -
+            name: "notify_on_slack"
+            ref: "chatops.post_message"
+            parameters:
+                channel: "lkhtesting"
+                message: "Interface {{interface}} just went down on {{host}}"
+            on-success: "show_run_interface"
+            on-failure: "report_failure"
+        -
+            name: "show_run_interface"
+            ref: "clicrud.ops_command"
+            parameters:
+                host: "{{host}}"
+                command: "show run interface {{interface}}" 
+            on-success: "send_show_run_interface_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_show_run_interface_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "{{show_run_interface.result}}"
+                channel: 'lkhtesting'
+            on-success: "bring_up_msg_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "bring_up_msg_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "Trying to bring up the link {{interface}} on {{host}}!"
+                channel: 'lkhtesting'
+            on-success: "bring_up_link"
+            on-failure: "report_failure"
+        -
+            name: "bring_up_link"
+            ref: "clicrud.config_command"
+            parameters:
+                host: "{{host}}"
+                command: ["int {{interface}}","shut","no shut"]
+            on-success: "show_interface_detail"
+            on-failure: "report_failure"
+        -
+            name: "show_interface_detail"
+            ref: "clicrud.ops_command"
+            parameters:
+                host: "{{host}}"
+                command: "show interface {{interface}}"
+            on-success: "send_interface_details_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_interface_details_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "{{show_interface_detail.result}}"
+                channel: 'lkhtesting'
+            on-success: "send_zendesk_msg_to_slack"
+            on-failure: "report_failure"
+        -
+            name: "send_zendesk_msg_to_slack"
+            ref: "chatops.post_message"
+            parameters:
+                message: "Creating a Zendesk issue for this event!"
+                channel: 'lkhtesting'
+            on-success: "create_zendesk_tkt"
+            on-failure: "report_failure"
+        -
+            name: "create_zendesk_tkt"
+            ref: "zendesk.create_ticket"
+            parameters:
+                subject: "Link down: {{interface}} on {{host}}"
+                description: "{{show_run_interface.result}}\n{{show_interface_detail.result}}"
+            on-failure: "report_failure"
+        -
+            name: "report_failure"
+            ref: "chatops.post_message"
+            parameters:
+                message: "Something went wrong in link down auto-remediation!"
+                channel: 'lkhtesting'
+    default: "notify_on_slack"

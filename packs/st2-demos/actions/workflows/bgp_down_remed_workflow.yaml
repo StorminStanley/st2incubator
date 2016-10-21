@@ -1,0 +1,85 @@
+---
+version: '2.0'
+
+st2-demos.bgp_down_remed_workflow:
+  
+  input:
+    - host
+    - neighbour 
+  tasks:
+
+    notify_on_slack:
+      # [105, 26]
+      action: chatops.post_message
+      input:
+        channel: "lkhtesting"
+        message: "BGP neighbour <% $.neighbour %> just went down on <% $.host %>"
+      on-success:
+        - show_bgp_neighbours
+      on-error:
+        - report_failure
+    show_bgp_neighbours:
+      # [211, 91]
+      action: clicrud.ops_command
+      input:
+        host: <% $.host %>
+        command: "show ip bgp neighbors"
+      on-success:
+        - send_show_bgp_neighbours_to_slack
+      on-error:
+        - report_failure
+    send_show_bgp_neighbours_to_slack:
+      # [360, 210]
+      action: chatops.post_message
+      input:
+        message: <% task(show_bgp_neighbours).result.result %>
+        channel: "lkhtesting"
+      on-success:
+        - show_interface_brief
+      on-error:
+        - report_failure
+    show_interface_brief:
+      # [551, 333]
+      action: clicrud.ops_command
+      input:
+        host: <% $.host %>
+        command: "show ip int br"
+      on-success:
+        - send_show_interface_brief_to_slack
+      on-error:
+        - report_failure
+    send_show_interface_brief_to_slack:
+      # [761, 436]
+      action: chatops.post_message
+      input:
+        channel: "lkhtesting"
+        message: <% task(show_interface_brief).result.result %>
+      on-success:
+        - send_jira_msg_to_slack
+      on-error:
+        - report_failure
+    send_jira_msg_to_slack:
+      # [716, 580]
+      action: chatops.post_message
+      input:
+        message: "Creating a Jira issue for this event!"
+        channel: "lkhtesting"
+      on-success:
+        - create_jira_issue
+      on-error:
+        - report_failure
+    create_jira_issue:
+      # [638, 743]
+      action: jira.create_issue
+      input:
+        type: "IT Help"
+        summary: "BGP neighbour down: <% $.neighbour %> on <% $.host %>"
+        description:  "<% task(show_bgp_neighbours).result.result %>\n<% task(show_interface_brief).result.result %>"
+      on-error:
+        - report_failure
+    report_failure:
+      # [135, 740]
+      action: chatops.post_message
+      input:
+        message: "Something went wrong in BGP down auto-remediation!"
+        channel: "lkhtesting"
