@@ -20,7 +20,7 @@ purr.create_vm:
             - fail: <% $.ec2_instance_id = null %>
 
     tasks:
-        create_instance:
+        run_instance:
             action: aws.ec2_run_instances
             input:
                 image_id: <% $.image_id %>
@@ -67,8 +67,7 @@ purr.create_vm:
                 instance: <%
                     let(instance_id => $.ec2_instance_id) ->
                         task(get_instances_by_id).result.result.where(
-                            $.id = $instance_id)[0]
-                %>
+                            $.id = $instance_id)[0] %>
 
 
 
