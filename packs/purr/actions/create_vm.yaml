@@ -1,0 +1,30 @@
+name: create_vm
+description: Creates a virtual machine
+runner_type: mistral-v2
+enabled: true
+entry_point: workflows/create_vm.yaml
+parameters:
+    image_id:
+        type: string
+        description: Image to use
+        default: ami-d732f0b7
+    instance_type:
+        type: string
+        description: Flavor of to use for instance creation
+        default: t2.micro
+    subnet_id:
+        type: string
+        description: Subnet to put the instance
+        default: subnet-f704fc93
+    username:
+        type: string
+        description: SSH username
+        default: ubuntu
+    key_name:
+        type: string
+        description: SSH key to use during intial instance creation
+        default: st3
+    keyfile:
+        type: string
+        description: Path to local private key that corresponds to {{key_name}}
+        default: /home/stanley/.ssh/st3.pem

@@ -1,0 +1,10 @@
+---
+name: destroy_vm
+runner_type: mistral-v2
+description: Destroys a VM and remove associated resources
+enabled: true
+entry_point: workflows/destroy_vm.yaml
+parameters:
+    instance_id:
+        type: string
+        description: Provider specific instance ID for the VM.
