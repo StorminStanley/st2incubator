@@ -59,7 +59,7 @@ purr.create_vm:
                 resource_ids: <% $.ec2_instance_id %>
                 tags: Name=kitty
             on-success:
-                - get_instance
+                - get_instances
 
         get_instances:
             action: aws.ec2_get_only_instances
