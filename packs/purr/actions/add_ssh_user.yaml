@@ -1,15 +1,17 @@
 name: add_ssh_user
 runner_type: run-remote-script
-description: Create user and add to ssh user group.
+description: Create new user and configure user for ssh password login.
 enabled: true
 entry_point: add_ssh_user.sh
 parameters:
-    username:
+    new_username:
         type: string
-        description: Username for the user.
-    password:
+        description: Username for the new user.
+        position: 0
+    new_password:
         type: string
-        description: Password for the user.
+        description: Password for the new user.
+        position: 1
     dir:
         immutable: true
         default: /home/stanley/
