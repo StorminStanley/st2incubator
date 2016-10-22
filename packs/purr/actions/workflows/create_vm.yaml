@@ -12,7 +12,7 @@ purr.create_vm:
     vars:
         ec2_instance_id: null
     output:
-        instance: $.instance
+        instance: <% $.instance %>
 
     task-defaults:
         on-error:
@@ -67,7 +67,7 @@ purr.create_vm:
                 instance: <%
                     let(instance_id => $.ec2_instance_id) ->
                         task(get_instances).result.result.where(
-                            $.id = $instance_id)[0] %>
+                            $.id = $instance_id).first() %>
 
 
 
