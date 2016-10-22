@@ -11,6 +11,8 @@ purr.create_vm:
         - keyfile
     vars:
         ec2_instance_id: null
+    output:
+        instance: $.instance
 
     task-defaults:
         on-error:
@@ -27,7 +29,6 @@ purr.create_vm:
                 key_name: <% $.key_name %>
             publish:
                 ec2_instance_id: <% task(run_instance).result.result[0].id %>
-                ec2_instance_public_ip: <% task(run_instance).result.result[0].public_ip_address %>
                 ec2_instance_private_ip: <% task(run_instance).result.result[0].private_ip_address %>
                 ec2_instance_private_dns: <% task(run_instance).result.result[0].private_dns_name %>
             on-success:
@@ -57,6 +58,17 @@ purr.create_vm:
             input:
                 resource_ids: <% $.ec2_instance_id %>
                 tags: Name=kitty
+            on-success:
+                - get_instance
+
+        get_instance:
+            action: aws.ec2_get_only_instances
+            publish:
+                instance: <%
+                    let(instance_id => $.ec2_instance_id) ->
+                        task(get_instances_by_id).result.result.where(
+                            $.id = $instance_id)[0]
+                %>
 
 
 
