@@ -19,7 +19,7 @@ purr.create_vm:
 
     tasks:
         create_instance:
-            action: aws.ec2_run_instance
+            action: aws.ec2_run_instances
             input:
                 image_id: <% $.image_id %>
                 subnet_id: <% $.subnet_id %>
