@@ -1,0 +1,12 @@
+name: purr
+description: >
+    Soft kitty, warm kitty, little ball of fur.
+    Happy kitty, sleepy kitty, purr purr purr...
+    Pack to automate StackStorm conference puzzle.
+version: 0.1.0
+author: st2-dev
+email: info@stackstorm.com
+keywords:
+    - st2
+    - puzzle
+    - kitty

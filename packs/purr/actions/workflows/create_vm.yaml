@@ -1,0 +1,68 @@
+version: '2.0'
+
+purr.create_vm:
+    description: Create virtual machine
+    input:
+        - image_id
+        - instance_type
+        - subnet_id
+        - username
+        - key_name
+        - keyfile
+    vars:
+        ec2_instance_id: null
+
+    task-defaults:
+        on-error:
+            - destroy_vm_on_failure: <% $.ec2_instance_id != null %>
+            - fail: <% $.ec2_instance_id = null %>
+
+    tasks:
+        create_instance:
+            action: aws.ec2_run_instance
+            input:
+                image_id: <% $.image_id %>
+                subnet_id: <% $.subnet_id %>
+                instance_type: <% $.instance_type %>
+                key_name: <% $.key_name %>
+            publish:
+                ec2_instance_id: <% task(run_instance).result.result[0].id %>
+                ec2_instance_public_ip: <% task(run_instance).result.result[0].public_ip_address %>
+                ec2_instance_private_ip: <% task(run_instance).result.result[0].private_ip_address %>
+                ec2_instance_private_dns: <% task(run_instance).result.result[0].private_dns_name %>
+            on-success:
+                - wait_for_instance
+
+        wait_for_instance:
+            action: aws.ec2_wait_for_state
+            input:
+                instance_id: <% $.ec2_instance_id %>
+                state: running
+            on-success:
+                - wait_for_ssh
+
+        wait_for_ssh:
+            action: linux.wait_for_ssh
+            input:
+                hostname: <% $.ec2_instance_private_ip %>
+                username: <% $.username %>
+                keyfile: <% $.keyfile %>
+                ssh_timeout: 20
+                retries: 30
+            on-success:
+                - add_tags
+
+        add_tags:
+            action: aws.ec2_create_tags
+            input:
+                resource_ids: <% $.ec2_instance_id %>
+                tags: Name=kitty
+
+
+
+        destroy_vm_on_failure:
+            action: purr.destroy_vm
+            input:
+                instance_id: <% $.ec2_instance_id %>
+            on-complete:
+                - fail

@@ -1,0 +1,47 @@
+version: '2.0'
+
+purr.destroy_vm:
+    description: Destroy VM and associated resources
+    type: direct
+    input:
+        - instance_id
+    tasks:
+        get_instances_by_id:
+            action: aws.ec2_get_only_instances
+            publish:
+                instances: <%
+                    task(get_instances_by_id).result.result.where(
+                        $.id = execution().input.instance_id).select($.id)
+                    %>
+            on-success:
+                - get_volumes: <% len($.instances) = 1 %>
+                - fail: <% len($.instances) > 1 %>
+        get_volumes:
+            action: aws.ec2_get_instance_attribute
+            input:
+                attribute: blockDeviceMapping
+                instance_id: <% $.instances[0] %>
+            publish:
+                volumes: <%
+                    task(get_volumes).result.result.first().get(
+                        blockDeviceMapping, {}).values().where(
+                            not $.get(delete_on_termination, True)).select($.volume_id) %>
+            on-success:
+                - destroy_instance
+        destroy_instance:
+            action: aws.ec2_terminate_instances
+            input:
+                instance_ids: <% $.instances[0] %>
+            on-complete:
+                - delete_volumes: <% len($.volumes) > 0 %>
+        delete_volumes:
+            # Give the instance time to terminate and volume(s) to be detached.
+            wait-before: 60
+            with-items: volume in <% $.volumes %>
+            action: aws.ec2_delete_volume
+            input:
+                volume_id: <% $.volume %>
+            # The instance may still be terminating and volumes are attached.
+            retry:
+                count: 10
+                delay: 60
