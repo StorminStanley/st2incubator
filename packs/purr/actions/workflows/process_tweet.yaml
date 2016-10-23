@@ -1,0 +1,54 @@
+version: '2.0'
+
+purr.process_tweet:
+    description: Process tweet for the stage.
+    input:
+        - contestant
+        - tweet_text
+        - tweet_timestamp
+    vars:
+        stg1_tracker: <% $.contestant + '.stage.1' %>
+        stg2_tracker: <% $.contestant + '.stage.2' %>
+        stg3_tracker: <% $.contestant + '.stage.3' %>
+        stg4_tracker: <% $.contestant + '.stage.4' %>
+        stg5_tracker: <% $.contestant + '.stage.5' %>
+
+    tasks:
+        get_stg1_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg1_tracker %>
+            on-success:
+                - get_stg2_tracker: <%$.stg1_tracker in task(get_stg1_tracker).result.result.keys() %>
+                - process_stg1_tweet: <%not $.stg1_tracker in task(get_stg1_tracker).result.result.keys() %>
+        process_stg1_tweet:
+            action: core.noop
+
+        get_stg2_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg2_tracker %>
+            on-success:
+                - get_stg3_tracker: <% $.stg2_tracker in task(get_stg2_tracker).result.result.keys() %>
+                - process_stg2_tweet: <% not $.stg2_tracker in task(get_stg2_tracker).result.result.keys() %>
+        process_stg2_tweet:
+            action: core.noop
+
+        get_stg3_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg3_tracker %>
+            on-success:
+                - get_stg4_tracker: <% $.stg3_tracker in task(get_stg3_tracker).result.result.keys() %>
+                - process_stg3_tweet: <% not $.stg3_tracker in task(get_stg3_tracker).result.result.keys() %>
+        process_stg3_tweet:
+            action: core.noop
+
+        get_stg4_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg4_tracker %>
+            on-success:
+                - process_stg4_tweet: <% not $.stg4_tracker in task(get_stg4_tracker).result.result.keys() %>
+        process_stg4_tweet:
+            action: core.noop
