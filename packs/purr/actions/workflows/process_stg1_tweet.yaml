@@ -21,7 +21,10 @@ purr.process_stg1_tweet:
             on-success:
                 - notify_contestant
         notify_contestant:
-            action: core.noop
+            action: twitter.direct_message
+            input:
+                screen_name: <% $.contestant %>
+                message: "TBD"
             on-success:
                 - set_tracker
         set_tracker:
