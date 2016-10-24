@@ -43,8 +43,16 @@ purr.process_stg6_tweet:
                 key: <% $.tracker %>
                 value: <% $.tweet_timestamp %>
             on-success:
+                - get_instance_id
+        get_instance_id:
+            ation: st2.kv.get
+            input:
+                key: <% $.instance_tracker %>
+            publish:
+                instance_id: <% task(get_instance_id).result.result %>
+            on-success:
                 - destroy_vm
         destroy_vm:
             action: purr.destroy_vm
             input:
-                instance_id: <% st2kv($.instance_tracker) %>
+                instance_id: <% $.instance_id %>
