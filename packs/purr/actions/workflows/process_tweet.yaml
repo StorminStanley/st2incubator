@@ -63,4 +63,8 @@ purr.process_tweet:
             on-success:
                 - process_stg4_tweet: <% not $.stg4_tracker in task(get_stg4_tracker).result.result.keys() %>
         process_stg4_tweet:
-            action: core.noop
+            action: purr.process_stg4_tweet
+            input:
+                contestant: <% $.contestant %>
+                tweet_text: <% $.tweet_text %>
+                tweet_timestamp: <% $.tweet_timestamp %>
