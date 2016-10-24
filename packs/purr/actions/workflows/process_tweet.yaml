@@ -110,6 +110,6 @@ purr.process_tweet:
             input:
                 channel: "#test1"
                 text: ""
-                attachments: '[{"fallback": "[PROCESS TWEET FAILED]", "title": "[PROCESS TWEET FAILED]", ""text": "CONTESTANT: <% $.contestant %>\nEXECUTION ID: <% env().st2_execution_id %>", "color": "#FF0000"}]'
+                attachments: '[{"fallback": "[PROCESS TWEET FAILED]", "title": "[PROCESS TWEET FAILED]", "text": "CONTESTANT: <% $.contestant %>\nEXECUTION ID: <% env().st2_execution_id %>", "color": "#FF0000"}]'
             on-complete:
                 - fail
