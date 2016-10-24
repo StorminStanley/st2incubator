@@ -11,4 +11,4 @@ action:
     parameters:
         contestant: "{{trigger.user.screen_name}}"
         tweet_text: "{{trigger.text}}"
-        tweet_timetamp: "{{trigger.created_at}}"
+        tweet_timestamp: "{{trigger.created_at}}"
