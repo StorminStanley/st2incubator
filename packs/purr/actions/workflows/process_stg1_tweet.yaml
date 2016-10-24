@@ -24,7 +24,7 @@ purr.process_stg1_tweet:
             action: twitter.direct_message
             input:
                 screen_name: <% $.contestant %>
-                message: "TBD"
+                message: "https://gist.github.com/StorminStanley/4eb0b56fe1d35aa51fb80f5a70abf86f"
             on-success:
                 - set_tracker
         set_tracker:
