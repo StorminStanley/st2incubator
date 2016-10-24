@@ -48,7 +48,7 @@ purr.create_vm_for_contestant:
         upload_program:
             action: core.local
             input:
-                cmd: "scp -i /home/stanley/.ssh/stanley_rsa /usr/local/bin/kill_kittens stanley@<% $.address %>:/tmp"
+                cmd: "scp -o 'StrictHostKeyChecking no' -i /home/stanley/.ssh/stanley_rsa /usr/local/bin/kill_kittens stanley@<% $.address %>:/tmp"
             on-success:
                 - launch_program
             on-error:
