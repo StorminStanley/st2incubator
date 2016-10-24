@@ -18,6 +18,8 @@ purr.process_stg6_tweet:
                 contestant: <% $.contestant %>
                 tweet_text: <% $.tweet_text %>
                 answer: <% st2kv($.answer_key) %>
+            on-error:
+                - noop
             on-success:
                 - notify_contestant
         notify_contestant:
