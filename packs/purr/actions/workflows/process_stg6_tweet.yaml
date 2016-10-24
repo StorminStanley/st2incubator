@@ -1,0 +1,35 @@
+version: '2.0'
+
+purr.process_stg6_tweet:
+    description: Process tweet for stage 6 of the puzzle.
+    input:
+        - contestant
+        - tweet_text
+        - tweet_timestamp
+    vars:
+        tracker: <% $.contestant + '.stage.6' %>
+        instance_tracker: <% $.contestant + '.vm.id' %>
+
+    tasks:
+        validate_tweet:
+            action: core.noop
+            on-success:
+                - notify_contestant
+        notify_contestant:
+            action: twitter.direct_message
+            input:
+                screen_name: <% $.contestant %>
+                message: "https://gist.github.com/StorminStanley/d0244954109eb22350eabb70a46d9b56"
+            on-success:
+                - set_tracker
+        set_tracker:
+            action: st2.kv.set
+            input:
+                key: <% $.tracker %>
+                value: <% $.tweet_timestamp %>
+            on-success:
+                - destroy_vm
+        destroy_vm:
+            action: purr.destroy_vm
+            input:
+                instance_id: <% st2kv($.instance_tracker) %>
