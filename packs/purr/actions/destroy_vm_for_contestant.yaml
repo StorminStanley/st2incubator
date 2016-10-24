@@ -1,0 +1,10 @@
+name: destroy_vm_for_contestant
+description: Destroy virtual machine for contestant
+runner_type: mistral-v2
+enabled: true
+entry_point: workflows/destroy_vm_for_contestant.yaml
+parameters:
+    contestant:
+        type: string
+        description: Twitter screen name of the contestant
+        required: true
