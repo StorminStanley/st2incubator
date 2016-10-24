@@ -9,6 +9,7 @@ purr.create_vm:
         - username
         - key_name
         - keyfile
+        - tags: "Name=kitty"
     vars:
         ec2_instance_id: null
     output:
@@ -57,7 +58,7 @@ purr.create_vm:
             action: aws.ec2_create_tags
             input:
                 resource_ids: <% $.ec2_instance_id %>
-                tags: Name=kitty
+                tags: <% $.tags %>
             on-success:
                 - get_instances
 
