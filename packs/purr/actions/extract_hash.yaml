@@ -1,0 +1,9 @@
+name: extract_hash
+runner_type: run-python
+description: Extract hash from text
+enabled: true
+entry_point: extract_hash.py
+parameters:
+    text:
+        type: string
+        description: Text to parse

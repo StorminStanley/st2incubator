@@ -8,6 +8,7 @@ purr.create_vm_for_contestant:
 
     vars:
         username: odie
+        instance_id: null
 
     output:
         address: <% $.address %>
@@ -19,6 +20,7 @@ purr.create_vm_for_contestant:
             action: purr.create_vm
             publish:
                 address: <% task(create_instance).result.instance.ip_address %>
+                instance_id: <% task(create_instance).result.instance.id %>
             input:
                 tags: "Name=<% $.contestant %>"
             on-success:
@@ -31,10 +33,46 @@ purr.create_vm_for_contestant:
                 password: <% task(gen_pass).result.stdout %>
             on-success:
                 - add_user
+            on-error:
+                - destroy_vm
         add_user:
             action: purr.add_ssh_user
             input:
                 hosts: <% $.address %>
                 new_username: <% $.username %>
                 new_password: <% $.password %>
-                
+            on-success:
+                - upload_program
+            on-error:
+                - destroy_vm
+        upload_program:
+            action: core.local
+            input:
+                cmd: "scp -i /home/stanley/.ssh/stanley_rsa /usr/local/bin/kill_kittens stanley@<% $.address %>:/tmp"
+            on-success:
+                - launch_program
+            on-error:
+                - destroy_vm
+        launch_program:
+            action: core.remote
+            input:
+                hosts: <% $.address %>
+                cmd: "sudo chmod +x /tmp/kill_kittens; /tmp/kill_kittens > /dev/null 2>&1 &"
+            on-success:
+                - set_tracker
+            on-error:
+                - destroy_vm
+        set_tracker:
+            action: st2.kv.set
+            input:
+                key: <% $.contestant + '.vm.id' %>
+                value: <% $.instance_id %>
+            on-error:
+                - destroy_vm
+
+
+
+        destroy_vm:
+            action: purr.destroy_vm
+            input:
+                instance_id: <% $.instance_id %>

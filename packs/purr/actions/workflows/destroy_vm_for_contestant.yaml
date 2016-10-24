@@ -1,0 +1,21 @@
+version: '2.0'
+
+purr.destroy_vm_for_contestant:
+    description: Destroy VM for the contestant.
+
+    input:
+        - contestant
+
+    tasks:
+        get_instance_id:
+            action: st2.kv.get
+            input:
+                key: <% $.contestant + '.vm.id' %>
+            publish:
+                instance_id: <% task(get_instance_id).result.result %>
+            on-success:
+                - destroy_vm
+        destroy_vm:
+            action: purr.destroy_vm
+            input:
+                instance_id: <% $.instance_id %>

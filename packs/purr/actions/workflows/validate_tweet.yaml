@@ -1,0 +1,29 @@
+version: '2.0'
+
+purr.validate_tweet:
+    description: Validate tweet.
+    input:
+        - contestant
+        - tweet_text
+        - answer
+
+    tasks:
+        extract:
+            action: purr.extract_hash
+            input:
+                text: <% $.tweet_text %>
+            publish:
+                hash: <% task(extract).result.result %>
+            on-success:
+                - calculate: <% $.hash != null %>
+                - fail: <% $.hash = null %>
+        calculate:
+            action: save_kittens.shait
+            input:
+                message: <% $.answer %>
+                handle: <% '@' + $.contestant %>
+            publish:
+                expected_hash: <% task(calculate).result.result %>
+            on-success:
+                - noop: <% $.hash = $.expected_hash %>
+                - fail: <% $.hash != $.expected_hash %>

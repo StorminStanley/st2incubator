@@ -1,0 +1,16 @@
+name: validate_tweet
+description: Validate the tweet
+runner_type: mistral-v2
+enabled: true
+entry_point: workflows/validate_tweet.yaml
+parameters:
+    contestant:
+        type: string
+        description: Twitter screen name of the contestant
+        required: true
+    tweet_text:
+        type: string
+        required: true
+    answer:
+        type: string
+        required: true

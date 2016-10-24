@@ -1,14 +1,15 @@
 version: '2.0'
 
-purr.process_stg1_tweet:
-    description: Process tweet for stage 1 of the puzzle.
+purr.process_stg6_tweet:
+    description: Process tweet for stage 6 of the puzzle.
     input:
         - contestant
         - tweet_text
         - tweet_timestamp
     vars:
-        tracker: <% $.contestant + '.stage.1' %>
-        answer_key: 'kitty.answer.1'
+        tracker: <% $.contestant + '.stage.6' %>
+        answer_key: 'kitty.answer.6'
+        instance_tracker: <% $.contestant + '.vm.id' %>
 
     tasks:
         validate_tweet:
@@ -18,18 +19,12 @@ purr.process_stg1_tweet:
                 tweet_text: <% $.tweet_text %>
                 answer: <% st2kv($.answer_key) %>
             on-success:
-                - follow_contestant
-        follow_contestant:
-            action: twitter.follow
-            input:
-                screen_name: <% $.contestant %>
-            on-success:
                 - notify_contestant
         notify_contestant:
             action: twitter.direct_message
             input:
                 screen_name: <% $.contestant %>
-                message: "https://gist.github.com/StorminStanley/4eb0b56fe1d35aa51fb80f5a70abf86f"
+                message: "https://gist.github.com/StorminStanley/d0244954109eb22350eabb70a46d9b56"
             on-success:
                 - set_tracker
         set_tracker:
@@ -37,3 +32,9 @@ purr.process_stg1_tweet:
             input:
                 key: <% $.tracker %>
                 value: <% $.tweet_timestamp %>
+            on-success:
+                - destroy_vm
+        destroy_vm:
+            action: purr.destroy_vm
+            input:
+                instance_id: <% st2kv($.instance_tracker) %>
