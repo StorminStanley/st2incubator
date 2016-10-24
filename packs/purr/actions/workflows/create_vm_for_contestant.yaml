@@ -76,3 +76,5 @@ purr.create_vm_for_contestant:
             action: purr.destroy_vm
             input:
                 instance_id: <% $.instance_id %>
+            on-complete:
+                - fail
