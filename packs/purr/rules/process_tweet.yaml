@@ -6,7 +6,7 @@ trigger:
     type: twitter.matched_tweet
     parameters: {}
 
-  action:
+action:
     ref: purr.process_tweet
     parameters:
         contestant: "{{trigger.user.screen_name}}"
