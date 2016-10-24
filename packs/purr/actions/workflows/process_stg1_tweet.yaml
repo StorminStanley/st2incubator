@@ -8,10 +8,15 @@ purr.process_stg1_tweet:
         - tweet_timestamp
     vars:
         tracker: <% $.contestant + '.stage.1' %>
+        answer_key: 'kitty.answer.1'
 
     tasks:
         validate_tweet:
-            action: core.noop
+            action: purr.validate_tweet
+            input:
+                contestant: <% $.contestant %>
+                tweet_text: <% $.tweet_text %>
+                answer: <% st2kv($.answer_key) %>
             on-success:
                 - follow_contestant
         follow_contestant:
