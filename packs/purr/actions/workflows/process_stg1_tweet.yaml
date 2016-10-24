@@ -8,7 +8,7 @@ purr.process_stg1_tweet:
         - tweet_timestamp
     vars:
         tracker: <% $.contestant + '.stage.1' %>
-        answer_key: 'system.kitty.answer.1'
+        answer_key: 'kitty.answer.1'
 
     tasks:
         get_answer:
