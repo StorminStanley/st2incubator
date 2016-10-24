@@ -1,0 +1,15 @@
+name: process_stg2_tweet
+description: Process tweet for stage 2 of the puzzle
+runner_type: mistral-v2
+enabled: true
+entry_point: workflows/process_stg2_tweet.yaml
+parameters:
+    contestant:
+        type: string
+        description: Twitter screen name of the contestant
+        required: true
+    tweet_text:
+        type: string
+    tweet_timestamp:
+        type: string
+        required: true

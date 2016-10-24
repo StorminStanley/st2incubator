@@ -1,0 +1,28 @@
+version: '2.0'
+
+purr.process_stg2_tweet:
+    description: Process tweet for stage 2 of the puzzle.
+    input:
+        - contestant
+        - tweet_text
+        - tweet_timestamp
+    vars:
+        tracker: <% $.contestant + '.stage.2' %>
+
+    tasks:
+        validate_tweet:
+            action: core.noop
+            on-success:
+                - notify_contestant
+        notify_contestant:
+            action: twitter.direct_message
+            input:
+                screen_name: <% $.contestant %>
+                message: "TBD"
+            on-success:
+                - set_tracker
+        set_tracker:
+            action: st2.kv.set
+            input:
+                key: <% $.tracker %>
+                value: <% $.tweet_timestamp %>
