@@ -1,0 +1,40 @@
+version: '2.0'
+
+purr.create_vm_for_contestant:
+    description: Create VM for the contestant.
+
+    input:
+        - contestant
+
+    vars:
+        username: odie
+
+    output:
+        address: <% $.address %>
+        username: <% $.username %>
+        password: <% $.password %>
+
+    tasks:
+        create_instance:
+            action: purr.create_vm
+            publish:
+                address: <% task(create_instance).result.instance.ip_address %>
+            input:
+                tags: "Name=<% $.contestant %>"
+            on-success:
+                - gen_pass
+        gen_pass:
+            action: core.local
+            input:
+                cmd: "openssl rand -base64 32"
+            publish:
+                password: <% task(gen_pass).result.stdout %>
+            on-success:
+                - add_user
+        add_user:
+            action: purr.add_ssh_user
+            input:
+                hosts: <% $.address %>
+                new_username: <% $.username %>
+                new_password: <% $.password %>
+                

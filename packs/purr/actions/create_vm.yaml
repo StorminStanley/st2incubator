@@ -28,3 +28,6 @@ parameters:
         type: string
         description: Path to local private key that corresponds to {{key_name}}
         default: /home/stanley/.ssh/st3.pem
+    tags:
+        type: string
+        description: List of tags (name=value) to attached to the virtual machine 
