@@ -13,6 +13,12 @@ purr.process_stg1_tweet:
         validate_tweet:
             action: core.noop
             on-success:
+                - follow_contestant
+        follow_contestant:
+            action: twitter.follow
+            input:
+                screen_name: <% $.contestant %>
+            on-success:
                 - notify_contestant
         notify_contestant:
             action: core.noop
