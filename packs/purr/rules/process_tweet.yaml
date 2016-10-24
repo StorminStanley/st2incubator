@@ -1,0 +1,14 @@
+name: process_tweet
+description: Trigger processing of tweet.
+enabled: true
+
+trigger:
+    type: twitter.matched_tweet
+    parameters: {}
+
+  action:
+    ref: purr.process_tweet
+    parameters:
+        contestant: "{{trigger.user.screen_name}}"
+        tweet_text: "{{trigger.text}}"
+        tweet_timetamp: "{{trigger.created_at}}"
