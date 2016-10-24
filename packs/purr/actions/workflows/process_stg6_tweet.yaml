@@ -45,7 +45,7 @@ purr.process_stg6_tweet:
             on-success:
                 - get_instance_id
         get_instance_id:
-            ation: st2.kv.get
+            action: st2.kv.get
             input:
                 key: <% $.instance_tracker %>
             publish:
