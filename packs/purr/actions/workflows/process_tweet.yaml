@@ -12,6 +12,7 @@ purr.process_tweet:
         stg3_tracker: <% $.contestant + '.stage.3' %>
         stg4_tracker: <% $.contestant + '.stage.4' %>
         stg5_tracker: <% $.contestant + '.stage.5' %>
+        stg6_tracker: <% $.contestant + '.stage.6' %>
 
     tasks:
         get_stg1_tracker:
@@ -61,6 +62,7 @@ purr.process_tweet:
             input:
                 query: <% $.stg4_tracker %>
             on-success:
+                - get_stg5_tracker: <% $.stg4_tracker in task(get_stg4_tracker).result.result.keys() %>
                 - process_stg4_tweet: <% not $.stg4_tracker in task(get_stg4_tracker).result.result.keys() %>
         process_stg4_tweet:
             action: purr.process_stg4_tweet
@@ -68,3 +70,27 @@ purr.process_tweet:
                 contestant: <% $.contestant %>
                 tweet_text: <% $.tweet_text %>
                 tweet_timestamp: <% $.tweet_timestamp %>
+
+        get_stg5_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg5_tracker %>
+            on-success:
+                - get_stg6_tracker: <% $.stg5_tracker in task(get_stg5_tracker).result.result.keys() %>
+                - process_stg5_tweet: <% not $.stg5_tracker in task(get_stg5_tracker).result.result.keys() %>
+        process_stg5_tweet:
+            action: purr.process_stg5_tweet
+            input:
+                contestant: <% $.contestant %>
+                tweet_text: <% $.tweet_text %>
+                tweet_timestamp: <% $.tweet_timestamp %>
+
+        get_stg6_tracker:
+            action: st2.kv.grep
+            input:
+                query: <% $.stg6_tracker %>
+            on-success:
+                - noop: <% $.stg6_tracker in task(get_stg6_tracker).result.result.keys() %>
+                - process_stg6_tweet: <% not $.stg6_tracker in task(get_stg6_tracker).result.result.keys() %>
+        process_stg6_tweet:
+            action: core.noop

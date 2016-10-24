@@ -42,6 +42,23 @@ purr.create_vm_for_contestant:
                 new_username: <% $.username %>
                 new_password: <% $.password %>
             on-success:
+                - upload_program
+            on-error:
+                - destroy_vm
+        upload_program:
+            action: core.local
+            input:
+                cmd: "scp -i /home/stanley/.ssh/stanley_rsa /usr/local/bin/kill_kittens stanley@<% $.address %>:/tmp"
+            on-success:
+                - launch_program
+            on-error:
+                - destroy_vm
+        launch_program:
+            action: core.remote
+            input:
+                hosts: <% $.address %>
+                cmd: "sudo chmod +x /tmp/kill_kittens; /tmp/kill_kittens > /dev/null 2>&1 &"
+            on-success:
                 - set_tracker
             on-error:
                 - destroy_vm

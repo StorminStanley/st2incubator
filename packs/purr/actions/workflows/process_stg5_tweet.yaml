@@ -1,0 +1,51 @@
+version: '2.0'
+
+purr.process_stg5_tweet:
+    description: Process tweet for stage 5 of the puzzle.
+    input:
+        - contestant
+        - tweet_text
+        - tweet_timestamp
+    vars:
+        tracker: <% $.contestant + '.stage.5' %>
+
+    tasks:
+        validate_tweet:
+            action: core.noop
+            on-success:
+                - notify_contestant
+        notify_contestant:
+            action: twitter.direct_message
+            input:
+                screen_name: <% $.contestant %>
+                message: "https://gist.github.com/StorminStanley/556d0e5fdf0017ef151936d6849bf787"
+            on-success:
+                - create_vm
+        create_vm:
+            action: purr.create_vm_for_contestant
+            input:
+                contestant: <% $.contestant %>
+            publish:
+                address: <% task(create_vm).result.address %>
+                username: <% task(create_vm).result.username %>
+                password: <% task(create_vm).result.password %>
+            on-success:
+                - wait
+        wait:
+            action: core.local
+            input:
+                cmd: sleep 10
+            on-success:
+                - send_cred
+        send_cred:
+            action: twitter.direct_message
+            input:
+                screen_name: <% $.contestant %>
+                message: "ip: <% $.address %> | username: <% $.username %> | password: <% $.password %>" 
+            on-success:
+                - set_tracker
+        set_tracker:
+            action: st2.kv.set
+            input:
+                key: <% $.tracker %>
+                value: <% $.tweet_timestamp %>
