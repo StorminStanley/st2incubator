@@ -17,6 +17,8 @@ purr.process_stg1_tweet:
                 contestant: <% $.contestant %>
                 tweet_text: <% $.tweet_text %>
                 answer: <% st2kv($.answer_key) %>
+            on-error:
+                - noop
             on-success:
                 - follow_contestant
         follow_contestant:
