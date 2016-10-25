@@ -3,7 +3,7 @@ description: Trigger processing of tweet.
 enabled: true
 
 trigger:
-    type: twitter.matched_tweet
+    type: twitter.stream_matched_tweet
     parameters: {}
 
 action:
