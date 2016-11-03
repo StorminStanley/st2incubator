@@ -28,8 +28,9 @@ fi
 virtualenv --no-site-packages .venv
 . ${REPO_MAIN}/.venv/bin/activate
 
-# Temporary hack around the amqp dependency problem
-pip install "amqp>=1.4.0,<2.0.0" 
+# Temporary hack around the kombu and amqp dependency problem
+pip install "kombu>=3.0.0,<4.0.0"
+pip install "amqp>=1.4.0,<2.0.0"
 
 # Setup mistral.
 cd ${REPO_MAIN}
