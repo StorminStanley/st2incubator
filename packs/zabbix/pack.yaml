@@ -1,0 +1,6 @@
+---
+name : zabbix
+description : st2 content pack for Zabbix integration.
+version : 0.1
+author : Fabio Brito
+email : psychopenguin@gmail.com
