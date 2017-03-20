@@ -48,7 +48,6 @@ fi
 # Temporary hack to get around oslo.utils bug.
 pip install -q netifaces
 
-pip install -U setuptools
 python setup.py develop
 
 # Setup plugins for custom actions.
