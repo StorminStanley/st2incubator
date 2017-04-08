@@ -16,8 +16,8 @@
         ref: "st2-demos.diskspace_remediation"
         parameters:
             hostname: "{{trigger.client.name}}"
-            directory: "{{system.logs_dir}}"
-            threshold: "{{system.logs_dir_threshold}}"
+            directory: "{{st2kv.system.logs_dir}}"
+            threshold: "{{st2kv.system.logs_dir_threshold}}"
             event_id: "{{trigger.id}}"
             check_name: "{{trigger.check.name}}"
             alert_message: "{{trigger.check.output}}"
